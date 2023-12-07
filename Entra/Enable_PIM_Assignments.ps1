@@ -62,6 +62,7 @@ $ToActivate = @(
 	'Helpdesk Administrator',
 	'Intune Administrator',
 	'License Administrator',
+	'Office Apps Administrator',
 	'Privileged Authentication Administrator',
 	'Privileged Role Administrator',
 	'Security Administrator',
