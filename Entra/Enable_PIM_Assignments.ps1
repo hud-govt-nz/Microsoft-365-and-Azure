@@ -94,7 +94,7 @@ foreach ($value in $SelectedRoles) {
 	$Role = Get-MgDirectoryRoleTemplate | Where-Object { $value -contains $_.DisplayName } | Select-Object DisplayName,Id
 
 	# Policy Assignment to role
-	$PolicyAssignment = Get-MgPolicyRoleManagementPolicyAssignment -Filter "scopeId eq '/' and scopeType eq 'DirectoryRole' and roleDefinitionId eq '$($Role.Id)'" -ExpandProperty "policy(`$expand=rules)"
+	$PolicyAssignment = Get-MgPolicyRoleManagementPolicyAssignment -Filter "scopeId eq '/' and scopeType eq 'DirectoryRole' and roleDefinitionId eq '$($Role.Id)'" #-ExpandProperty "policy(`$expand=rules)"
 
 	# Retrieve Rule (specific to Expiration_EndUser_Assignment but can be other rules if required)
 	$Rule = Get-MgPolicyRoleManagementPolicyRule -UnifiedRoleManagementPolicyId $PolicyAssignment.PolicyId | Where-Object { $_.id -eq 'Expiration_EndUser_Assignment' } | Select-Object Id -ExpandProperty AdditionalProperties
