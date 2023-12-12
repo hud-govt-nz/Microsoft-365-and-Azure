@@ -129,7 +129,7 @@ $validationFolderVar = $folderPaths.ValidationFolder
 $Date = Get-Date -Format "MM-dd-yyyy"
 $AppName = "Hosts_File_Update"
 $AppValidationFile = "$validationFolderVar\$AppName.txt"
-$AppVersion = "1.0"
+$AppVersion = "1.1"
 $LogFileName = "$($AppName)_${Mode}_$Date.log"
 
 # Comment: The script initiates the install process, logs the initiation, and performs cleanup of the setup folder if it exists.
@@ -161,6 +161,9 @@ if ($Mode -eq "Add") {
 		$hostEntries.Add("10.0.2.20","sql-projectregister-prod.database.windows.net")
 		$hostEntries.Add("10.0.4.40","sql-reporting-prod.database.windows.net")
 		$hostEntries.Add("10.0.2.30","sqldb-printix-prod.database.windows.net")
+		$hostEntries.Add("10.0.5.5","dlprojectsdataprod.blob.core.windows.net")
+		$hostEntries.Add("10.0.5.6","dlreportingdataprod.blob.core.windows.net")
+
 
 		# Check if the backup file exists and if it doesn't, create it
 		if (-not (Test-Path -Path $backupFilePath)) {
