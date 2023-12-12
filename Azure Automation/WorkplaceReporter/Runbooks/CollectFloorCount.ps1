@@ -1,23 +1,38 @@
-#< RUN MANUALLY
-Clear-Host
+<#
+.SYNOPSIS
+   Script for collecting and analyzing user sign-ins from Microsoft Graph Audit Logs,
+   calculating floor counts, and sending a summarized report via email.
 
-# Connect to Microsoft Graph
-Connect-MgGraph -NoWelcome | Out-Null
+.DESCRIPTION
+   This script connects to Microsoft Graph and SharePoint Online, retrieves user sign-ins,
+   filters data, excludes specified users, calculates floor counts, updates a SharePoint list,
+   and sends an email with the summarized floor count statistics.
+
+.NOTES
+   File Name      : FloorCountScript.ps1
+   Author         : Ashley Forde
+   Prerequisite   : PowerShell, Microsoft Graph PowerShell Module, SharePoint PnP PowerShell Module
 #>
 
+
 #Connect to Microsoft Graph
-.\GraphLogin.ps1 # block out to run locally.
+Connect-MgGraph -Identity -nowelcome 
+
+# Connect to SharePoint Online
+$siteUrl = "https://mhud.sharepoint.com/sites/infomgmt"
+$pnpConnection = Connect-PnPOnline -Url $siteUrl -ManagedIdentity
+$pnpConnection
 
 # Set the timezone to NZ Standard Time
 Set-TimeZone -Id "New Zealand Standard Time"
 
 # Assuming New Zealand Time (NZT) is UTC+12 or UTC+13 during daylight saving time
 $nztOffset = if ([TimeZoneInfo]::Local.IsDaylightSavingTime((Get-Date))) { 13 } else { 12 }
-$currentNztTime = (Get-Date).Date.AddDays(1)
+$currentNztTime = (Get-Date).Date
 
 # Calculate the start and end times in NZT
 # For a 24-hour window starting from the current day at 00:00:00 NZT
-$startTimeNzt = $currentNztTime.Date.AddDays(-2)
+$startTimeNzt = $currentNztTime.Date.AddDays(-1)
 $endTimeNzt = $startTimeNzt.AddDays(1)
 
 # Convert these NZT times back to UTC
@@ -27,6 +42,11 @@ $endTimeUtc = $endTimeNzt.AddHours(-$nztOffset)
 # Format the start and end times for the filter query
 $startTimeStr = $startTimeUtc.ToString("yyyy-MM-ddTHH:mm:ssZ")
 $endTimeStr = $endTimeUtc.ToString("yyyy-MM-ddTHH:mm:ssZ")
+
+# Format the date period
+$datePeriod = "$($startTimeNzt.ToString('dd/MM/yyyy'))"
+
+Write-Output "Date being collected: $datePeriod"
 
 # Define the two IP addresses to filter by
 $ipAddress1 = "203.167.143.72"
@@ -90,6 +110,7 @@ $excludedUsers = @(
 
 # Iterate through the audit logs
 foreach ($log in $auditLogs) {
+   
     # Check if the user should be excluded
     if ($excludedUsers -notcontains $log.UserPrincipalName) {
         # Get user details from Microsoft Graph
@@ -114,42 +135,65 @@ foreach ($log in $auditLogs) {
     }
 }
 
-# Unique result (avoids duplicate log entries for multiple sign-ins...)
+# Obtain 1 result per each user detected in Audit Log
 $uniqueUsers = $combinedResults | Sort-Object SignInDateTime | Group-Object UserPrincipalName | ForEach-Object {
     $_.Group | Select-Object -First 1
 }
 
-# Group the results by office location and count the occurrences
+# Collect locations of each unique user
 $locationCounts = $uniqueUsers | Group-Object -Property UserLocation | Select-Object @{Name='OfficeLocation'; Expression={$_.Name}}, @{Name='Count'; Expression={$_.Count}}
 
-# Format the date period
-$datePeriod = "$($startTimeNzt.ToString('dd/MM/yyyy')) to $($endTimeNzt.ToString('dd/MM/yyyy'))"
+# Transform data and place loations into object array
+$officeLocationCounts = @{}
+$locationCounts | ForEach-Object {
+    $officeLocationCounts[$_.OfficeLocation] = $_.Count
+}
+
+# Obtaining counts for each location
+$AKL6 = $officeLocationCounts["Auckland - APO - Level 6"] + $officeLocationCounts["APO Auckland"]
+$AKL7 = $officeLocationCounts["Auckland - APO - Level 7"] + $officeLocationCounts["Auckland Level 7"]
+$WLN6 = $officeLocationCounts["Wellington - 7WQ - Level 6"]
+$WLN7 = $officeLocationCounts["Wellington - 7WQ - Level 7"]
+$WLN8 = $officeLocationCounts["Wellington - 7WQ - Level 8"]
+$WLN9 = $officeLocationCounts["Wellington - 7WQ - Level 9"]
+$PARLIAMENT = $officeLocationCounts["Wellington - Parliament"]
+
+# Totals
+$AKLTOTAL = ($locationCounts | Where-Object { $_.OfficeLocation -like "*Auckland*" } | Measure-Object -Property Count -Sum).Sum
+$WLNTOTAL = ($locationCounts | Where-Object { $_.OfficeLocation -like "*Wellington*" } | Measure-Object -Property Count -Sum).Sum
+$TOTAL = ($locationCounts | Measure-Object -Property Count -Sum).Sum
+
+# Updating sharepoint list at $siteurl location
+$listName = "Test_Floor_Count_List"
+$newItem = @{ 
+    "Title" = "0"
+    "DATE" = $datePeriod
+    "WLN7WQ_x002d_L6" = $WLN6
+    "WLN7WQ_x002d_L7" = $WLN7
+    "WLN7WQ_x002d_L8" = $WLN8
+    "WLN7WQ_x002d_L9" = $WLN9
+    "AKLAPO_x002d_L6" = $AKL6
+    "AKLAPO_x002d_L7" = $AKL7
+    "WLNTOTAL" = $WLNTOTAL
+    "AKLTOTAL" = $AKLTOTAL
+    "OTHER" = $PARLIAMENT
+    "TOTAL" = $TOTAL
+
+}
+$ListOutput = Add-PnPListItem -List $listName -Values $newItem -ContentType Number
+$ListOutput
 
 # Introduction line
-$introduction = "Good morning,<br><br>Please find the floor count stats for the date period: $datePeriod"
-
-# Calculate separate totals for Wellington and Auckland
-$totalWellington = ($locationCounts | Where-Object { $_.OfficeLocation -like "Wellington*" } | Measure-Object -Property Count -Sum).Sum
-$totalAuckland = ($locationCounts | Where-Object { $_.OfficeLocation -like "Auckland*" } | Measure-Object -Property Count -Sum).Sum
-
-# Calculate count for other locations
-$totalOtherLocations = ($locationCounts | Where-Object { $_.OfficeLocation -notlike "Wellington*" -and $_.OfficeLocation -notlike "Auckland*" } | Measure-Object -Property Count -Sum).Sum
-
-# Calculate total overall sum
-$totalOverall = ($locationCounts | Measure-Object -Property Count -Sum).Sum
+$introduction = "Good morning,<br><br>Please find below the floor count break down for date: $datePeriod"
 
 # Convert $locationCounts to HTML table with improved styling and introduction
-$htmlTable = $locationCounts | ConvertTo-Html -Fragment -Property OfficeLocation, Count -PreContent "<style>table { border-collapse: collapse; width: 80%; } th, td { border: 1px solid #dddddd; text-align: left; padding: 8px; } th { background-color: #f2f2f2; }</style><p>$introduction</p>"
+$htmlTable = $locationCounts | ConvertTo-Html -Fragment -Property OfficeLocation, Count -PreContent "<style>table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid #dddddd; text-align: left; padding: 8px; } th { background-color: #f2f2f2; }</style><p>$introduction</p>"
 
 # Add separate total counts for Wellington and Auckland to the HTML table
-$htmlTable += "<p>Total Wellington Count: $totalWellington</p>"
-$htmlTable += "<p>Total Auckland Count: $totalAuckland</p>"
-
-# Add count for other locations to the HTML table
-$htmlTable += "<p>Total Other Locations Count: $totalOtherLocations</p>"
-
-# Add total overall sum to the HTML table
-$htmlTable += "<p>Total Overall Count: $totalOverall</p>"
+$htmlTable += "<p>Total Wellington Count: $WLNTOTAL</p>"
+$htmlTable += "<p>Total Auckland Count: $AKLTOTAL</p>"
+$htmlTable += "<p>Total Other Locations Count: $PARLIAMENT</p>"
+$htmlTable += "<p>Total Overall Count: $TOTAL</p>"
 
 # Email Results
 $params = @{
@@ -172,3 +216,19 @@ $params = @{
 
 # Send email
 Send-MgUserMail -UserId "DigitalSupport@hud.govt.nz" -BodyParameter $params
+
+Write-Output "Auckland Stats `n--------------"
+Write-Output "`nAPO Auckland: $AKL6"
+Write-Output "Auckland Level 7: $AKL7"
+Write-Output "Auckland Total: $AKLTOTAL"
+Write-Output "`nWellington Stats `n----------------"
+Write-Output "`nWLN Level 6: $WLN6"
+Write-Output "WLN Level 7: $WLN7"
+Write-Output "WLN Level 8: $WLN8"
+Write-Output "WLN Level 9: $WLN9"
+Write-Output "WLN PS User: $OTHER"
+Write-Output "Wellington Total: $WLNTOTAL"
+Write-Output "`n----------------------"
+Write-Output "Overall Total: $TOTAL"
+Write-Output "`n----------------------"
+Write-Output "Script Completed"
