@@ -1,0 +1,9 @@
+<Configuration>
+  <Add Version="MatchInstalled">
+    <Product ID="ProofingTools">
+      <Language ID="mi-NZ" />
+    </Product>
+  </Add>
+  <Display Level="FULL" AcceptEULA="TRUE" />
+  <Property Name="FORCEAPPSHUTDOWN" Value="TRUE" />
+</Configuration>
