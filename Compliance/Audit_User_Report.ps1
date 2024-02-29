@@ -24,8 +24,8 @@ $EndDateInput += " 00:00:00"
 $StartDate = [datetime]::ParseExact($StartDateInput, $dateFormat, [System.Globalization.CultureInfo]::InvariantCulture)
 $EndDate = [datetime]::ParseExact($EndDateInput, $dateFormat, [System.Globalization.CultureInfo]::InvariantCulture)
 
-# Set interval count to 1 hour
-$intervalMinutes = 60
+# Set interval count to 3 hour
+$intervalMinutes = 180
 
 # Determine total number of intervals for progress calculation
 $totalIntervals = [math]::Ceiling(($EndDate - $StartDate).TotalMinutes / $intervalMinutes)
@@ -43,18 +43,6 @@ $ProcessedExchange =@()
 $ProcessedOther =@()
 
 # Function to process audit data and correct date time, and filter duplicates by Id and Workload
-function Process-AuditData {
-    param (
-        [Parameter(Mandatory=$true)]
-        [Object[]]$AuditData,
-        [Parameter(Mandatory=$true)]
-        [TimeZoneInfo]$TimeZone
-    )
-
-    $uniqueEntries = @{}
-    $Data= @()
-
-    # Function to convert an array of objects to a string
 function Convert-ArrayToString {
     param (
         [Parameter(Mandatory=$true)]
@@ -73,40 +61,40 @@ function Convert-ArrayToString {
     }
     return $stringArray -join "; "
 }
+function Convert-AuditData {
+    param (
+        [Parameter(Mandatory=$true)]
+        [Object[]]$AuditData,
+        [Parameter(Mandatory=$true)]
+        [TimeZoneInfo]$TimeZone
+    )
+
+    $uniqueEntries = @{}
+    $Data= @()
 
     foreach ($jsonEntry in $AuditData) {
-        # Check if the JSON entry is an array or a single object
         $entries = @($jsonEntry | ConvertFrom-Json)
         
         foreach ($entry in $entries) {
-            # Transform to local date time
             $utcDateTime = [DateTime]::Parse($entry.CreationTime, [System.Globalization.CultureInfo]::InvariantCulture)
             $localDateTime = [TimeZoneInfo]::ConvertTimeFromUtc($utcDateTime, $TimeZone)
             $entry.CreationTime = $localDateTime
 
-            # Loop through all properties of the entry
             foreach ($property in $entry.PSObject.Properties) {
                 if ($property.Value -is [Array] -and $property.Value.Count -gt 0) {
-                    # Convert array properties to a string
                     $property.Value = Convert-ArrayToString -Array $property.Value
                 }
             }
 
-            # Create a unique key based on Id and Workload
             $uniqueKey = "$($entry.Id)_$($entry.Workload)"
-
-            # Guard clause: Check if an entry with the same key already exists
-            if (!$uniqueEntries.ContainsKey($uniqueKey))  {
+            if (!$uniqueEntries.ContainsKey($uniqueKey)) {
                 $uniqueEntries[$uniqueKey] = $true
-                
                 $Data += $entry
             }
         }
     }
-    
     return $Data
 }
-
 
 # Define available workload options  
 $workloadOptions = @("EntraID (AAD)", "Intune", "Teams", "SharePoint", "OneDrive", "Exchange", "Other")  
@@ -119,7 +107,6 @@ if ($selectedWorkloads.Count -eq 0) {
     Write-Host "No options selected. Exiting." -ForegroundColor Yellow  
     exit  
 } 
-
 
 # Main Loop  
 while ($FormatStartDate -lt $EndDate) {  
@@ -138,7 +125,7 @@ while ($FormatStartDate -lt $EndDate) {
         $SearchResults = $Search.AuditData  
   
         # Process and filter results from interval  
-        $IntervalResults = Process-AuditData -AuditData $SearchResults -TimeZone $nzTimeZone  
+        $IntervalResults = Convert-AuditData -AuditData $SearchResults -TimeZone $nzTimeZone  
   
         # Filter processed results and add to respective final arrays  
         $ProcessedEntra += $IntervalResults | Where-Object { $_.Workload -eq "azureactivedirectory" }  
@@ -180,25 +167,25 @@ if ($SaveFileResult -eq [System.Windows.Forms.DialogResult]::OK) {
 
     # Export SharePoint, SharePointFileOperation, and SharePointSharingOperation results to separate worksheets
     if ($selectedWorkloads -contains "EntraID (AAD)") {  
-        $ProcessedEntra | Sort-Object creationtime | Export-Excel -Path $SelectedFilePath -WorksheetName "EntraID (AAD)" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow  
+        $ProcessedEntra | Export-Excel -Path $SelectedFilePath -WorksheetName "EntraID (AAD)" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow  
     } 
     if ($selectedWorkloads -contains "Intune") {  
-        $ProcessedIntune | Sort-Object creationtime | Export-Excel -Path $SelectedFilePath -WorksheetName "Intune" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow  
+        $ProcessedIntune | Export-Excel -Path $SelectedFilePath -WorksheetName "Intune" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow  
     } 
     if ($selectedWorkloads -contains "Teams") {  
-        $ProcessedTeams | Sort-Object creationtime | Export-Excel -Path $SelectedFilePath -WorksheetName "Teams" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow  
+        $ProcessedTeams | Export-Excel -Path $SelectedFilePath -WorksheetName "Teams" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow  
     } 
     if ($selectedWorkloads -contains "SharePoint") {  
-        $ProcessedSharePoint | Sort-Object creationtime | Export-Excel -Path $SelectedFilePath -WorksheetName "SharePoint" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow  
+        $ProcessedSharePoint | Export-Excel -Path $SelectedFilePath -WorksheetName "SharePoint" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow  
     } 
     if ($selectedWorkloads -contains "OneDrive") {  
-        $ProcessedOneDrive | Sort-Object creationtime | Export-Excel -Path $SelectedFilePath -WorksheetName "OneDrive" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow  
+        $ProcessedOneDrive | Export-Excel -Path $SelectedFilePath -WorksheetName "OneDrive" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow  
     }
     if ($selectedWorkloads -contains "Exchange") {  
-        $ProcessedExchange | Sort-Object creationtime | Export-Excel -Path $SelectedFilePath -WorksheetName "Exchange" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow  
+        $ProcessedExchange | Export-Excel -Path $SelectedFilePath -WorksheetName "Exchange" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow  
     } 
     if ($selectedWorkloads -contains "Other") {  
-        $ProcessedOther | Sort-Object creationtime | Export-Excel -Path $SelectedFilePath -WorksheetName "Other" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow  
+        $ProcessedOther | Export-Excel -Path $SelectedFilePath -WorksheetName "Other" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow  
     } 
     
     $excelPackage = Open-ExcelPackage -Path $SelectedFilePath
