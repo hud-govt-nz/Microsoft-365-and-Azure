@@ -18,14 +18,14 @@ $dateFormat = "dd/MM/yyyy HH:mm:ss"
 
 # Append "00:00:00" to the user-provided start and end dates
 $StartDateInput += " 00:00:00"
-$EndDateInput += " 00:00:00"
+$EndDateInput += " 23:59:59"
 
 # Parse date time input to an object 
 $StartDate = [datetime]::ParseExact($StartDateInput, $dateFormat, [System.Globalization.CultureInfo]::InvariantCulture)
 $EndDate = [datetime]::ParseExact($EndDateInput, $dateFormat, [System.Globalization.CultureInfo]::InvariantCulture)
 
-# Set interval count to 3 hour
-$intervalMinutes = 180
+# Set interval count to 1 hour
+$intervalMinutes = 60
 
 # Determine total number of intervals for progress calculation
 $totalIntervals = [math]::Ceiling(($EndDate - $StartDate).TotalMinutes / $intervalMinutes)
