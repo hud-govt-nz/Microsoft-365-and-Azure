@@ -16,6 +16,7 @@
     - AUTHOR: Ashley Forde
     - Version: 2.8
 #>
+
 # Parameters
 [CmdletBinding()]
 param(
@@ -24,6 +25,7 @@ param(
 	[ValidateSet("Install","Uninstall")]
 	[string]$Mode
 )
+
 # Functions
 function Write-LogEntry {
 	param(
@@ -147,6 +149,7 @@ function Remove-HudTemplates {
     )
     Remove-Item -Path $paths -Recurse -Force -Confirm:$false -ErrorAction Stop
 }
+
 # Initialisations
 $HomeFolder = "C:\HUD"
 $folderPaths = Initialize-Directories -HomeFolder $HomeFolder
