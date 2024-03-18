@@ -63,6 +63,7 @@ $combinedResults = @()
 
  # Add the UserPrincipalNames of users to be excluded
 $excludedUsers = @(
+    "DigitalSupport@hud.govt.nz",
     "AppAdmin@mhud.onmicrosoft.com",
     "AppMinDevTest@hud.govt.nz",
     "AwareGroup_Test@hud.govt.nz",
@@ -112,7 +113,7 @@ $excludedUsers = @(
 foreach ($log in $auditLogs) {
    
     # Check if the user should be excluded
-    if ($excludedUsers -notcontains $log.UserPrincipalName) {
+    if ($excludedUsers -notcontains $log.UserPrincipalName -and $log.UserPrincipalName -like "*@hud.govt.nz") {
         # Get user details from Microsoft Graph
         $userDetails = Get-MgUser -UserId $log.UserPrincipalName
 

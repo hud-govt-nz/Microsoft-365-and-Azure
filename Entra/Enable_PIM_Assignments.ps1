@@ -40,7 +40,7 @@ $context = Get-MgContext
 $currentUser = (Get-MgUser -UserId $context.Account).id
 
 # Select which role group you wish to activate
-Clear-Host
+#Clear-Host
 Write-Host '## Elevate PIM roles ##' -ForegroundColor Yellow
 
 $ToActivate = @(
