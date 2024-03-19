@@ -1,0 +1,33 @@
+{
+    "User":{
+       "accountEnabled":true,
+       "city":"Lower Hutt",
+       "country":"New Zealand",
+       "department":"Digital",
+       "displayName":"Pilot7 User - Ash",
+       "givenName":"Pilot7",
+       "jobTitle":"Engineer",
+       "mailNickname":"Pilot7User",
+       "passwordPolicies":"DisablePasswordExpiration",
+       "passwordProfile":{
+          "password":"b48a4392-b31f-265c-87d4-a351fcda5efb",
+          "forceChangePasswordNextSignIn":true
+       },
+       "officeLocation":"Wellington",
+       "postalCode":"6011",
+       "preferredLanguage":"en-NZ",
+       "state":"NZ",
+       "streetAddress":"7 Waterloo Quay",
+       "surname":"User",
+       "mobilePhone":"+64 21 5558798",
+       "usageLocation":"NZ",
+       "userPrincipalName":"Pilot7.User@hud.govt.nz"
+    },
+    "ManagerData":{
+       "Manager":"Ashley.Forde@hud.govt.nz"
+    },
+    "CustomAttributes":{
+       "EmploymentCategory":"HUD_LEAVE_WO_PAY",
+       "UserStartDate":"30/09/2022"
+    }
+ }

@@ -1,0 +1,58 @@
+//AAD-ExcludeFrom-BlockOffice365Apps
+AuditLogs 
+| where TargetResources[1].id in ('ac9d3047-acc6-4f0e-bbf5-d02d488152b4') 
+| where ActivityDisplayName == "Add member to group" or ActivityDisplayName == "Remove member from group"
+| where TimeGenerated >= ago(14d)
+| project
+    ActivityDateTime,
+    ActivityDisplayName,
+    InitiatedBy.user.userPrincipalName,
+    TargetResources[0].userPrincipalName,
+    TargetResources[0].modifiedProperties[1].newValue,
+    TargetResources[0].modifiedProperties[1].oldValue
+| render table    
+
+
+//AAD-ExcludeFrom-BlockAdminAccess-UntrustedLocations
+AuditLogs 
+| where TargetResources[1].id in ('b38205aa-ebe3-4401-8959-9480dbdeb2f2')
+| where ActivityDisplayName == "Add member to group" or ActivityDisplayName == "Remove member from group"
+| where TimeGenerated >= ago(14d)
+| project
+    ActivityDateTime,
+    ActivityDisplayName,
+    InitiatedBy.user.userPrincipalName,
+    TargetResources[0].userPrincipalName,
+    TargetResources[0].modifiedProperties[1].newValue,
+    TargetResources[0].modifiedProperties[1].oldValue
+| render table    
+
+
+//AAD-ExcludeFrom-ConditionalAccess
+AuditLogs 
+| where TargetResources[1].id in ('f2ccfb34-4074-4c69-96c0-0214da943a6df')
+| where ActivityDisplayName == "Add member to group" or ActivityDisplayName == "Remove member from group"
+| where TimeGenerated >= ago(14d)
+| project
+    ActivityDateTime,
+    ActivityDisplayName,
+    InitiatedBy.user.userPrincipalName,
+    TargetResources[0].userPrincipalName,
+    TargetResources[0].modifiedProperties[1].newValue,
+    TargetResources[0].modifiedProperties[1].oldValue
+| render table    
+
+
+//AAD-ExcludeFrom-MultiFactorAuthentication-Users
+AuditLogs 
+| where TargetResources[1].id in ('cb6deeee-6f75-429b-a773-52b1cca8e46f')
+| where ActivityDisplayName == "Add member to group" or ActivityDisplayName == "Remove member from group"
+| where TimeGenerated >= ago(14d)
+| project
+    ActivityDateTime,
+    ActivityDisplayName,
+    InitiatedBy.user.userPrincipalName,
+    TargetResources[0].userPrincipalName,
+    TargetResources[0].modifiedProperties[1].newValue,
+    TargetResources[0].modifiedProperties[1].oldValue
+| render table    

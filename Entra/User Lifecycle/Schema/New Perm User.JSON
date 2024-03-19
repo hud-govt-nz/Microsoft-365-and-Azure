@@ -1,0 +1,32 @@
+{
+    "User":{
+       "accountEnabled":true,
+       "city":"Wellington",
+       "country":"New Zealand",
+       "department":"Operational Policy",
+       "displayName":"Paige Gear",
+       "givenName":"Paige",
+       "jobTitle":"Senior Advisor",
+       "mailNickname":"PaigeGear",
+       "passwordPolicies":"DisablePasswordExpiration",
+       "passwordProfile":{
+          "password":"b48a4392-b31f-265c-87d4-a351fcda5efb",
+          "forceChangePasswordNextSignIn":true
+       },
+       "officeLocation":"Wellington",
+       "postalCode":"6011",
+       "preferredLanguage":"en-NZ",
+       "state":"NZ",
+       "streetAddress":"Level 8,7 Waterloo Quay,Pipitea,Wellington",
+       "surname":"User",
+       "usageLocation":"NZ",
+       "userPrincipalName":"Paige.Gear@hud.govt.nz"
+    },
+    "ManagerData":{
+       "Manager":"Fiona.Smith@hud.govt.nz"
+    },
+    "CustomAttributes":{
+       "EmploymentCategory":"HUD_SUBSTANTIVE_POSITION",
+       "UserStartDate":"24/01/2023"
+    }
+ }

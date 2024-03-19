@@ -374,3 +374,41 @@ Automation/M365 DSC/Security/SCSecurityFilter.ps1
 Automation/M365 DSC/Security/SCSensitivityLabel.ps1
 Automation/M365 DSC/Security/SCSupervisoryReviewPolicy.ps1
 Automation/M365 DSC/Security/SCSupervisoryReviewRule.ps1
+Intune/Win32Apps/Document Templates/Installer/HUD Aide Memoire Template.dotx
+Intune/Win32Apps/Document Templates/Installer/HUD Briefing Template.dotx
+Intune/Win32Apps/Document Templates/Installer/HUD Event Template.dotx
+Intune/Win32Apps/Document Templates/Old Templates/Aide Memoire for Events.dotx
+Intune/Win32Apps/Document Templates/Old Templates/Aide Memoire for Events.dotx.old
+Intune/Win32Apps/Document Templates/Old Templates/Aide Memoire.dotx
+Intune/Win32Apps/Document Templates/Old Templates/Aide Memoire.dotx.old
+Intune/Win32Apps/Document Templates/Old Templates/Briefing Paper.dotx
+Intune/Win32Apps/Document Templates/Old Templates/Memo.dotx.old
+Intune/Win32Apps/Font Install/Installer/National-Book.otf
+Intune/Win32Apps/Font Install/Installer/National-Semibold.otf
+Intune/Win32Apps/Font Install/Installer/national-web-black-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-black.otf
+Intune/Win32Apps/Font Install/Installer/national-web-bold-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-bold.otf
+Intune/Win32Apps/Font Install/Installer/national-web-book-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-book.otf
+Intune/Win32Apps/Font Install/Installer/national-web-extrabold-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-extrabold.otf
+Intune/Win32Apps/Font Install/Installer/national-web-light-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-light.otf
+Intune/Win32Apps/Font Install/Installer/national-web-medium-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-medium.otf
+Intune/Win32Apps/Font Install/Installer/national-web-regular-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-regular.otf
+Intune/Win32Apps/Font Install/Installer/national-web-semibold-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-semibold.otf
+Intune/Win32Apps/Font Install/Installer/national-web-thin-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-thin.otf
+Intune/Win32Apps/Microsoft Visual Studio Code/Installer/VSCodeSetup-x64-1.87.2.exe
+Intune/Win32Apps/Oracle ADF Desktop Integration/Installer/adfdi.exe
+Intune/Win32Apps/Te Reo Plugin Outlook/Installer/Setup.msi
+Intune/Win32Apps/Te Reo Plugin Outlook/Installer/TeReoGreetings.csv
+Entra/CSV Files/ExampleGroupList.csv
+Entra/CSV Files/rbacgroup.csv
+Entra/CSV Files/rbacgroups.csv
+Entra/Auth/Azure AD Reporting (HUD Digital).JSON
+Entra/Auth/HUDDEV - Application Authentication.json
