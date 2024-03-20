@@ -44,7 +44,7 @@ $validationFolderVar = $folderPaths.ValidationFolder
 $Date = Get-Date -Format "MM-dd-yyyy"
 $AppName = "HUD Email Signature"
 $AppValidationFile = "$validationFolderVar\$AppName.txt"
-$AppVersion = "1.0"
+$AppVersion = "3.0"
 $LogFileName = "$($AppName)_${Mode}_$Date.log"
 $UPN = whoami /upn
 
@@ -166,14 +166,14 @@ if ($Mode -eq "Install") {
 				Write-LogEntry -Value "Signature template copied to $signaturePath" -Severity 1
 
 				# Set signature as deault for new mail in outlook
-				# find the default profile name used by outlook     
- 				$profilename = Get-ItemProperty -Path "hkcu:\SOFTWARE\Microsoft\Office\16.0\Outlook" -Name DefaultProfile | Select-Object -ExpandProperty DefaultProfile 
+				# find the default profile name used by outlook   
+ 				#$profilename = Get-ItemProperty -Path "hkcu:\SOFTWARE\Microsoft\Office\16.0\Outlook" -Name DefaultProfile | Select-Object -ExpandProperty DefaultProfile 
   
  				# grabs all the data we need to detect the signature configuration from the default outlook profile     
- 				$profilepath = Get-ItemProperty -Path "hkcu:\SOFTWARE\Microsoft\Office\16.0\Outlook\Profiles\$profilename\9375CFF0413111d3B88A00104B2A6676\*" | Where-Object { $_."Account name" -eq $upn } | Select-Object -ExpandProperty pspath 
+ 				#$profilepath = Get-ItemProperty -Path "hkcu:\SOFTWARE\Microsoft\Office\16.0\Outlook\Profiles\$profilename\9375CFF0413111d3B88A00104B2A6676\*" | Where-Object { $_."Account name" -eq $upn } | Select-Object -ExpandProperty pspath 
     
 				# create/set the "new signature" key     
-				New-ItemProperty -Path $profilepath -Name "New Signature" -Value "Default" -Force -ErrorAction stop     
+				#New-ItemProperty -Path $profilepath -Name "New Signature" -Value "Default" -Force -ErrorAction stop     
 
 				# Add Validation File
 				New-Item -ItemType File -Path $AppValidationFile -Force -Value $AppVersion

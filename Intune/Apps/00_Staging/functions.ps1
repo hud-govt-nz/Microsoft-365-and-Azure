@@ -90,3 +90,16 @@ function Initialize-Directories {
 		ValidationFolder = $ValidationFolder
 	}
 }
+function Get-CurrentUserSID {
+    $currentUser = (Get-Process -IncludeUserName -Name explorer | Select-Object -First 1 | Select-Object -ExpandProperty UserName).Split("\")[1]
+    $profileListKeys = Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\" -Recurse
+
+    foreach ($profileListKey in $profileListKeys) {
+        if (($profileListKey.GetValueNames() | ForEach-Object { $profileListKey.GetValue($_) }) -match $currentUser) {
+            $sid = $profileListKey.PSChildName
+            break
+        }
+    }
+
+    return $sid
+}
