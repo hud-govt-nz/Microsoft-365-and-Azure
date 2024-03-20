@@ -1,7 +1,7 @@
 $Folder = "$($env:homedrive)\HUD"
 $validation = "$Folder\02_Validation"
-$version = "3.0"
-$validationFile = "$validation\HUD Email Signature.txt"
+$version = "2.0"
+$validationFile = "$validation\Outlook_Email_Signature.txt"
 $content = Get-Content -Path $validationFile
 
 if ($content -eq $version) {

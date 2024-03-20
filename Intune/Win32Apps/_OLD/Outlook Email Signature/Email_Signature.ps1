@@ -10,8 +10,8 @@
     Sets the mode of operation. Supported modes are Install or Uninstall.
 
 .EXAMPLE 
-    powershell.exe -executionpolicy bypass -file .\appinstall.ps1 -Mode Install
-    powershell.exe -executionpolicy bypass -file .\appinstall.ps1 -Mode Uninstall
+    powershell.exe -executionpolicy bypass -file .\Email_Signature.ps1 -Mode Install
+    powershell.exe -executionpolicy bypass -file .\Email_Signature.ps1 -Mode Uninstall
 
 .NOTES
     - AUTHOR: Ashley Forde
@@ -22,7 +22,7 @@
 
 #>
 
-# Parameters
+#Region Parameters
 [CmdletBinding()]
 param(
 	[Parameter(Mandatory = $false)]
@@ -30,35 +30,163 @@ param(
 	[ValidateSet("Install","Uninstall")]
 	[string]$Mode
 )
+# EndRegion Parameters
+# Region Functions
+function Write-LogEntry {
+	param(
+		[Parameter(Mandatory = $true,HelpMessage = "Value added to the log file.")]
+		[ValidateNotNullOrEmpty()]
+		[string]$Value,
+		[Parameter(Mandatory = $true,HelpMessage = "Severity for the log entry. 1 for Informational, 2 for Warning and 3 for Error.")]
+		[ValidateNotNullOrEmpty()]
+		[ValidateSet("1","2","3")]
+		[string]$Severity,
+		[Parameter(Mandatory = $false,HelpMessage = "Name of the log file that the entry will written to.")]
+		[ValidateNotNullOrEmpty()]
+		[string]$FileName = $LogFileName
+	)
+	# Determine log file location
+	$LogFilePath = Join-Path -Path $logsFolderVar -ChildPath $FileName
 
-# Reference functions.ps1
-. "$PSScriptRoot\functions.ps1"
+	# Construct time stamp for log entry
+	$Time = -join @((Get-Date -Format "HH:mm:ss.fff")," ",(Get-WmiObject -Class Win32_TimeZone | Select-Object -ExpandProperty Bias))
 
-# Initialize Directories
-$folderpaths = Initialize-Directories -HomeFolder C:\HUD\
+	# Construct date for log entry
+	$Date = (Get-Date -Format "MM-dd-yyyy")
+
+	# Construct context for log entry
+	$Context = $([System.Security.Principal.WindowsIdentity]::GetCurrent().Name)
+
+	# Construct final log entry
+	$LogText = "<![LOG[$($Value)]LOG]!><time=""$($Time)"" date=""$($Date)"" component=""$($LogFileName)"" context=""$($Context)"" type=""$($Severity)"" thread=""$($PID)"" file="""">"
+
+	# Add value to log file
+	try {
+		Out-File -InputObject $LogText -Append -NoClobber -Encoding Default -FilePath $LogFilePath -ErrorAction Stop
+		if ($Severity -eq 1) {
+			Write-Verbose -Message $Value
+		}
+		elseif ($Severity -eq 3) {
+			Write-Warning -Message $Value
+		}
+	}
+	catch [System.Exception]{
+		Write-Warning -Message "Unable to append log entry to $LogFileName.log file. Error message at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)"
+	}
+}
+function Initialize-Directories {
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true)]
+		[ValidateNotNullOrEmpty()]
+		[string]$HomeFolder
+	)
+
+	# Check if the path exists
+	if (Test-Path -Path $HomeFolder) {
+		Write-Verbose "Home folder exists..."
+		# Force creating 00_Staging folder at a minimum if it is missing
+		New-Item -Path "$HomeFolder" -Name "00_Staging" -ItemType "directory" -Force -Confirm:$false | Out-Null
+	}
+	else {
+		Write-Verbose "Creating root folder..."
+		New-Item -Path $HomeFolder -ItemType "directory" -Force -Confirm:$false
+		if (-not $?) {
+			Write-Verbose "Failed to create $HomeFolder"
+		}
+
+		# Create subfolders
+		foreach ($subFolder in "00_Staging","01_Logs","02_Validation") {
+			New-Item -Path "$HomeFolder\" -Name $subFolder -ItemType "directory" -Force -Confirm:$false
+			if (-not $?) {
+				Write-Verbose -Message "Failed to create sub-folder $subFolder under $HomeFolder"
+			}
+		}
+	}
+
+	# Calculate subfolder paths
+	$StagingFolder = Join-Path -Path $HomeFolder -ChildPath "00_Staging"
+	$LogsFolder = Join-Path -Path $HomeFolder -ChildPath "01_Logs"
+	$ValidationFolder = Join-Path -Path $HomeFolder -ChildPath "02_Validation"
+
+	# Return the folder paths as a custom object
+	return @{
+		HomeFolder = $HomeFolder
+		StagingFolder = $StagingFolder
+		LogsFolder = $LogsFolder
+		ValidationFolder = $ValidationFolder
+	}
+}
+function Set-DisableRoamingSignatures {
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true)]
+		[ValidateSet('Add','Remove')]
+		[string]$Action,
+
+		[Parameter(Mandatory = $false)]
+		[ValidateSet(0,1)]
+		[int]$ValueData
+	)
+
+	$Hive = "HKEY_CURRENT_USER"
+	$KeyPath = "Software\Microsoft\Office\16.0\Outlook\Setup"
+	$ValueName = "DisableRoamingSignatures"
+	$ValueType = "DWORD"
+
+	if ($Action -eq "Add") {
+		New-ItemProperty -Path "Registry::$Hive\$KeyPath" -Name $ValueName -PropertyType $ValueType -Value $ValueData -Force
+		Write-Verbose -Message "Registry value added successfully."
+	}
+	elseif ($Action -eq "Remove") {
+		Remove-ItemProperty -Path "Registry::$Hive\$KeyPath" -Name $ValueName -Force
+		Write-Verbose -Message "Registry value removed successfully."
+	}
+}
+# EndRegion Functions
+
+# Comment: This region contains initialisations and variable assignments required for the script.   
+# Region Initialisations
+$HomeFolder = "C:\HUD"
+$folderPaths = Initialize-Directories -HomeFolder $HomeFolder
+# EndRegion Initialisations
 
 # Assign the returned values to individual variables
 $stagingFolderVar = $folderPaths.StagingFolder
 $logsFolderVar = $folderPaths.LogsFolder
 $validationFolderVar = $folderPaths.ValidationFolder
-$Date = Get-Date -Format "MM-dd-yyyy"
-$AppName = "HUD Email Signature"
-$AppValidationFile = "$validationFolderVar\$AppName.txt"
-$AppVersion = "3.0"
-$LogFileName = "$($AppName)_${Mode}_$Date.log"
-$UPN = whoami /upn
 
-# Begin Setup
+# Variables
+$Date = Get-Date -Format "MM-dd-yyyy"
+$AppName = "Outlook_Email_Signature"
+$AppValidationFile = "$validationFolderVar\$AppName.txt"
+$AppVersion = "2.0"
+$LogFileName = "$($AppName)_${Mode}_$Date.log"
+
+# Comment: The script initiates the install process, logs the initiation, and performs cleanup of the setup folder if it exists.
+# Initate Install
 Write-LogEntry -Value "Initiating setup process" -Severity 1
+
+# Attempt Cleanup of SetupFolder
+if (Test-Path "$stagingFolderVar") {
+	Remove-Item -Path "$($stagingFolderVar)\*" -Recurse -Force -ErrorAction SilentlyContinue
+
+}
+
 $SetupFolder = (New-Item -ItemType "directory" -Path $stagingFolderVar -Name $AppName -Force).FullName
 Write-LogEntry -Value "Setup folder has been created at: $Setupfolder." -Severity 1
 
-# Install/Uninstall
+
+# Install/Uninstall M365 Apps
 if ($Mode -eq "Install") {
+
 	try {
+		# Disable roaming signatures
+		Set-DisableRoamingSignatures -Action Add -ValueData 1 -Verbose
+		Write-LogEntry -Value "Roaming Signatures has been disabled in Outlook" -Severity 1
 
 		# Copy Signature template files to staging folder
-		Copy-Item -Path "$PSScriptRoot\Files\*" -Destination $SetupFolder -Recurse -Force -ErrorAction Stop
+		Copy-Item -Path "$PSScriptRoot\Payload\*" -Destination $SetupFolder -Recurse -Force -ErrorAction Stop
 		Write-LogEntry -Value "Signature files have been copied to $Setupfolder." -Severity 1
 
 		try {
@@ -90,14 +218,16 @@ if ($Mode -eq "Install") {
 			try {
 
 				# Create signature files
-				Connect-MgGraph -Scopes "Directory.Read.All,Directory.ReadWrite.All,User.Read,User.Read.All,User.ReadBasic.All,User.ReadWrite,User.ReadWrite.All" -NoWelcome
+				$upn = Whoami /upn
+				Connect-MgGraph -NoWelcome
 				Write-LogEntry -Value "Connecting to EntraID using Graph SDK" -Severity 1
 
-				# Get user details from EntraID
-				$User = Get-MgBetaUser -UserId $UPN
-				Write-LogEntry -Value "Obtaining account details of $UPN" -Severity 1
 
-				$Group = (Get-MgBetaUser -UserId $UPN | select AdditionalProperties -ExpandProperty AdditionalProperties).extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserOrganisationalGroup
+				# Get user details from EntraID
+				$User = Get-MgBetaUser -UserId $upn
+				Write-LogEntry -Value "Obtaining account details of $upn" -Severity 1
+
+
 				# Get all signature files
 				$signatureFiles = Get-ChildItem -Path $SetupFolder
 
@@ -116,7 +246,6 @@ if ($Mode -eq "Install") {
 						$signatureFileContent = $signatureFileContent -replace "%TelephoneNumber%",$User.BusinessPhones
 						$signatureFileContent = $signatureFileContent -replace "%JobTitle%",$User.Jobtitle
 						$signatureFileContent = $signatureFileContent -replace "%Department%",$User.Department
-						$signatureFileContent = $signatureFileContent -replace "%Group%",$Group
 						$signatureFileContent = $signatureFileContent -replace "%City%",$User.City
 						$signatureFileContent = $signatureFileContent -replace "%Country%",$User.Country
 						$signatureFileContent = $signatureFileContent -replace "%StreetAddress%",$User.StreetAddress
@@ -135,6 +264,7 @@ if ($Mode -eq "Install") {
 				# Load new signature files to Outlook signatures folder
 				Copy-Item -Path $SetupFolder\* -Destination $signaturePath -Recurse -Force -Confirm:$false
 				Write-LogEntry -Value "Signature template copied to $signaturePath" -Severity 1
+
 
 				# Add Validation File
 				New-Item -ItemType File -Path $AppValidationFile -Force -Value $AppVersion
@@ -163,6 +293,10 @@ if ($Mode -eq "Install") {
 }
 
 elseif ($Mode -eq "Uninstall") {
+	# Enable roaming signatures
+	Set-DisableRoamingSignatures -Action Remove -Verbose
+	Write-LogEntry -Value "Roaming Signatures has been re-enabled in Outlook" -Severity 1
+
 	# Purge signature files
 	$signaturePath = "$env:Appdata\Microsoft\Signatures"
 	$oldSignaturePattern = "*Default*"
