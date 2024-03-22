@@ -103,3 +103,47 @@ function Get-CurrentUserSID {
 
     return $sid
 }
+function Set-DisableRoamingSignatures {
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true)]
+		[ValidateSet('Add','Remove')]
+		[string]$Action,
+
+		[Parameter(Mandatory = $false)]
+		[ValidateSet(0,1)]
+		[int]$ValueData
+	)
+
+	$currentUserSID = Get-CurrentUserSID
+
+	$Hive = "HKEY_USERS"
+	$KeyPath = "SOFTWARE\Microsoft\Office\16.0\Outlook\Setup"
+	$ValueName = "DisableRoamingSignatures"
+	$ValueType = "DWORD"
+
+	$registryPath = "$Hive\$currentUserSID\$KeyPath"
+
+	if ($Action -eq "Add") {
+		New-ItemProperty -Path "Registry::$registryPath" -Name $ValueName -PropertyType $ValueType -Value $ValueData -Force
+	}
+	elseif ($Action -eq "Remove") {
+		Remove-ItemProperty -Path "Registry::$registryPath" -Name $ValueName -Force
+	}
+}
+function Get-InstalledApps {
+    param (
+        [string[]]$App
+    )
+
+    $Installed = Get-ItemProperty -Path HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -and $_.DisplayName -ne '' } | Select-Object DisplayName, DisplayVersion, UninstallString
+    $Installed += Get-ItemProperty -Path HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -and $_.DisplayName -ne '' } | Select-Object DisplayName, DisplayVersion, UninstallString
+
+    $SelectedApp = @()
+    foreach ($item in $App) {
+        $tempResult = $Installed | Where-Object { $_.DisplayName -match $item }
+        $SelectedApp += @($tempResult)
+    }
+
+    return $SelectedApp
+}

@@ -27,7 +27,9 @@
        "Manager":"Ashley.Forde@hud.govt.nz"
     },
     "CustomAttributes":{
-       "EmploymentCategory":"HUD_SUBSTANTIVE_POSITION",
-       "UserStartDate":"30/09/2022"
+      "EmploymentCategory":"ORA_HRX_CONSULTANT",
+      "UserStartDate":"02/04/2024",
+      "EmploymentType": "Consultant",
+      "Group": "Te Kāhui - Māori Housing"
     }
  }

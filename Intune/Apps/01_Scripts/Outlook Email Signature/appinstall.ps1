@@ -15,10 +15,9 @@
 
 .NOTES
     - AUTHOR: Ashley Forde
-    - Version: 2.0
+    - Version: 3.0
         - Pre-reqs: Microsoft Graph PS Module
         - Previous iteration of this deployment used the AzureAD PowerShell Module whereas this script leverages Graph
-        - Roaming signature feature in Outlook Click-to-Run has been disabled https://techcommunity.microsoft.com/t5/outlook/outlook-roaming-signature-vs-signatures-on-this-device/m-p/3672866
 
 #>
 
