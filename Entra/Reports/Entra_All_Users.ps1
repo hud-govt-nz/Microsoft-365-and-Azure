@@ -10,7 +10,8 @@ $results += Get-MgBetaUser -All -Property id,SignInActivity | Select-Object -Pro
 
 # Gather other Attributes.
 $Values = @()
-$Values += Get-MgBetaUser -All | Select-Object ID,CreatedDateTime,AccountEnabled,UserType,DisplayName,GivenName,Surname,UserPrincipalName,Mail,UsageLocation,
+
+$Users = Get-MgBetaUser -All | Select-Object ID,CreatedDateTime,AccountEnabled,UserType,DisplayName,GivenName,Surname,UserPrincipalName,Mail,UsageLocation,
 Department,JobTitle,CompanyName,StreetAddress,City,PostalCode,State,Country,officelocation,SecurityIdentifier,MobilePhone,
 @{ Name = 'BusinessPhones'; Expression = { [string]$_.BusinessPhones -replace "{",'' } },
 @{ Name = 'passwordPolicies'; Expression = { [string]$_.passwordPolicies } },
@@ -25,6 +26,21 @@ Department,JobTitle,CompanyName,StreetAddress,City,PostalCode,State,Country,offi
 @{ Name = 'RoomMailbox'; Expression = { $_.AdditionalProperties['extension_56a473fa1d5b476484f306f7b06ee688_RoomMailbox'] } },
 @{ Name = 'SharedMailbox'; Expression = { $_.AdditionalProperties['extension_56a473fa1d5b476484f306f7b06ee688_SharedMailbox'] } }
 
+foreach ($User in $Users) {
+    try {
+        $Manager = Get-MgUserManager -UserId $User.ID -ErrorAction SilentlyContinue
+        $User | Add-Member -MemberType NoteProperty -Name Manager -Value $Manager.AdditionalProperties.userPrincipalName -ErrorAction SilentlyContinue
+        $Values += $User
+    } catch [Microsoft.Graph.ServiceException] {
+        if ($_.Exception.Error.Code -eq "Request_ResourceNotFound") {
+            Write-Host "Manager not found for user: $($User.ID)"
+        } else {
+            Write-Host "Error retrieving manager for user: $($User.ID)"
+            Write-Host "Error message: $($_.Exception.Message)"
+        }
+        continue
+    }
+}
 # Assuming $Results and $Values are the two arrays
 
 # Merge the arrays
@@ -36,8 +52,8 @@ for ($i = 0; $i -lt $Results.count; $i++) {
 	$result | Add-Member -MemberType NoteProperty -Name 'AccountEnabled' -Value $value.accountenabled
 	$result | Add-Member -MemberType NoteProperty -Name 'UserType' -Value $value.UserType
 	$result | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $value.DisplayName
-	$result | Add-Member -MemberType NoteProperty -Name 'GivenName' -Value $value.GivenName
-	$result | Add-Member -MemberType NoteProperty -Name 'Surname' -Value $value.Surname
+	#$result | Add-Member -MemberType NoteProperty -Name 'GivenName' -Value $value.GivenName
+	#$result | Add-Member -MemberType NoteProperty -Name 'Surname' -Value $value.Surname
 	$result | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value $value.UserPrincipalname
 	$result | Add-Member -MemberType NoteProperty -Name 'Mail' -Value $value.Mail
 	$result | Add-Member -MemberType NoteProperty -Name 'UsageLocation' -Value $value.UsageLocation
@@ -50,7 +66,7 @@ for ($i = 0; $i -lt $Results.count; $i++) {
 	$result | Add-Member -MemberType NoteProperty -Name 'State' -Value $value.State
 	$result | Add-Member -MemberType NoteProperty -Name 'Country' -Value $value.Country
 	$result | Add-Member -MemberType NoteProperty -Name 'OfficeLocation' -Value $value.officelocation
-	$result | Add-Member -MemberType NoteProperty -Name 'SecurityIdentifier' -Value $value.SecurityIdentifier
+	#$result | Add-Member -MemberType NoteProperty -Name 'SecurityIdentifier' -Value $value.SecurityIdentifier
 	$result | Add-Member -MemberType NoteProperty -Name 'MobilePhone' -Value $value.MobilePhone
 	$result | Add-Member -MemberType NoteProperty -Name 'BusinessPhones' -Value $value.BusinessPhones
 	$result | Add-Member -MemberType NoteProperty -Name 'passwordPolicies' -Value $value.passwordPolicies
@@ -64,43 +80,43 @@ for ($i = 0; $i -lt $Results.count; $i++) {
 	$result | Add-Member -MemberType NoteProperty -Name 'NoLicense' -Value $value.NoLicense
 	$result | Add-Member -MemberType NoteProperty -Name 'RoomMailbox' -Value $value.RoomMailbox
 	$result | Add-Member -MemberType NoteProperty -Name 'SharedMailbox' -Value $value.SharedMailbox
+	$result | Add-Member -MemberType NoteProperty -Name 'Manager' -Value $value.Manager
+	
 }
 
 $Output = $results | Select-Object `
+	ID, `
 	DisplayName, `
-	AccountEnabled, `
-	UserType, `
 	JobTitle, `
 	Department, `
 	@{Name='Organisational Group (Aho)'; Expression={$_.'OrgGroup'}}, `
 	CompanyName, `
+	Mail,`
+	UserPrincipalName, `
+	BusinessPhones, `
+	MobilePhone, `
+	manager, `
 	StreetAddress, `
 	City, `
 	PostalCode, `
 	State, `
 	Country, `
 	officelocation, `
-	BusinessPhones, `
-	MobilePhone, `
-	Mail, `
-	GivenName, `
-	Surname, `
+	AccountEnabled, `
+	UserType, `
 	CreatedDateTime, `
 	@{Name='StartDate (Aho)'; Expression={$_.'StartDate'}}, `
-	UserPrincipalName,
 	@{Name='EmployeeType (Aho)'; Expression={$_.'EmployeeType'}}, `
 	@{Name='EmployeeCategory (Aho)'; Expression={$_.'EmployeeCategory'}}, `
 	M365E3, `
 	M365E5, `
 	NoLicense, `
 	UsageLocation, `
-	LastSignInDateTime,
-	@{Name='Leave Date (Aho)'; Expression={$_.'LeaveDate'}},  `
 	passwordPolicies, `
 	RoomMailbox, `
 	SharedMailbox, `
-	ID, `
-	SecurityIdentifier | Sort-Object DisplayName
+	LastSignInDateTime,`
+	@{Name='Leave Date (Aho)'; Expression={$_.'LeaveDate'}} | Sort-Object DisplayName
 
 Write-Host "Open Save Dialog"
 
