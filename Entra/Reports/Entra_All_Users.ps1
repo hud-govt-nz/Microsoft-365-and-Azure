@@ -1,122 +1,126 @@
 # Connect to Microsoft Graph PowerShell
 Write-Host "Connecting to Microsoft Graph"
-$Scopes = @('AuditLog.Read.All','Directory.Read.All','Organization.Read.All','User.Read','User.Read.All')
+$Scopes = @('AuditLog.Read.All','Directory.Read.All','Organization.Read.All','User.Read','User.Read.All',"UserAuthenticationMethod.Read.All")
 Connect-MgGraph -Scopes $Scopes -NoWelcome | out-null
 
 # Obtain Last Sign Date Time (Non Standard property value)
 Write-Host "Collecting user information..." -ForegroundColor yellow
-$Results = @()
-$results += Get-MgBetaUser -All -Property id,SignInActivity | Select-Object -Property id,@{ Name = 'LastSignInDateTime'; Expression = { [datetime]$_.SignInActivity.LastSignInDateTime } }
 
-# Gather other Attributes.
-$Values = @()
-
-$Users = Get-MgBetaUser -All | Select-Object ID,CreatedDateTime,AccountEnabled,UserType,DisplayName,GivenName,Surname,UserPrincipalName,Mail,UsageLocation,
-Department,JobTitle,CompanyName,StreetAddress,City,PostalCode,State,Country,officelocation,SecurityIdentifier,MobilePhone,
-@{ Name = 'BusinessPhones'; Expression = { [string]$_.BusinessPhones -replace "{",'' } },
-@{ Name = 'passwordPolicies'; Expression = { [string]$_.passwordPolicies } },
-@{ Name = "StartDate"; Expression = { $_.AdditionalProperties['extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserStartDate'] } },
-@{ Name = "LeaveDate"; Expression = { $_.AdditionalProperties['extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserLeaveDateTime'] } },
-@{ Name = "EmployeeType"; Expression = { $_.AdditionalProperties['extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserEmployeeType'] } },
-@{ Name = "EmployeeCategory"; Expression = { $_.AdditionalProperties['extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserEmploymentCategory'] } },
-@{ Name = "OrgGroup"; Expression = { $_.AdditionalProperties['extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserOrganisationalGroup'] } },
-@{ Name = 'M365E3'; Expression = { if ($_.assignedLicenses.skuid -eq "05e9a617-0261-4cee-bb44-138d3ef5d965") { $true } else { $false } } },
-@{ Name = 'M365E5'; Expression = { if ($_.assignedLicenses.skuid -eq "06ebc4ee-1bb5-47dd-8120-11324bc54e06") { $true } else { $false } } },
-@{ Name = 'NoLicense'; Expression = { ($_.assignedLicenses.count -eq 0) } },
-@{ Name = 'RoomMailbox'; Expression = { $_.AdditionalProperties['extension_56a473fa1d5b476484f306f7b06ee688_RoomMailbox'] } },
-@{ Name = 'SharedMailbox'; Expression = { $_.AdditionalProperties['extension_56a473fa1d5b476484f306f7b06ee688_SharedMailbox'] } }
-
-foreach ($User in $Users) {
-    try {
-        $Manager = Get-MgUserManager -UserId $User.ID -ErrorAction SilentlyContinue
-        $User | Add-Member -MemberType NoteProperty -Name Manager -Value $Manager.AdditionalProperties.userPrincipalName -ErrorAction SilentlyContinue
-        $Values += $User
-    } catch [Microsoft.Graph.ServiceException] {
-        if ($_.Exception.Error.Code -eq "Request_ResourceNotFound") {
-            Write-Host "Manager not found for user: $($User.ID)"
-        } else {
-            Write-Host "Error retrieving manager for user: $($User.ID)"
-            Write-Host "Error message: $($_.Exception.Message)"
+# Define the Get-AllUsers function
+Function Get-AllUsers {
+    param (
+        [Parameter(Mandatory)]
+        [bool]
+        $IncludeGuests
+    )
+    
+    process {
+        # Retrieve users using the Microsoft Graph API with property
+        $propertyParams = @{
+            All            = $true
+            #Select              = '*'
+            Property            = 'SignInActivity'             
+            ExpandProperty      = 'manager'
         }
-        continue
+            if ($IncludeGuests) {
+                # Remove the filter
+                $propertyParams.Remove('Filter')
+            } else {
+                # Keep the filter
+                $propertyParams['Filter'] = "userType eq 'member'"
+            }
+
+        $users = Get-MgBetaUser @propertyParams
+        $totalUsers = $users.Count
+
+        # Initialize progress counter
+        $progress = 0
+
+        # Collect and loop through all users
+        foreach ($index in 0..($totalUsers - 1)) {
+            $user = $users[$index]
+
+            # Update progress counter
+            $progress++
+            
+            # Calculate percentage complete
+            $percentComplete = ($progress / $totalUsers) * 100
+
+            # Define progress bar parameters
+            $progressParams = @{
+                Activity        = "Processing Users"
+                Status          = "User $($index + 1) of $totalUsers - $($user.userPrincipalName) - $($percentComplete -as [int])% Complete"
+                PercentComplete = $percentComplete
+            }
+            
+            # Display progress bar
+            Write-Progress @progressParams
+
+            if ($null -ne $User.SignInActivity -and $null -ne $User.SignInActivity.LastSignInDateTime) {
+                # Convert SignInActivity to NZT
+                $NZT_SignInActivity = $User.SignInActivity.LastSignInDateTime.ToUniversalTime().ToLocalTime()
+                
+                # Update the user object with NZT SignInActivity
+                $User.SignInActivity.LastSignInDateTime = $NZT_SignInActivity
+            }
+        
+            # Create an object to store user properties
+            $userObject = [PSCustomObject]@{
+                "ID"                          = $user.id
+                "First name"                  = $user.givenName
+                "Last name"                   = $user.surname
+                "Display name"                = $user.displayName
+                "User principal name"         = $user.userPrincipalName
+                "Email address"               = $user.mail
+                "Job title"                   = $user.jobTitle
+                "Manager display name"        = $User.Manager.AdditionalProperties.displayName
+                "Manager user principal name" = $User.Manager.AdditionalProperties.userPrincipalName
+                "Department"                  = $user.department
+                "Company"                     = $user.companyName
+                "Office"                      = $user.officeLocation
+                "Employee ID"                 = $user.employeeID
+                "Mobile"                      = $user.mobilePhone
+                "Phone"                       = $user.businessPhones -join ','
+                "Street"                      = $user.streetAddress
+                "City"                        = $user.city
+                "Postal code"                 = $user.postalCode
+                "State"                       = $user.state
+                "Country"                     = $user.country
+                "User type"                   = $user.userType
+                "Account status"              = if ($user.accountEnabled) { "enabled" } else { "disabled" }
+                "Account Created on"          = $user.createdDateTime
+                "Last log in"                 = if ($user.SignInActivity.LastSignInDateTime) { $NZT_SignInActivity } else { "No log in" }
+			    "M365E3"                      = if ($user.assignedLicenses.skuid -eq "05e9a617-0261-4cee-bb44-138d3ef5d965") { $true } else { $false }
+				"M365E5"                      = if ($user.assignedLicenses.skuid -eq "06ebc4ee-1bb5-47dd-8120-11324bc54e06") { $true } else { $false }
+				"NoLicense"                   = if ($user.assignedLicenses.count -eq 0) { $true } else { $false }
+				"UsageLocation"               = $user.usageLocation
+				"SID"						  = $user.SecurityIdentifier
+				"passwordPolicies"            = $User.passwordPolicies
+			    "StartDate" 				  = $User.AdditionalProperties.extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserStartDate
+				"LeaveDate"                   = $User.AdditionalProperties.extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserLeaveDateTime
+				"EmployeeType"                = $User.AdditionalProperties.extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserEmployeeType
+				"Employee Category"           = $User.AdditionalProperties.extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserEmploymentCategory
+				"OrgGroup"                    = $User.AdditionalProperties.extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserOrganisationalGroup
+				"RoomMailbox"                 = $User.AdditionalProperties.extension_56a473fa1d5b476484f306f7b06ee688_RoomMailbox
+				"SharedMailbox"               = $User.AdditionalProperties.extension_56a473fa1d5b476484f306f7b06ee688_SharedMailbox
+                "EmployeeOrgData - Division"  = $user.EmployeeOrgData.Division
+}
+            
+            # Output the user object
+            $userObject
+        }
     }
 }
-# Assuming $Results and $Values are the two arrays
 
-# Merge the arrays
-for ($i = 0; $i -lt $Results.count; $i++) {
-	$result = $Results[$i]
-	$value = $Values[$i]
 
-	$result | Add-Member -MemberType NoteProperty -Name 'CreatedDateTime' -Value $value.CreatedDateTime
-	$result | Add-Member -MemberType NoteProperty -Name 'AccountEnabled' -Value $value.accountenabled
-	$result | Add-Member -MemberType NoteProperty -Name 'UserType' -Value $value.UserType
-	$result | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $value.DisplayName
-	#$result | Add-Member -MemberType NoteProperty -Name 'GivenName' -Value $value.GivenName
-	#$result | Add-Member -MemberType NoteProperty -Name 'Surname' -Value $value.Surname
-	$result | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value $value.UserPrincipalname
-	$result | Add-Member -MemberType NoteProperty -Name 'Mail' -Value $value.Mail
-	$result | Add-Member -MemberType NoteProperty -Name 'UsageLocation' -Value $value.UsageLocation
-	$result | Add-Member -MemberType NoteProperty -Name 'Department' -Value $value.Department
-	$result | Add-Member -MemberType NoteProperty -Name 'JobTitle' -Value $value.Jobtitle
-	$result | Add-Member -MemberType NoteProperty -Name 'CompanyName' -Value $value.CompanyName
-	$result | Add-Member -MemberType NoteProperty -Name 'StreetAddress' -Value $value.StreetAddress
-	$result | Add-Member -MemberType NoteProperty -Name 'City' -Value $value.City
-	$result | Add-Member -MemberType NoteProperty -Name 'PostalCode' -Value $value.PostalCode
-	$result | Add-Member -MemberType NoteProperty -Name 'State' -Value $value.State
-	$result | Add-Member -MemberType NoteProperty -Name 'Country' -Value $value.Country
-	$result | Add-Member -MemberType NoteProperty -Name 'OfficeLocation' -Value $value.officelocation
-	#$result | Add-Member -MemberType NoteProperty -Name 'SecurityIdentifier' -Value $value.SecurityIdentifier
-	$result | Add-Member -MemberType NoteProperty -Name 'MobilePhone' -Value $value.MobilePhone
-	$result | Add-Member -MemberType NoteProperty -Name 'BusinessPhones' -Value $value.BusinessPhones
-	$result | Add-Member -MemberType NoteProperty -Name 'passwordPolicies' -Value $value.passwordPolicies
-	$result | Add-Member -MemberType NoteProperty -Name 'StartDate' -Value $value.StartDate
-	$result | Add-Member -MemberType NoteProperty -Name 'LeaveDate' -Value $value.LeaveDate
-	$result | Add-Member -MemberType NoteProperty -Name 'EmployeeType' -Value $value.EmployeeType
-	$result | Add-Member -MemberType NoteProperty -Name 'EmployeeCategory' -Value $value.EmployeeCategory
-	$result | Add-Member -MemberType NoteProperty -Name 'OrgGroup' -Value $value.OrgGroup
-	$result | Add-Member -MemberType NoteProperty -Name 'M365E3' -Value $value.M365E3
-	$result | Add-Member -MemberType NoteProperty -Name 'M365E5' -Value $value.M365E5
-	$result | Add-Member -MemberType NoteProperty -Name 'NoLicense' -Value $value.NoLicense
-	$result | Add-Member -MemberType NoteProperty -Name 'RoomMailbox' -Value $value.RoomMailbox
-	$result | Add-Member -MemberType NoteProperty -Name 'SharedMailbox' -Value $value.SharedMailbox
-	$result | Add-Member -MemberType NoteProperty -Name 'Manager' -Value $value.Manager
-	
+$Query = Read-Host "Do you want to include 'Guest' accounts? (y/n)"
+
+if ($Query -eq "y") {
+	$results = Get-AllUsers -IncludeGuests $true
+} else {
+	$results = Get-AllUsers -IncludeGuests $false
 }
 
-$Output = $results | Select-Object `
-	ID, `
-	DisplayName, `
-	JobTitle, `
-	Department, `
-	@{Name='Organisational Group (Aho)'; Expression={$_.'OrgGroup'}}, `
-	CompanyName, `
-	Mail,`
-	UserPrincipalName, `
-	BusinessPhones, `
-	MobilePhone, `
-	manager, `
-	StreetAddress, `
-	City, `
-	PostalCode, `
-	State, `
-	Country, `
-	officelocation, `
-	AccountEnabled, `
-	UserType, `
-	CreatedDateTime, `
-	@{Name='StartDate (Aho)'; Expression={$_.'StartDate'}}, `
-	@{Name='EmployeeType (Aho)'; Expression={$_.'EmployeeType'}}, `
-	@{Name='EmployeeCategory (Aho)'; Expression={$_.'EmployeeCategory'}}, `
-	M365E3, `
-	M365E5, `
-	NoLicense, `
-	UsageLocation, `
-	passwordPolicies, `
-	RoomMailbox, `
-	SharedMailbox, `
-	LastSignInDateTime,`
-	@{Name='Leave Date (Aho)'; Expression={$_.'LeaveDate'}} | Sort-Object DisplayName
 
 Write-Host "Open Save Dialog"
 
@@ -137,7 +141,7 @@ $SaveFileDialog.FileName = $FileName
 $SaveFileResult = $SaveFileDialog.ShowDialog()
 if ($SaveFileResult -eq [System.Windows.Forms.DialogResult]::OK) {
 	$SelectedFilePath = $SaveFileDialog.FileName
-	$Output | Export-Excel $SelectedFilePath -AutoSize -AutoFilter -WorksheetName $Date -FreezeTopRow -BoldTopRow
+	$results | Export-Excel $SelectedFilePath -AutoSize -AutoFilter -WorksheetName $Date -FreezeTopRow -BoldTopRow
     
     $excelPackage = Open-ExcelPackage -Path $SelectedFilePath
     $worksheet = $excelPackage.Workbook.Worksheets["$Date"]
