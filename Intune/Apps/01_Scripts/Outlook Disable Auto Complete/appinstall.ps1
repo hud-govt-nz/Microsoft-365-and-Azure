@@ -62,12 +62,11 @@ if ($Mode -eq "Install") {
         $value = $ShowAutoSug.ShowAutoSug
         $path = $ShowAutoSug.pspath
         
-        $registryKey = Get-ItemProperty -Path $path -Name ShowAutoSug -ErrorAction SilentlyContinue
-        if ($registryKey.ShowAutoSug -eq 1) {
+        if ($value -eq 1) {
             Set-ItemProperty -Path $path -Name ShowAutoSug -Value 0 -Force
             Write-LogEntry -Value "Auto Complete has been disabled" -Severity 1
             
-        } elseif (!$registryKey) {
+        } elseif (!$value) {
                 New-ItemProperty -Path $path -Name ShowAutoSug -PropertyType DWORD -Value 0 -Force
                 Write-LogEntry -Value "Item created and Auto Complete has been disabled" -Severity 1
                 }
