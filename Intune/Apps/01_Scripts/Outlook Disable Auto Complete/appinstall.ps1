@@ -161,8 +161,6 @@ elseif ($Mode -eq "Uninstall") {
         $value = $ShowAutoSug.ShowAutoSug
         $path = $ShowAutoSug.pspath
         
-        $registryKey = Get-ItemProperty -Path $path -Name ShowAutoSug -ErrorAction SilentlyContinue
-
         Remove-ItemProperty -Path $path -Name 'ShowAutoSug' -Force -ErrorAction SilentlyContinue
         Write-LogEntry -Value "Auto Complete has been enabled" -Severity 1
 

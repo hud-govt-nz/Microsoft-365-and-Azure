@@ -28,7 +28,7 @@ param(
 )
 
 # Reference functions.ps1
-#. "$PSScriptRoot\functions.ps1"
+. "$PSScriptRoot\functions.ps1"
 
 # Initialize Directories
 $folderpaths = Initialize-Directories -HomeFolder C:\HUD\
@@ -54,7 +54,6 @@ if ($Mode -eq "Install") {
     try {
         # Get current user SID and username
         $SID = Get-CurrentUserSID
-        $User = (Get-Process -IncludeUserName -Name explorer | Select-Object -First 1 | Select-Object -ExpandProperty UserName).Split("\")[1]
                 
         #Auto Complete Registry Key
         $KeyValue = Get-ItemProperty Registry::HKEY_USERS\$SID\Software\Microsoft\Office\16.0\Outlook\Options\General
@@ -142,7 +141,6 @@ elseif ($Mode -eq "Uninstall") {
     try {
         # Get current user SID and username
         $SID = Get-CurrentUserSID
-        $User = (Get-Process -IncludeUserName -Name explorer | Select-Object -First 1 | Select-Object -ExpandProperty UserName).Split("\")[1]
                 
         #Auto Complete Registry Key
         $KeyValue = Get-ItemProperty Registry::HKEY_USERS\$SID\Software\Microsoft\Office\16.0\Outlook\Options\General
