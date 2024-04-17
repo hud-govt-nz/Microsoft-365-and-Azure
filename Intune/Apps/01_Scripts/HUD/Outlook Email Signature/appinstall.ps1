@@ -96,7 +96,7 @@ if ($Mode -eq "Install") {
 				$User = Get-MgBetaUser -UserId $UPN
 				Write-LogEntry -Value "Obtaining account details of $UPN" -Severity 1
 
-				$Group = (Get-MgBetaUser -UserId $UPN | select AdditionalProperties -ExpandProperty AdditionalProperties).extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserOrganisationalGroup
+				$Group = (Get-MgBetaUser -UserId $UPN | Select-Object AdditionalProperties -ExpandProperty AdditionalProperties).extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserOrganisationalGroup
 				# Get all signature files
 				$signatureFiles = Get-ChildItem -Path $SetupFolder
 
