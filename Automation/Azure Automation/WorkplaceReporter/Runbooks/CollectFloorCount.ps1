@@ -51,9 +51,10 @@ Write-Output "Date being collected: $datePeriod"
 # Define the two IP addresses to filter by
 $ipAddress1 = "203.167.143.72"
 $ipAddress2 = "203.167.143.80"
+$ipAddress3 = "203.97.18.66"
 
 # Update the filter query
-$filter = "createdDateTime ge " + $startTimeStr + " and createdDateTime lt " + $endTimeStr + " and (ipAddress eq '" + $ipAddress1 + "' or ipAddress eq '" + $ipAddress2 + "')" 
+$filter = "createdDateTime ge " + $startTimeStr + " and createdDateTime lt " + $endTimeStr + " and (ipAddress eq '" + $ipAddress1 + "' or ipAddress eq '" + $ipAddress2 + "' or ipAddress eq '" + $ipAddress3 + "')" 
 
 # Get the audit log sign-ins with the filter
 $auditLogs = Get-MgAuditLogSignIn -All -Filter $filter
@@ -141,6 +142,9 @@ $uniqueUsers = $combinedResults | Sort-Object SignInDateTime | Group-Object User
     $_.Group | Select-Object -First 1
 }
 
+# Obtain result of that user if they are at ipAddress3 and add to a separate Array
+$ipAddress3Users = $combinedResults | Where-Object { $_.IPAddress -eq "ipAddress3" }
+
 # Collect locations of each unique user
 $locationCounts = $uniqueUsers | Group-Object -Property UserLocation | Select-Object @{Name='OfficeLocation'; Expression={$_.Name}}, @{Name='Count'; Expression={$_.Count}}
 
@@ -153,6 +157,7 @@ $locationCounts | ForEach-Object {
 # Obtaining counts for each location
 $AKL6 = $officeLocationCounts["Auckland - APO - Level 6"] + $officeLocationCounts["APO Auckland"]
 $AKL7 = $officeLocationCounts["Auckland - APO - Level 7"] + $officeLocationCounts["Auckland Level 7"]
+$NewAPO = $ipAddress3Users.Count
 $WLN6 = $officeLocationCounts["Wellington - 7WQ - Level 6"]
 $WLN7 = $officeLocationCounts["Wellington - 7WQ - Level 7"]
 $WLN8 = $officeLocationCounts["Wellington - 7WQ - Level 8"]
@@ -160,9 +165,9 @@ $WLN9 = $officeLocationCounts["Wellington - 7WQ - Level 9"]
 $PARLIAMENT = $officeLocationCounts["Wellington - Parliament"]
 
 # Totals
-$AKLTOTAL = ($locationCounts | Where-Object { $_.OfficeLocation -like "*Auckland*" } | Measure-Object -Property Count -Sum).Sum
+$AKLTOTAL = ($locationCounts | Where-Object { $_.OfficeLocation -like "*Auckland*"   } | Measure-Object -Property Count -Sum).Sum + $NewAPO
 $WLNTOTAL = ($locationCounts | Where-Object { $_.OfficeLocation -like "*Wellington*" } | Measure-Object -Property Count -Sum).Sum
-$TOTAL = ($locationCounts | Measure-Object -Property Count -Sum).Sum
+$TOTAL = ($locationCounts | Measure-Object -Property Count -Sum).Sum + $NewAPO
 
 # Updating sharepoint list at $siteurl location
 $listName = "Test_Floor_Count_List"
@@ -175,6 +180,7 @@ $newItem = @{
     "WLN7WQ_x002d_L9" = $WLN9
     "AKLAPO_x002d_L6" = $AKL6
     "AKLAPO_x002d_L7" = $AKL7
+    "NEWAPO" = $NewAPO
     "WLNTOTAL" = $WLNTOTAL
     "AKLTOTAL" = $AKLTOTAL
     "OTHER" = $PARLIAMENT

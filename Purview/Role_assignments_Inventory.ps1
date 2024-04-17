@@ -1,5 +1,5 @@
-[CmdletBinding()] #Make sure we can use -Verbose
-Param([switch]$IncludeRoleGroups,[switch]$IncludeUnassignedRoleGroups,[switch]$IncludeDelegatingAssingments)
+Connect-IPPSSession
+
 
 #Enumerate all Role Groups that have no management role assignments
 function getEmptyRoleGroups {
@@ -130,7 +130,7 @@ if ($IncludeRoleGroups -and $IncludeUnassignedRoleGroups) {
 }
 
 #Dump the raw output to a CSV file
-$output | Export-Excel -Path "C:\HUD\EXO_RBACAssignments.xlsx" -WorksheetName "Output" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+$output | Export-Excel -Path "C:\HUD\PURVIEW_RBAC_8.4.2024.xlsx" -WorksheetName "Output" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
 
 
 #Transform the output and return it to the console. Group assignments by individual user/group

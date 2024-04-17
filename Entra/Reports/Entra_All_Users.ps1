@@ -78,7 +78,6 @@ Function Get-AllUsers {
                 "Department"                  = $user.department
                 "Company"                     = $user.companyName
                 "Office"                      = $user.officeLocation
-                "Employee ID"                 = $user.employeeID
                 "Mobile"                      = $user.mobilePhone
                 "Phone"                       = $user.businessPhones -join ','
                 "Street"                      = $user.streetAddress
