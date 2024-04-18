@@ -94,6 +94,14 @@ if ($Mode -eq "Install") {
 } elseif ($Mode -eq "Uninstall") {
 	try {
 		$MyApp = Get-InstalledApps -App "R for Windows*" 
+		
+		if ($MyApp.Count -gt 1) { #More than 1 installed
+			$MyApp = $MyApp | Where-Object { $_.DisplayVersion -eq "4.3.3" }
+			if ($MyApp.Count -eq 0) {
+				Write-LogEntry -Value "More than one instance installed. Unable to determine which one to uninstall" -Severity 3
+				throw
+			}
+		}
 
 		# Uninstall App
 		$uninstallProcess = Start-Process $MyApp.UninstallString -ArgumentList '/SILENT' -PassThru -Wait -ErrorAction stop
