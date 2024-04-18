@@ -4,10 +4,13 @@
 Write-Host "Please enter the name for this package" -ForegroundColor Yellow
 $AppName = Read-Host -Prompt "Enter the folder name for the package"
 
+
 Write-Host "Please select the folder for the package" -ForegroundColor Yellow
+
 $PackageFolder = New-Object -Typename System.Windows.Forms.FolderBrowserDialog
-$PackageFolder.rootfolder = "Desktop"
+$PackageFolder.SelectedPath = "C:\HUD\20_Packages"
 $PackageFolder.ShowDialog()
+
 
 $FolderName = "$($packageFolder.SelectedPath)\$AppName"
 Write-Host "Folder name: $FolderName" -ForegroundColor Green
@@ -24,7 +27,8 @@ Copy-Item -Path "$PSScriptRoot\functions.ps1" -Destination $FolderName -Force
 
 Write-host "Please select the folder for the deployment" -ForegroundColor Yellow
 $DeploymentFolder = New-Object -Typename System.Windows.Forms.FolderBrowserDialog
-$DeploymentFolder.rootfolder = "Desktop"
+
+$DeploymentFolder.SelectedPath = "$env:appfolder"
 $DeploymentFolder.ShowDialog()
 
 
