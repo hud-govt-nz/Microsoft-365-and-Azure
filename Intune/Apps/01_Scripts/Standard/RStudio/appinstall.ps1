@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-    R for Windows.
+    RStudio for Windows.
 
 .DESCRIPTION
-    Script to install R for Windows.
+    Script to install RStudio for Windows.
 
 .PARAMETER Mode
 Sets the mode of operation. Supported modes are Install or Uninstall.
@@ -14,7 +14,7 @@ Sets the mode of operation. Supported modes are Install or Uninstall.
 
 .NOTES
     - AUTHOR: Ashley Forde
-    - Version: 2.0
+    - Version: 2023.12.1.0
     - Date: 18.04.2024
 #>
 
@@ -38,9 +38,9 @@ $stagingFolderVar = $folderPaths.StagingFolder
 $logsFolderVar = $folderPaths.LogsFolder
 $validationFolderVar = $folderPaths.ValidationFolder
 $Date = Get-Date -Format "MM-dd-yyyy"
-$AppName = "R for Windows"
+$AppName = "RStudio for Windows"
 $AppValidationFile = "$validationFolderVar\$AppName.txt"
-$AppVersion = "4.3.3"
+$AppVersion = "2023.12.1.0"
 $LogFileName = "$($AppName)_${Mode}_$Date.log"
 
 # Begin Setup
@@ -56,7 +56,7 @@ if ($Mode -eq "Install") {
         Write-LogEntry -Value "Setup files have been copied to $Setupfolder." -Severity 1
 
 		# Test if there is a setup file
-		$SetupFilePath = (Join-Path -Path $SetupFolder -ChildPath "R-4.3.3-win.exe").ToString()
+		$SetupFilePath = (Join-Path -Path $SetupFolder -ChildPath "RStudio-2023.12.1-402.exe").ToString()
 
 		if (-not (Test-Path $SetupFilePath)) { 
 			throw "Error: Setup file not found" 
@@ -65,8 +65,8 @@ if ($Mode -eq "Install") {
 
 		try {
 			# Run setup with custom arguments and create validation file
-			Write-LogEntry -Value "Starting $Mode of R for Windows" -Severity 1
-			[string]$Arguments = "/VERYSILENT"
+			Write-LogEntry -Value "Starting $Mode of RStudio for Windows" -Severity 1
+			[string]$Arguments = "/S"
 			$Process = Start-Process $SetupFilePath -ArgumentList $Arguments -Wait -PassThru -ErrorAction Stop
 
 			# Post Install Actions
@@ -93,10 +93,16 @@ if ($Mode -eq "Install") {
 
 } elseif ($Mode -eq "Uninstall") {
 	try {
-		$MyApp = Get-InstalledApps -App "R for Windows*" 
+		$MyApp =Get-InstalledApps -App "RStudio*"
 
 		# Uninstall App
-		$uninstallProcess = Start-Process $MyApp.UninstallString -ArgumentList '/SILENT' -PassThru -Wait -ErrorAction stop
+		$uninstallProcess = Start-Process $MyApp.UninstallString -ArgumentList '/S' -PassThru -Wait -ErrorAction stop
+		
+		# Delete start menu item
+		if (Test-Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\RStudio") {
+			Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\RStudio" -Recurse -Force -ErrorAction Continue
+			Write-LogEntry -Value "Start Menu item has been removed" -Severity 1
+			}
 
 		# Post Uninstall Actions
 		if ($uninstallProcess.ExitCode -eq "0") {
