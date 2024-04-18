@@ -1,9 +1,0 @@
-<Configuration>
-    <Remove>
-        <Product ID="O365ProPlusRetail">
-            <Language ID="en-us" />
-        </Product>
-    </Remove>
-    <Display Level="none" AcceptEULA="TRUE" />
-    <Property Name="FORCEAPPSHUTDOWN" Value="TRUE"/>
-</Configuration>
