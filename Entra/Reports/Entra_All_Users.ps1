@@ -172,3 +172,4 @@ if ($SaveFileResult -eq [System.Windows.Forms.DialogResult]::OK) {
 } else {
 	Write-Host "Save cancelled" -ForegroundColor Yellow
 }
+Clear
