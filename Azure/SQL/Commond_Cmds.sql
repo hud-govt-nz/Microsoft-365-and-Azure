@@ -1,5 +1,9 @@
 -- ADD USERS
 
+-- FAW USER ADD ON DB
+CREATE USER fawreporter WITH PASSWORD = 'e#bYHFbHT#2aQn'
+ALTER ROLE db_datareader ADD MEMBER [fawreporter];
+
 	-- Create 'groups' on Database - assumes security group exists in Azure AD
 	CREATE USER [Data Reporting - SQLDB - Reader] FROM EXTERNAL PROVIDER WITH DEFAULT_SCHEMA=[dbo];
 	CREATE USER [Data Reporting - SQLDB - Writer] FROM EXTERNAL PROVIDER WITH DEFAULT_SCHEMA=[dbo];

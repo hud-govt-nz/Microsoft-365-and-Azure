@@ -13,7 +13,7 @@ $certParams = @{
 }
 
 # Create the self-signed certificate
-$cert = New-SelfSignedCertificate @certParams
+$cert = PKI\New-SelfSignedCertificate @certParams
 
 # Define the export parameters for the public and private keys
 
