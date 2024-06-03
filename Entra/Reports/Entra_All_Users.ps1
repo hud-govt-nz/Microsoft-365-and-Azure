@@ -55,9 +55,7 @@ Function Get-AllUsers {
             
             # Display progress bar
             Write-Progress @progressParams
-            
-	    Clear
-	    
+            	        
             if ($null -ne $User.SignInActivity -and $null -ne $User.SignInActivity.LastSignInDateTime) {
                 # Convert SignInActivity to NZT
                 $NZT_SignInActivity = $User.SignInActivity.LastSignInDateTime.ToUniversalTime().ToLocalTime()
@@ -109,6 +107,8 @@ Function Get-AllUsers {
             
             # Output the user object
             $userObject
+
+     	    clear
         }
     }
 }
