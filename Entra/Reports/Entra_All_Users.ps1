@@ -107,8 +107,6 @@ Function Get-AllUsers {
             
             # Output the user object
             $userObject
-
-     	    clear
         }
     }
 }
