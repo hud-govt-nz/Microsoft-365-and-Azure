@@ -1,0 +1,9 @@
+<Configuration>
+  <Remove>
+    <Product ID="ProofingTools">
+      <Language ID="mi-NZ" />
+    </Product>
+  </Remove>
+  <Display Level="none" AcceptEULA="TRUE" />
+  <Property Name="FORCEAPPSHUTDOWN" Value="TRUE" />
+</Configuration>

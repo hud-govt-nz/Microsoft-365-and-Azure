@@ -1,0 +1,68 @@
+<VPNProfile>  
+  <NativeProfile>  
+    <Servers>azuregateway-f6dd002a-af3b-467c-a8ac-669542f8d9ea-00b2af831edc.vpn.azure.com</Servers>  
+    <NativeProtocolType>IKEv2</NativeProtocolType>  
+    <Authentication>  
+      <MachineMethod>Certificate</MachineMethod>  
+    </Authentication>  
+    <RoutingPolicyType>SplitTunnel</RoutingPolicyType>  
+    <!-- disable the addition of a class based route for the assigned IP address on the VPN interface -->
+    <DisableClassBasedDefaultRoute>true</DisableClassBasedDefaultRoute>  
+  </NativeProfile> 
+  <!-- use host routes(/32) to prevent routing conflicts -->  
+  <Route>  
+    <Address>10.0.0.0</Address>  
+    <PrefixSize>22</PrefixSize>  
+  </Route>
+  <Route>  
+    <Address>10.0.4.0</Address>  
+    <PrefixSize>22</PrefixSize>  
+  </Route>
+  <Route>  
+    <Address>10.1.0.0</Address>  
+    <PrefixSize>16</PrefixSize>  
+  </Route>
+  <Route>  
+    <Address>20.36.104.6</Address>  
+    <PrefixSize>32</PrefixSize>  
+  </Route>
+  <Route>  
+    <Address>20.36.104.7</Address>  
+    <PrefixSize>32</PrefixSize>  
+  </Route>
+  <Route>  
+    <Address>20.36.105.32</Address>  
+    <PrefixSize>22</PrefixSize>  
+  </Route>
+  <Route>  
+    <Address>20.53.48.96</Address>  
+    <PrefixSize>27</PrefixSize>  
+  </Route>
+  <Route>  
+    <Address>20.36.112.6</Address>  
+    <PrefixSize>32</PrefixSize>  
+  </Route>
+  <Route>  
+    <Address>20.36.113.0</Address>  
+    <PrefixSize>32</PrefixSize>  
+  </Route>
+  <Route>  
+    <Address>20.36.113.32</Address>  
+    <PrefixSize>29</PrefixSize>  
+  </Route>
+  <Route>  
+    <Address>29.53.48.96</Address>  
+    <PrefixSize>27</PrefixSize>  
+  </Route>
+  <!-- traffic filters for the routes specified above so that only this traffic can go over the device tunnel -->
+  <TrafficFilter>
+    <RemoteAddressRanges>10.0.0.0/22,10.0.4.0/22,10.0.1.0/24,10.1.0.0/16,20.36.104.6/32,30.36.104.7/32,20.36.105.32/29,20.53.48.96/27,20.36.113.0/32,20.36.112.6/32,20.36.113.32/29,29.53.48.96/27</RemoteAddressRanges>
+  </TrafficFilter>   
+<!-- need to specify always on = true --> 
+  <AlwaysOn>true</AlwaysOn> 
+<!-- new node to specify that this is a device tunnel -->  
+  <DeviceTunnel>true</DeviceTunnel>
+<!--new node to register client IP address in DNS to enable manage out -->
+  <RegisterDNS>true</RegisterDNS>
+  <RememberCredentials>true</RememberCredentials>
+</VPNProfile>

@@ -1,0 +1,3 @@
+Download URL: https://www.7-zip.org/download.html
+
+Note: Download the install file and export into this directory before packaging. 

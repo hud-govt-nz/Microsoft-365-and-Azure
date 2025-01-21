@@ -1,0 +1,1 @@
+Download the .exe and then extract it using 7-zip to get the MSI 

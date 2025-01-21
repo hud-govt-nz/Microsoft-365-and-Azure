@@ -1,0 +1,614 @@
+Intune/Win32Apps/WinSCP/Config/DEV_TEST_WorkforceData_TKM_HUD.ppk
+Intune/Win32Apps/WinSCP/Config/winSCP_All.ini
+Intune/Win32Apps/WinSCP/Config/PROD_tkm_connector_id_rsa.ppk
+Intune/Win32Apps/WinSCP/Installer/WinSCP-6.1.2-Setup.exe
+Intune/Win32Apps/WinSCP/Config/winSCP_Workforce_Data.ini
+Intune/Win32Apps/WinSCP/Config/winSCP_SecurePass.ini
+Intune/Win32Apps/Maori Keyboard/Installer/EngTRkb_amd64.msi
+Intune/Win32Apps/Maori Keyboard/Installer/amd64/EngTRkb.dll
+Intune/Win32Apps/Maori Keyboard/Installer/wow64/EngTRkb.dll
+Intune/Win32Apps/Document Templates/CoverPage/HUD Cover Pages.dotx
+Intune/Win32Apps/Document Templates/CoverPage/Quality Assurance Sheet.dotx
+Intune/Win32Apps/Document Templates/Installer/Aide Memoire for Events.dotx
+Intune/Win32Apps/Document Templates/Installer/Aide Memoire for Events.dotx.old
+Intune/Win32Apps/Document Templates/Installer/Aide Memoire.dotx
+Intune/Win32Apps/Document Templates/Installer/Aide Memoire.dotx.old
+Intune/Win32Apps/Document Templates/Installer/Briefing Paper.dotx
+Intune/Win32Apps/Document Templates/Installer/HUD Document Template.dotx
+Intune/Win32Apps/Document Templates/Installer/HUD PowerPoint Template.potx
+Intune/Win32Apps/Document Templates/Installer/Letterhead Dark.dotx
+Intune/Win32Apps/Document Templates/Installer/Memo.dotx
+Intune/Win32Apps/Document Templates/Installer/Memo.dotx.old
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/EngTRkb_amd64.msi
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/EngTRkb_i386.msi
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/EngTRkb_ia64.msi
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/setup.exe
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/setup.exe
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/OptiTRkb_ia64.msi
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/OptiTRkb_i386.msi
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/OptiTRkb_amd64.msi
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/wow64/EngTRkb.dll
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/ia64/EngTRkb.dll
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/i386/EngTRkb.dll
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/amd64/EngTRkb.dll
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/wow64/OptiTRkb.dll
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/ia64/OptiTRkb.dll
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/i386/OptiTRkb.dll
+Intune/Win32Apps/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/amd64/OptiTRkb.dll
+Automation/M365 DSC/8748-M365DSC-ErrorLog.log
+Automation/M365 DSC/11208-M365DSC-ErrorLog.log
+Automation/M365 DSC/Config/SCC.ps1
+Automation/M365 DSC/Config/Security.ps1
+Automation/M365 DSC/DSC/_Run.ps1
+Automation/M365 DSC/DSC/2740-M365DSC-ErrorLog.log
+Automation/M365 DSC/DSC/4492-M365DSC-ErrorLog.log
+Automation/M365 DSC/DSC/22184-M365DSC-ErrorLog.log
+Automation/M365 DSC/DSC/Generate Certificates.ps1
+Automation/M365 DSC/DSC/Reports/M365DSC_Configuration_Reports.ps1
+Automation/M365 DSC/DSC/Scripts/AzureAD.ps1
+Automation/M365 DSC/DSC/Scripts/ExchangeOnline.ps1
+Automation/M365 DSC/DSC/Scripts/MSIntune.ps1
+Automation/M365 DSC/DSC/Scripts/Office365.ps1
+Automation/M365 DSC/DSC/Scripts/OneDrive.ps1
+Automation/M365 DSC/DSC/Scripts/Planner.ps1
+Automation/M365 DSC/DSC/Scripts/PowerPlatform.ps1
+Automation/M365 DSC/DSC/Scripts/SecurityAndCompliance.ps1
+Automation/M365 DSC/DSC/Scripts/SharePointOnline.ps1
+Automation/M365 DSC/DSC/Scripts/Teams.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AAD_Auth_Policies.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADAdministrativeUnit.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADApplication.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADAuthenticationMethodPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADAuthenticationMethodPolicyAuthenticator.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADAuthenticationMethodPolicyEmail.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADAuthenticationMethodPolicyFido2.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADAuthenticationMethodPolicySms.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADAuthenticationMethodPolicySoftware.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADAuthenticationMethodPolicyTemporary.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADAuthenticationMethodPolicyVoice.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADAuthenticationMethodPolicyX509.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADAuthenticationStrengthPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADAuthorizationPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADConditionalAccessPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADCrossTenantAccessPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADCrossTenantAccessPolicyConfigurationDefault.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADCrossTenantAccessPolicyConfigurationPartner.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADEntitlementManagementAccessPackage.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADEntitlementManagementAccessPackageAssignmentPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADEntitlementManagementAccessPackageCatalog.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADEntitlementManagementAccessPackageCatalogResource.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADEntitlementManagementConnectedOrganization.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADGroup.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADGroupLifecyclePolicy.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADGroupsNamingPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADGroupsSettings.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADNamedLocationPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADRoleDefinition.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADRoleSetting.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADSecurityDefaults.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADServicePrincipal.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADTenantDetails.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADTokenLifetimePolicy.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/AADUser.ps1
+Automation/M365 DSC/DSC/Workloads/AzureAD/ConfigurationData.psd1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/ConfigurationData.psd1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOAcceptedDomain.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOActiveSyncDeviceAccessRule.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOAddressBookPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOAddressList.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOAntiPhishPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOAntiPhishRule.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOApplicationAccessPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOAtpPolicyForO365.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOAuthenticationPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOAuthenticationPolicyAssignment.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOAvailabilityAddressSpace.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOAvailabilityConfig.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOCASMailboxPlan.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOCASMailboxSettings.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOClientAccessRule.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXODataClassification.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXODataEncryptionPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXODistributionGroup.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXODkimSigningConfig.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOEmailAddressPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOGlobalAddressList.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOGroupSettings.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOHostedConnectionFilterPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOHostedContentFilterPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOHostedContentFilterRule.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOHostedOutboundSpamFilterPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOHostedOutboundSpamFilterRule.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOInboundConnector.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOIntraOrganizationConnector.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOIRMConfiguration.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOJournalRule.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOMailboxPlan.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOMailboxSettings.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOMailContact.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOMailTips.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOMalwareFilterPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOMalwareFilterRule.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOManagementRole.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOManagementRoleAssignment.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOMessageClassification.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOMobileDeviceMailboxPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOOfflineAddressBook.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOOMEConfiguration.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOOnPremisesOrganization.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOOrganizationConfig.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOOrganizationRelationship.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOOutboundConnector.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOOwaMailboxPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOPartnerApplication.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOPerimeterConfiguration.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOPolicyTipConfig.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOQuarantinePolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXORemoteDomain.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOResourceConfiguration.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXORoleAssignmentPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXORoleGroup.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOSafeAttachmentPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOSafeAttachmentRule.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOSafeLinksPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOSafeLinksRule.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOSharedMailbox.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOSharingPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOTransportConfig.ps1
+Automation/M365 DSC/DSC/Workloads/ExchangeOnline/EXOTransportRule.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/ConfigurationData.psd1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneAntivirusPolicyWindows10SettingCatalog.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneAppConfigurationPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneApplicationControlPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneAppProtectionPolicyAndroid.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneAppProtectionPolicyiOS.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneASRRulesPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneAttackSurfaceReductionRulesPolicyWindows10ConfigManager.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceAndAppManagementAssignmentFilter.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceCategory.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceCompliancePolicyAndroid.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceCompliancePolicyAndroidDeviceOwner.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceCompliancePolicyAndroidWorkProfile.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceCompliancePolicyiOs.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceCompliancePolicyMacOS.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceCompliancePolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationAdministrativeTemplatePolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationCustomPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationDefenderForEndpointOnboardingPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationDeliveryOptimizationPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationDomainJoinPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationEmailProfilePolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationEndpointProtectionPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationFirmwareInterfacePolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationHealthMonitoringConfigurationPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationIdentityProtectionPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationImportedPfxCertificatePolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationKioskPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationNetworkBoundaryPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationPkcsCertificatePolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationPolicyAndroidDeviceAdministrator.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationPolicyAndroidDeviceOwner.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationPolicyAndroidOpenSourceProject.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationPolicyAndroidWorkProfile.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationPolicyiOS.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationPolicyMacOS.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationSCEPCertificatePolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationSecureAssessmentPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationSharedMultiDevicePolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationTrustedCertificatePolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationVpnPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationWindowsTeamPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceConfigurationWiredNetworkPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceEnrollmentLimitRestriction.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceEnrollmentPlatformRestriction.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneDeviceEnrollmentStatusPageWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneExploitProtectionPolicyWindows10SettingCatalog.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneRoleAssignment.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneRoleDefinition.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneSettingCatalogASRRulesPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneSettingCatalogCustomPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneWiFiConfigurationPolicyAndroidDeviceAdministrator.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneWifiConfigurationPolicyAndroidEnterpriseDeviceOwner.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneWifiConfigurationPolicyAndroidEnterpriseWorkProfile.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneWifiConfigurationPolicyAndroidForWork.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneWifiConfigurationPolicyAndroidOpenSourceProject.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneWifiConfigurationPolicyIOS.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneWifiConfigurationPolicyMacOS.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneWifiConfigurationPolicyWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneWindowsAutopilotDeploymentProfileAzureADHybridJoined.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneWindowsAutopilotDeploymentProfileAzureADJoined.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneWindowsInformationProtectionPolicyWindows10MdmEnrolled.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneWindowsUpdateForBusinessFeatureUpdateProfileWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/MSIntune/IntuneWindowsUpdateForBusinessRingUpdateProfileWindows10.ps1
+Automation/M365 DSC/DSC/Workloads/Office365/ConfigurationData.psd1
+Automation/M365 DSC/DSC/Workloads/Office365/O365AdminAuditLogConfig.ps1
+Automation/M365 DSC/DSC/Workloads/Office365/O365Group.ps1
+Automation/M365 DSC/DSC/Workloads/Office365/O365OrgCustomizationSetting.ps1
+Automation/M365 DSC/DSC/Workloads/Office365/O365OrgSettings.ps1
+Automation/M365 DSC/DSC/Workloads/Office365/O365SearchAndIntelligenceConfigurations.ps1
+Automation/M365 DSC/DSC/Workloads/OneDrive/ConfigurationData.psd1
+Automation/M365 DSC/DSC/Workloads/OneDrive/ODSettings.ps1
+Automation/M365 DSC/DSC/Workloads/Planner/ConfigurationData.psd1
+Automation/M365 DSC/DSC/Workloads/Planner/PlannerBucket.ps1
+Automation/M365 DSC/DSC/Workloads/Planner/PlannerPlan.ps1
+Automation/M365 DSC/DSC/Workloads/Planner/PlannerTask.ps1
+Automation/M365 DSC/DSC/Workloads/PowerPlatform/ConfigurationData.psd1
+Automation/M365 DSC/DSC/Workloads/PowerPlatform/PPPowerAppsEnvironment.ps1
+Automation/M365 DSC/DSC/Workloads/PowerPlatform/PPTenantIsolationSettings.ps1
+Automation/M365 DSC/DSC/Workloads/PowerPlatform/PPTenantSettings.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/ConfigurationData.psd1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCAuditConfigurationPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCAutoSensitivityLabelPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCAutoSensitivityLabelRule.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCCaseHoldPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCCaseHoldRule.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCComplianceCase.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCComplianceSearch.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCComplianceSearchAction.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCComplianceTag.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCDeviceConditionalAccessPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCDeviceConfigurationPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCDLPCompliancePolicy.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCDLPComplianceRule.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCFilePlanPropertyAuthority.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCFilePlanPropertyCategory.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCFilePlanPropertyCitation.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCFilePlanPropertyDepartment.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCFilePlanPropertyReferenceId.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCFilePlanPropertySubCategory.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCLabelPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCProtectionAlert.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCRetentionCompliancePolicy.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCRetentionComplianceRule.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCRetentionEventType.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCSensitivityLabel.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCSupervisoryReviewPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/SecurityAndCompliance/SCSupervisoryReviewRule.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/ConfigurationData.psd1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOAccessControlSettings.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOApp.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOBrowserIdleSignout.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOHomeSite.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOHubSite.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOOrgAssetsLibrary.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOPropertyBag.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOSearchManagedProperty.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOSearchResultSource.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOSharingSettings.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOSite.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOSiteAuditSettings.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOSiteDesign.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOSiteDesignRights.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOSiteGroup.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOSiteScript.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOStorageEntity.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOTenantCdnEnabled.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOTenantCdnPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOTenantSettings.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOTheme.ps1
+Automation/M365 DSC/DSC/Workloads/SharePointOnline/SPOUserProfileProperty.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/ConfigurationData.psd1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsAppPermissionPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsAppSetupPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsAudioConferencingPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsCallHoldPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsCallingPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsCallParkPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsChannel.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsChannelsPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsChannelTab.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsClientConfiguration.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsComplianceRecordingPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsCortanaPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsDialInConferencingTenantSettings.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsEmergencyCallingPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsEmergencyCallRoutingPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsEnhancedEncryptionPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsEventsPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsFederationConfiguration.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsFeedbackPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsFilesPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsGroupPolicyAssignment.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsGuestCallingConfiguration.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsGuestMeetingConfiguration.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsGuestMessagingConfiguration.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsIPPhonePolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsMeetingBroadcastConfiguration.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsMeetingBroadcastPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsMeetingConfiguration.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsMeetingPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsMessagingPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsMobilityPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsNetworkRoamingPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsOnlineVoicemailPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsOnlineVoicemailUserSettings.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsOnlineVoiceUser.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsOrgWideAppSettings.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsPstnUsage.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsShiftsPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsTeam.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsTenantDialPlan.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsTenantNetworkRegion.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsTenantNetworkSite.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsTenantNetworkSubnet.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsTenantTrustedIPAddress.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsTranslationRule.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsUnassignedNumberTreatment.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsUpdateManagementPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsUpgradeConfiguration.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsUpgradePolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsUser.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsVdiPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsVoiceRoute.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsVoiceRoutingPolicy.ps1
+Automation/M365 DSC/DSC/Workloads/Teams/TeamsWorkloadPolicy.ps1
+Automation/M365 DSC/Security/5660-M365DSC-ErrorLog.log
+Automation/M365 DSC/Security/ConfigurationData.psd1
+Automation/M365 DSC/Security/M365DSCConfig_022224.ps1
+Automation/M365 DSC/Security/SCAuditConfigurationPolicy.ps1
+Automation/M365 DSC/Security/SCAutoSensitivityLabelPolicy.ps1
+Automation/M365 DSC/Security/SCAutoSensitivityLabelRule.ps1
+Automation/M365 DSC/Security/SCCaseHoldPolicy.ps1
+Automation/M365 DSC/Security/SCCaseHoldRule.ps1
+Automation/M365 DSC/Security/SCComplianceCase.ps1
+Automation/M365 DSC/Security/SCComplianceSearch.ps1
+Automation/M365 DSC/Security/SCComplianceSearchAction.ps1
+Automation/M365 DSC/Security/SCComplianceTag.ps1
+Automation/M365 DSC/Security/SCDeviceConditionalAccessPolicy.ps1
+Automation/M365 DSC/Security/SCDeviceConfigurationPolicy.ps1
+Automation/M365 DSC/Security/SCDLPCompliancePolicy.ps1
+Automation/M365 DSC/Security/SCDLPComplianceRule.ps1
+Automation/M365 DSC/Security/SCFilePlanPropertyAuthority.ps1
+Automation/M365 DSC/Security/SCFilePlanPropertyCategory.ps1
+Automation/M365 DSC/Security/SCFilePlanPropertyCitation.ps1
+Automation/M365 DSC/Security/SCFilePlanPropertyDepartment.ps1
+Automation/M365 DSC/Security/SCFilePlanPropertyReferenceId.ps1
+Automation/M365 DSC/Security/SCFilePlanPropertySubCategory.ps1
+Automation/M365 DSC/Security/SCLabelPolicy.ps1
+Automation/M365 DSC/Security/SCProtectionAlert.ps1
+Automation/M365 DSC/Security/SCRetentionCompliancePolicy.ps1
+Automation/M365 DSC/Security/SCRetentionComplianceRule.ps1
+Automation/M365 DSC/Security/SCRetentionEventType.ps1
+Automation/M365 DSC/Security/SCSecurityFilter.ps1
+Automation/M365 DSC/Security/SCSensitivityLabel.ps1
+Automation/M365 DSC/Security/SCSupervisoryReviewPolicy.ps1
+Automation/M365 DSC/Security/SCSupervisoryReviewRule.ps1
+Intune/Win32Apps/Document Templates/Installer/HUD Aide Memoire Template.dotx
+Intune/Win32Apps/Document Templates/Installer/HUD Briefing Template.dotx
+Intune/Win32Apps/Document Templates/Installer/HUD Event Template.dotx
+Intune/Win32Apps/Document Templates/Old Templates/Aide Memoire for Events.dotx
+Intune/Win32Apps/Document Templates/Old Templates/Aide Memoire for Events.dotx.old
+Intune/Win32Apps/Document Templates/Old Templates/Aide Memoire.dotx
+Intune/Win32Apps/Document Templates/Old Templates/Aide Memoire.dotx.old
+Intune/Win32Apps/Document Templates/Old Templates/Briefing Paper.dotx
+Intune/Win32Apps/Document Templates/Old Templates/Memo.dotx.old
+Intune/Win32Apps/Font Install/Installer/National-Book.otf
+Intune/Win32Apps/Font Install/Installer/National-Semibold.otf
+Intune/Win32Apps/Font Install/Installer/national-web-black-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-black.otf
+Intune/Win32Apps/Font Install/Installer/national-web-bold-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-bold.otf
+Intune/Win32Apps/Font Install/Installer/national-web-book-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-book.otf
+Intune/Win32Apps/Font Install/Installer/national-web-extrabold-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-extrabold.otf
+Intune/Win32Apps/Font Install/Installer/national-web-light-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-light.otf
+Intune/Win32Apps/Font Install/Installer/national-web-medium-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-medium.otf
+Intune/Win32Apps/Font Install/Installer/national-web-regular-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-regular.otf
+Intune/Win32Apps/Font Install/Installer/national-web-semibold-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-semibold.otf
+Intune/Win32Apps/Font Install/Installer/national-web-thin-italic.otf
+Intune/Win32Apps/Font Install/Installer/national-web-thin.otf
+Intune/Win32Apps/Microsoft Visual Studio Code/Installer/VSCodeSetup-x64-1.87.2.exe
+Intune/Win32Apps/Oracle ADF Desktop Integration/Installer/adfdi.exe
+Intune/Win32Apps/Te Reo Plugin Outlook/Installer/Setup.msi
+Intune/Win32Apps/Te Reo Plugin Outlook/Installer/TeReoGreetings.csv
+Entra/CSV Files/ExampleGroupList.csv
+Entra/CSV Files/rbacgroup.csv
+Entra/CSV Files/rbacgroups.csv
+Entra/Auth/Azure AD Reporting (HUD Digital).JSON
+Entra/Auth/HUDDEV - Application Authentication.json
+Intune/Win32Apps/Custom Shortcuts/Installer/Aho.ico
+Intune/Win32Apps/Custom Shortcuts/Installer/HUD.ico
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default.htm
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default.rtf
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default.txt
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/colorschememapping.xml
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/filelist.xml
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/image001.png
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/image002.png
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/image003.png
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/image004.png
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/image005.png
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/image006.png
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/image007.jpg
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/image008.jpg
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/image009.png
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/image010.png
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/image011.png
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/image012.jpg
+Intune/Apps/01_Scripts/HUD Email Signature/Files/Default_files/themedata.thmx
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default.htm
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default.rtf
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default.txt
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/colorschememapping.xml
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/filelist.xml
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/image001.png
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/image002.png
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/image003.png
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/image004.png
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/image005.png
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/image006.png
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/image007.jpg
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/image008.jpg
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/image009.png
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/image010.png
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/image011.png
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/image012.jpg
+Intune/Win32Apps/_OLD/Outlook Email Signature/Payload/Default_files/themedata.thmx
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default.htm
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default.rtf
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default.txt
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/colorschememapping.xml
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/filelist.xml
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/image001.png
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/image002.png
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/image003.png
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/image004.png
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/image005.png
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/image006.png
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/image007.jpg
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/image008.jpg
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/image009.png
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/image010.png
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/image011.png
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/image012.jpg
+Intune/Apps/01_Scripts/Outlook Email Signature/Files/Default_files/themedata.thmx
+Intune/Configuration Policy Schemas/check wifi.xml
+Intune/Configuration Policy Schemas/Startmenu_Layout.json
+Intune/Configuration Policy Schemas/Managed_Favourites.json
+Intune/Apps/01_Scripts/SAFEQ Cloud Printing/Files/safeq-cloud-client-3.41.0-release-setup.exe
+Intune/Apps/01_Scripts/7-Zip/Files/7z2301-x64.exe
+Intune/Apps/01_Scripts/SQL Server Management Studio (SSMS)/Files/SSMS-Setup-ENU.exe
+Intune/Win32Apps/_OLD/Document Templates/Installer/HUD PowerPoint Template.potx
+Intune/Win32Apps/_OLD/Document Templates/Installer/Letterhead Dark.dotx
+Intune/Win32Apps/_OLD/Document Templates/Installer/Memo.dotx
+Intune/Win32Apps/_OLD/Document Templates/Old Templates/Aide Memoire for Events.dotx
+Intune/Win32Apps/_OLD/Document Templates/Old Templates/Aide Memoire for Events.dotx.old
+Intune/Win32Apps/_OLD/Document Templates/Old Templates/Aide Memoire.dotx
+Intune/Win32Apps/_OLD/Document Templates/Old Templates/Aide Memoire.dotx.old
+Intune/Win32Apps/_OLD/Document Templates/Old Templates/Briefing Paper.dotx
+Intune/Win32Apps/_OLD/Document Templates/Old Templates/Memo.dotx.old
+Entra/User Lifecycle/Onboard via Graph API/Provision New Starters App (Aho).json
+Intune/Apps/01_Scripts/Git/Installer/Git-2.44.0-64-bit.exe
+Intune/Apps/01_Scripts/Office 365 Document Templates/CoverPages/HUD Cover Pages.dotx
+Intune/Apps/01_Scripts/Office 365 Document Templates/CoverPages/Quality Assurance Sheet.dotx
+Intune/Apps/01_Scripts/Office 365 Document Templates/Old Templates/Aide Memoire for Events.dotx
+Intune/Apps/01_Scripts/Office 365 Document Templates/Old Templates/Aide Memoire for Events.dotx.old
+Intune/Apps/01_Scripts/Office 365 Document Templates/Old Templates/Aide Memoire.dotx
+Intune/Apps/01_Scripts/Office 365 Document Templates/Old Templates/Aide Memoire.dotx.old
+Intune/Apps/01_Scripts/Office 365 Document Templates/Old Templates/Briefing Paper.dotx
+Intune/Apps/01_Scripts/Office 365 Document Templates/Old Templates/Memo.dotx.old
+Intune/Apps/01_Scripts/Office 365 Document Templates/Templates/HUD Aide Memoire Template.dotx
+Intune/Apps/01_Scripts/Office 365 Document Templates/Templates/HUD Briefing Template.dotx
+Intune/Apps/01_Scripts/Office 365 Document Templates/Templates/HUD Document Template.dotx
+Intune/Apps/01_Scripts/Office 365 Document Templates/Templates/HUD Event Template.dotx
+Intune/Apps/01_Scripts/Office 365 Document Templates/Templates/HUD PowerPoint Template.potx
+Intune/Apps/01_Scripts/Office 365 Document Templates/Templates/Letterhead Dark.dotx
+Intune/Apps/01_Scripts/Office 365 Document Templates/Templates/Memo.dotx
+Intune/Apps/01_Scripts/Windows Custom Desktop Shortcuts/Shortcuts/Aho.ico
+Intune/Apps/01_Scripts/Windows Custom Desktop Shortcuts/Shortcuts/HUD.ico
+Intune/Apps/01_Scripts/HUD/Custom Desktop Shortcuts/Shortcuts/Aho.ico
+Intune/Apps/01_Scripts/HUD/Custom Desktop Shortcuts/Shortcuts/HUD.ico
+Intune/Apps/01_Scripts/HUD/Office 365 Custom Dictionary/Files/ToMerge.dic
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/CoverPages/HUD Cover Pages.dotx
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/CoverPages/Quality Assurance Sheet.dotx
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/Old Templates/Aide Memoire for Events.dotx
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/Old Templates/Aide Memoire for Events.dotx.old
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/Old Templates/Aide Memoire.dotx
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/Old Templates/Aide Memoire.dotx.old
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/Old Templates/Briefing Paper.dotx
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/Old Templates/Memo.dotx.old
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/Templates/HUD Aide Memoire Template.dotx
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/Templates/HUD Briefing Template.dotx
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/Templates/HUD Document Template.dotx
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/Templates/HUD Event Template.dotx
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/Templates/HUD PowerPoint Template.potx
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/Templates/Letterhead Dark.dotx
+Intune/Apps/01_Scripts/HUD/Office 365 Document Templates/Templates/Memo.dotx
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default.htm
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default.rtf
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default.txt
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/colorschememapping.xml
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/filelist.xml
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/image001.png
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/image002.png
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/image003.png
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/image004.png
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/image005.png
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/image006.png
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/image007.jpg
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/image008.jpg
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/image009.png
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/image010.png
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/image011.png
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/image012.jpg
+Intune/Apps/01_Scripts/HUD/Outlook Email Signature/Files/Default_files/themedata.thmx
+Intune/Apps/01_Scripts/Standard/Git/Installer/Git-2.44.0-64-bit.exe
+Intune/Apps/01_Scripts/Standard/7-Zip/Files/7z2301-x64.exe
+Intune/Apps/01_Scripts/Standard/SQL Server Management Studio (SSMS)/Files/SSMS-Setup-ENU.exe
+Intune/Apps/01_Scripts/Standard/R for Windows/Installer/R-4.3.3-win.exe
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/National-Book.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/National-Semibold.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-black-italic.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-black.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-bold-italic.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-bold.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-book-italic.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-book.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-extrabold-italic.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-extrabold.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-light-italic.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-light.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-medium-italic.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-medium.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-regular-italic.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-regular.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-semibold-italic.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-semibold.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-thin-italic.otf
+Intune/Win32Apps/_TO MIGRATE/Font Install/Installer/national-web-thin.otf
+Intune/Win32Apps/_TO MIGRATE/M365 Apps/Configurations/LangPack_Install.xml
+Intune/Win32Apps/_TO MIGRATE/M365 Apps/Configurations/LangPack_Uninstall.xml
+Intune/Win32Apps/_TO MIGRATE/M365 Apps/Configurations/OfficeInclAccess_Install.xml
+Intune/Win32Apps/_TO MIGRATE/M365 Apps/Configurations/OfficeInclAccess_Uninstall.xml
+Intune/Win32Apps/_TO MIGRATE/M365 Apps/Configurations/OfficeStd_Install.xml
+Intune/Win32Apps/_TO MIGRATE/M365 Apps/Configurations/OfficeStd_Uninstall.xml
+Intune/Win32Apps/_TO MIGRATE/M365 Apps/Configurations/Project_Install.xml
+Intune/Win32Apps/_TO MIGRATE/M365 Apps/Configurations/Project_Uninstall.xml
+Intune/Win32Apps/_TO MIGRATE/M365 Apps/Configurations/ProofTools_Install.xml
+Intune/Win32Apps/_TO MIGRATE/M365 Apps/Configurations/ProofTools_Uninstall.xml
+Intune/Win32Apps/_TO MIGRATE/M365 Apps/Configurations/Visio_Install.xml
+Intune/Win32Apps/_TO MIGRATE/M365 Apps/Configurations/Visio_Uninstall.xml
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/EngTRkb_amd64.msi
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/EngTRkb_amd64.msi
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/EngTRkb_i386.msi
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/EngTRkb_ia64.msi
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/setup.exe
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/amd64/EngTRkb.dll
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/i386/EngTRkb.dll
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/ia64/EngTRkb.dll
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/engtrkb/wow64/EngTRkb.dll
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/OptiTRkb_amd64.msi
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/OptiTRkb_i386.msi
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/OptiTRkb_ia64.msi
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/setup.exe
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/amd64/OptiTRkb.dll
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/i386/OptiTRkb.dll
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/ia64/OptiTRkb.dll
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/20240125_0910_te_reo_keyboard_layout_setup/optitrkb/wow64/OptiTRkb.dll
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/amd64/EngTRkb.dll
+Intune/Win32Apps/_TO MIGRATE/Maori Keyboard/Installer/wow64/EngTRkb.dll
+Intune/Win32Apps/_TO MIGRATE/Te Reo Plugin Outlook/Installer/Setup.msi
+Intune/Win32Apps/_TO MIGRATE/Te Reo Plugin Outlook/Installer/TeReoGreetings.csv
+Intune/Apps/01_Scripts/Standard/RStudio/Installer/RStudio-2023.12.1-402.exe
+SharePoint Online/Delete OneDrive Files.ps1
+_Projects/HUD Digital Support/Authentication_Snippets.ps1
+_Projects/HUD Digital Support/Authentication_Snippets.ps1
+Intune/App Deployment/Packages/Internal/Digital Support Authentication/AppInstall.ps1
+Intune/App Deployment/Packages/Internal/Digital Support Authentication/Validation.ps1
+_Projects/HUD Digital Support/Authentication_Snippets.ps1
+_Projects/HUD Digital Support/Authentication_Snippets.ps1
+_Projects\HUD Digital Support\Authentication_Snippets.ps1
+Intune/App Deployment/Packages/Internal/Office 365 Document Templates/Templates/Non Template Versions/HUD Aide Memoire Template.dotx
+Intune/App Deployment/Packages/Internal/Office 365 Document Templates/Templates/Non Template Versions/HUD Briefing Template.dotx
+Intune/App Deployment/Packages/Internal/Office 365 Document Templates/Templates/Non Template Versions/HUD Document Template.dotx
+Intune/App Deployment/Packages/Internal/Office 365 Document Templates/Templates/Non Template Versions/HUD Event Template.dotx
+Intune/App Deployment/Packages/Internal/Office 365 Document Templates/Templates/Non Template Versions/HUD PowerPoint Template - Nov 2024.potx
+Intune/App Deployment/Packages/Internal/Office 365 Document Templates/Templates/Non Template Versions/Letterhead Dark.dotx
+Intune/App Deployment/Packages/Internal/Office 365 Document Templates/Templates/Non Template Versions/Memo.dotx
+_Projects/HUD Digital Support/Authentication_Snippets.ps1

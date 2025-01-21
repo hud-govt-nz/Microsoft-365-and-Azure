@@ -1,0 +1,43 @@
+﻿Group,Type,Te Reo,English,Description
+Formal,Closings,"Nāku, nā",Regards,
+Formal,Closings,"Nāku iti nei, nā",Yours sincerely,Yours sincerely in a humbly way
+Formal,Closings,Ngā mihi,Thank you,
+Formal,Closings,Ngā mihi nui,Kind regards,Kind regards with more emphasis on gratitude
+Formal,Closings,"Nāku noa, nā",Yours faithfully,
+Informal,Closings,Nā,From,
+Informal,Closings,Hei konā mai,Goodbye for now,
+Informal,Closings,Mā te wā,See you later,"See you later, more than likely soon"
+Informal,Closings,Noho ora mai,Stay well,"Stay well, look after yourself, goodbye"
+Informal,Closings,Kia pai te rā,Have a nice day,
+Informal,Closings,Kia pai ngā rā whakatā,Have a good break,
+Formal,Greetings,Tēnā koe,Dear,Hello to one person
+Formal,Greetings,Tēnā kōrua,Greetings,Hello to two people
+Formal,Greetings,Tēnā koutou,Greetings,Hello to three or more people
+Formal,Greetings,Tēnā tatou katoa,Greetings,Greetings to all including speaker
+Informal,Greetings,Kia ora,Hello,Hello to a person(s) you know
+Informal,Greetings,Kia ora kōrua,Hello,Hello to two people you know
+Informal,Greetings,Kia ora koutou,Hello,Hello to more than two people you know
+Informal,Greetings,Mōrena,Good morning,Good morning to everybody
+Informal,Greetings,Ata mārie,Good morning,Good morning to everybody
+Informal,Greetings,Ahiahi mārie,Good afternoon,Good afternoon to someone you know
+Informal,Greetings,Ngā mihi o te ahiahi,Good afternoon,Greetings of the afternoon
+Informal,Conclusions,Noho mai rā i roto i ngā manaakitanga katoa,Stay well/take care,
+Informal,Conclusions,Kia tau rā ngā manaakitanga ki a koe,May you be well,
+Informal,Conclusions,Kia tau rā ngā manaakitanga ki a kōrua,May you both be well,
+Informal,Conclusions,Kia tau rā ngā manaakitanga ki a koutou katoa,May you all be well,
+Informal,Conclusions,Ko te tūmanako he āwhina i roto,I hope this is helpful,
+Informal,Conclusions,Ko te tūmanako he paku āwhina tēnei,Hope this is of a little assistance,
+Informal,Conclusions,Kia rongo kōrero anō māua i a kōrua,Until we (both) hear from either of you (2) again,
+Informal,Conclusions,Kia rongo kōrero anō mātou i a koe,Until we all hear from you again,
+Informal,Conclusions,Māu au e whakamōhio mai,Let me know your response,
+Informal,Conclusions,Tēnā koa whakamōhiotia mai au,Please let me know your response,
+Informal,Conclusions,"Kia wātea mai koe, whakahoki kōrero mai","When you are free, I look forward to hearing your response",
+Informal,Conclusions,"Kia wātea mai koe, whakapā mai","When you are free, make contact",
+Informal,Conclusions,Ngā mihi maioha,Thank you with appreciation,
+Informal,Conclusions,"Taku hē, taku hē",I apologise for my mistake,
+Informal,Conclusions,Taku whakapāha,My apologies,
+Informal,Conclusions,"Mēna he pātai āu, whakapā mai","If you have any questions, contact me",
+Informal,Conclusions,"Mēna he pātai ā kōrua, whakapā mai","If either of you have any questions, contact me",
+Informal,Conclusions,"Mēna he pātai ā koutou, whakapā mai","If any of you have any questions, contact me (3+)",
+Informal,Conclusions,Kia manahau!,Enjoy!,
+Informal,Conclusions,Ka mau te wehi!,Awesome!,
