@@ -26,7 +26,7 @@ Copy-Item -Path "$PSScriptRoot\functions.ps1" -Destination $FolderName -Force
 Write-host "Please select the folder of the deployment files" -ForegroundColor Yellow
 $DeploymentFolder = New-Object -Typename System.Windows.Forms.FolderBrowserDialog
 
-$DeploymentFolder.SelectedPath = "C:\HUD\15_CodeRepo\AshForde\M365-Staging\INTUNE\App Deployment\Packages"
+$DeploymentFolder.SelectedPath = "C:\HUD\Git_Repositories\Microsoft-365-and-Azure\Intune\App Deployment\Packages"
 $DeploymentFolder.ShowDialog()
 
 

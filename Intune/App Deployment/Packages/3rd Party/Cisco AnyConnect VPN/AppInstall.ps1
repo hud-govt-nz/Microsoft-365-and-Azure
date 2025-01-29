@@ -33,7 +33,7 @@ param(
 $AppName = "Cisco Secure Client - AnyConnect VPN"
 $AppVersion = "5.1.6.103"
 $Installer = "cisco-secure-client-win-5.1.6.103-core-vpn-predeploy-k9.msi" # assumes the .exe or .msi installer is in the Files folder of the app package.
-$InstallArguments = "TRANSFORMS=CSCTransform.mst /qn /norestart ALLUSERS=1" # Optional
+$InstallArguments = "TRANSFORMS=CSCTransform.mst /qn /norestart ALLUSERS=1" # Optional #transform file created using Orca tool, asked to add desktop shortcut.
 #$UninstallArguments = "<UNINSTALLARGUMENTS>" # Optional
 
 # Initialize Directories

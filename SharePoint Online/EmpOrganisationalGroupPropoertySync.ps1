@@ -18,6 +18,7 @@ $select = @(
     'displayName'
     'mail'
     'userprincipalname'
+    'accountEnabled'
     'jobTitle'
     'department'
     'extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserOrganisationalGroup'
@@ -35,7 +36,7 @@ $select = @(
 ) -join ','
 
 # Graph API Call
-$uri     = "https://graph.microsoft.com/v1.0/users?`$Filter=accountEnabled eq true and UserType eq 'Member'&`$select=$select&`$expand=manager"
+$uri     = "https://graph.microsoft.com/v1.0/users?`$Filter=UserType eq 'Member'&`$select=$select&`$expand=manager"
 $headers = @{
         "Authorization" = $Token
         "Content-Type"  = "application/json"
@@ -55,6 +56,7 @@ do {
             'display_name'                = $user.displayName
             'email'                       = $user.mail
             'userprincipalname'           = $user.userPrincipalName
+            'account_enabled'             = if ($user.accountEnabled -eq $true) { "true" } else { "false" }
 
             # Organisational Structure
             'job_title'                   = $user.jobTitle
@@ -95,23 +97,18 @@ Write-output "Total Users: $totalUsers"
 
 
 # Sort the result by display name
-$output = $output | Sort-Object -Property display_name | Format-Table -Property id, display_name, email, userprincipalname, job_title, department, organisational_group -AutoSize -Wrap
-
-
+$output = $output | Sort-Object -Property display_name #| Format-Table -Property id, display_name, email, userprincipalname, job_title, department, organisational_group -AutoSize -Wrap
 
 
 # Update the Organisational Group property in SharePoint Online
 $output | ForEach-Object {
     $user = $_
+    if ($user.account_enabled -eq "false") {
+        $user.organisational_group = ""
+    }
     $user | Select-Object -Property id, display_name, email, userprincipalname, job_title, department, organisational_group
     Set-PnPUserProfileProperty -Account $user.userprincipalname -PropertyName "OrganisationalGroup" -Value $user.organisational_group
+    Set-PnPUserProfileProperty -Account $user.userprincipalname -PropertyName "accountEnabled" -Value $user.account_enabled
 
-    Write-Output "Updated Organisational Group for $($user.display_name) to $($user.organisational_group)"
+    Write-Output "Updated Organisational Group for $($user.display_name) to $($user.organisational_group)`n"
 }
-
-
-#set-PnPUserProfileProperty -Account Ashley.Forde@hud.govt.nz -PropertyName "OrganisationalGroup" -Value "Organisational Performance"
-
-#>
-
-#return $output

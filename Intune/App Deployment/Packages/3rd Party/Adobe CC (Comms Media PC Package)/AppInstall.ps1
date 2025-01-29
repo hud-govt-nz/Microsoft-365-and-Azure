@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-    7-Zip File Manager
+    Adobe Create Cloud (Comms Media PC Package)
 
 .DESCRIPTION
-    Script to install 7-Zip File Manager
+    Script to install Adobe Create Cloud (Comms Media PC Package) which also includes inDesign and Photoshop.
 
 .PARAMETER Mode
     Sets the mode of operation. Supported modes are Install or Uninstall
@@ -14,8 +14,8 @@
 
 .NOTES
     - AUTHOR: Ashley Forde
-    - Version: 24.09
-    - Date: 27.01.2025
+    - Version: 24.2.20759.0
+    - Date: 
 #>
 # Region Parameters
 [CmdletBinding()]
@@ -30,11 +30,11 @@ param(
 . "$PSScriptRoot\functions.ps1"
 
 # Application Variables
-$AppName = "7-Zip"
-$AppVersion = "24.09"
-$Installer = "7z2409-x64.exe" # assumes the .exe or .msi installer is in the Files folder of the app package.
-$InstallArguments = "/S" # Optional
-$UninstallArguments = "/S" # Optional
+$AppName = "Adobe CC - Comms Media PC Package"
+$AppVersion = "6.5.0"
+$Installer = "Comms Media PC Package.msi" # assumes the .exe or .msi installer is in the Files folder of the app package.
+$InstallArguments = "/norestart /quiet EULA_ACCEPT=YES" # Optional
+$UninstallArguments = "<UNINSTALLARGUMENTS>" # Optional
 
 # Initialize Directories
 $folderpaths = Initialize-Directories -HomeFolder C:\HUD\
@@ -103,7 +103,10 @@ switch ($Mode) {
             $AppToUninstall = Get-InstalledApps -App $AppName
 
             # Uninstall App
-            $uninstallProcess = Start-Process $AppToUninstall.UninstallString -ArgumentList $UninstallArguments -PassThru -Wait -ErrorAction stop
+            $uninstall_command = 'MsiExec.exe'
+            $Result = (($AppToUninstall.UninstallString -split ' ')[1] -replace '/I','/X ') + ' /q'
+            $uninstall_args = [string]$Result
+            $uninstallProcess = Start-Process $uninstall_command  -ArgumentList $uninstall_args -PassThru -Wait -ErrorAction stop
 
             # Post Uninstall Actions
             if ($uninstallProcess.ExitCode -eq "0") {
