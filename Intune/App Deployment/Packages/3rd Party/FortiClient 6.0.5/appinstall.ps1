@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-    Adobe Create Cloud (Comms Media PC Package)
+    FortiClient Desktop VPN Client
 
 .DESCRIPTION
-    Script to install Adobe Create Cloud (Comms Media PC Package) which also includes inDesign and Photoshop.
+    Script to install FortiClient Desktop VPN Client
 
 .PARAMETER Mode
     Sets the mode of operation. Supported modes are Install or Uninstall
@@ -14,8 +14,8 @@
 
 .NOTES
     - AUTHOR: Ashley Forde
-    - Version: 6.5.0
-    - Date: 30.1.25
+    - Version: 6.0.5
+    - Date: 31.01.25
 #>
 # Region Parameters
 [CmdletBinding()]
@@ -30,11 +30,10 @@ param(
 . "$PSScriptRoot\functions.ps1"
 
 # Application Variables
-$AppName = "Adobe CC - Comms Media PC Package"
-$AppVersion = "6.5.0"
-$Installer = "Comms Media PC Package.msi" # assumes the .exe or .msi installer is in the Files folder of the app package.
-$InstallArguments = "/qn" # Optional
-$UninstallArguments = '/X "{d032052d-840a-490b-b844-46e9284b6623}" /qb' # Optional
+$AppName = "FortiClient"
+$Installer = "FortiClientSetup_6.0.5.0209_x64.exe" # assumes the .exe or .msi installer is in the Files folder of the app package.
+$InstallArguments = "/quiet /norestart" # Optional
+#$UninstallArguments = "<UNINSTALLARGUMENTS>" # Optional
 
 # Initialize Directories
 $folderpaths = Initialize-Directories -HomeFolder C:\HUD\
@@ -75,11 +74,12 @@ switch ($Mode) {
                 Write-LogEntry -Value "Starting $Mode of $AppName" -Severity 1
                 $Process = Start-Process $SetupFilePath -ArgumentList $InstallArguments -Wait -PassThru -ErrorAction Stop
 
+                
                 # Post Install Actions
                 if ($Process.ExitCode -eq "0") {
                     # Create validation file
-                    New-Item -ItemType File -Path $AppValidationFile -Force -Value $AppVersion
-                    Write-LogEntry -Value "Validation file has been created at $AppValidationFile" -Severity 1
+                    #New-Item -ItemType File -Path $AppValidationFile -Force -Value $AppVersion
+                    #Write-LogEntry -Value "Validation file has been created at $AppValidationFile" -Severity 1
                     Write-LogEntry -Value "Install of $AppName is complete" -Severity 1
                 } else {
                     Write-LogEntry -Value "Install of $AppName failed with ExitCode: $($Process.ExitCode)" -Severity 3
@@ -100,20 +100,20 @@ switch ($Mode) {
 
     "Uninstall" {
         try {
-            #$AppToUninstall = Get-InstalledApps -App $AppName
+            $AppToUninstall = Get-InstalledApps -App $AppName
 
             # Uninstall App
             $uninstall_command = 'MsiExec.exe'
-            #$Result = (($AppToUninstall.UninstallString -split ' ')[1] -replace '/I','/X ') + ' /q'
-            $uninstall_args = '/X "{d032052d-840a-490b-b844-46e9284b6623}" /qb'
-            $uninstallProcess = Start-Process $uninstall_command  -ArgumentList $uninstall_args -PassThru -Wait -ErrorAction stop
+            $Result = (($AppToUninstall.UninstallString -split ' ')[1]) + ' /qb'
+            $uninstall_args = [string]$Result
+            $uninstallProcess = Start-Process $uninstall_command -ArgumentList $uninstall_args -PassThru -Wait -ErrorAction Stop
 
             # Post Uninstall Actions
             if ($uninstallProcess.ExitCode -eq "0") {
                 # Delete validation file
                 try {
-                    Remove-Item -Path $AppValidationFile -Force -Confirm:$false
-                    Write-LogEntry -Value "Validation file has been removed at $AppValidationFile" -Severity 1
+                    #Remove-Item -Path $AppValidationFile -Force -Confirm:$false
+                    #Write-LogEntry -Value "Validation file has been removed at $AppValidationFile" -Severity 1
 
                     # Cleanup 
                     if (Test-Path "$SetupFolder") {
