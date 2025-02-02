@@ -100,38 +100,47 @@ switch ($Mode) {
 
     "Uninstall" {
         try {
-            $AppToUninstall = Get-InstalledApps -App $AppName
-
-            # Uninstall App
-            $uninstall_command = 'MsiExec.exe'
-            $Result = (($AppToUninstall.UninstallString -split ' ')[1]) + ' /qb'
-            $uninstall_args = [string]$Result
-            $uninstallProcess = Start-Process $uninstall_command -ArgumentList $uninstall_args -PassThru -Wait -ErrorAction Stop
-
-            # Post Uninstall Actions
-            if ($uninstallProcess.ExitCode -eq "0") {
-                # Delete validation file
-                try {
-                    #Remove-Item -Path $AppValidationFile -Force -Confirm:$false
-                    #Write-LogEntry -Value "Validation file has been removed at $AppValidationFile" -Severity 1
-
-                    # Cleanup 
-                    if (Test-Path "$SetupFolder") {
-                        Remove-Item -Path "$SetupFolder" -Recurse -Force -ErrorAction Continue
-                        Write-LogEntry -Value "Cleanup completed successfully" -Severity 1
-                    }
-                } catch [System.Exception] {
-                    Write-LogEntry -Value "Error deleting validation file. Errormessage: $($_.Exception.Message)" -Severity 3
-                }
-            } else {
-                throw "Uninstallation failed with exit code $($uninstallProcess.ExitCode)"
+            # Set the service to disabled
+            $service = Get-Service -Name "FA_Scheduler" -ErrorAction SilentlyContinue
+            if ($service) {
+                Write-LogEntry -Value "Disabling service FA_Scheduler" -Severity 1
+                Set-Service -Name "FA_Scheduler" -StartupType Disabled
             }
+
+            # Command to run a script block upon reboot
+            $scriptBlock = {
+
+                # Run the FCRemove.exe app
+                $FCRemove = "C:\HUD\00_Staging\fcremove\fcremove_x64.exe"
+                if (Test-Path $FCRemove) {
+                    Write-Output "Running FCRemove.exe"
+                    Start-Process -FilePath $FCRemove -ArgumentList "-silent -noreboot" -Wait
+                }
+
+            }
+
+            # Convert script block to a Base64 encoded string to pass it to the scheduled task
+            $encodedCommand = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($scriptBlock.ToString()))
+
+            # Creating the scheduled task
+            $action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "-ExecutionPolicy Bypass -EncodedCommand $encodedCommand"
+            $trigger = New-ScheduledTaskTrigger -AtStartup
+
+            Register-ScheduledTask `
+                -Action $action `
+                -Trigger $trigger `
+                -TaskName "Continue FortiClient Uninstall" `
+                -Description "Completes the FCRemove.exe task to complete uninstall of FortiClient" `
+                -RunLevel Highest `
+                -User "System"
+
+            # Restart the computer (uncomment in actual use)
+            Restart-Computer
+
         } catch [System.Exception] {
             Write-LogEntry -Value "Error completing uninstall. Errormessage: $($_.Exception.Message)" -Severity 3
             throw "Uninstallation halted due to an error"
         }
-
-        Write-LogEntry -Value "Uninstall of $AppName is complete" -Severity 1
     }
 
     default {
