@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     FortiClient Desktop VPN Client
 
@@ -33,7 +33,6 @@ param(
 $AppName = "FortiClient"
 $Installer = "FortiClientSetup_6.0.5.0209_x64.exe" # assumes the .exe or .msi installer is in the Files folder of the app package.
 $InstallArguments = "/quiet /norestart" # Optional
-#$UninstallArguments = "<UNINSTALLARGUMENTS>" # Optional
 
 # Initialize Directories
 $folderpaths = Initialize-Directories -HomeFolder C:\HUD\
@@ -77,9 +76,6 @@ switch ($Mode) {
                 
                 # Post Install Actions
                 if ($Process.ExitCode -eq "0") {
-                    # Create validation file
-                    #New-Item -ItemType File -Path $AppValidationFile -Force -Value $AppVersion
-                    #Write-LogEntry -Value "Validation file has been created at $AppValidationFile" -Severity 1
                     Write-LogEntry -Value "Install of $AppName is complete" -Severity 1
                 } else {
                     Write-LogEntry -Value "Install of $AppName failed with ExitCode: $($Process.ExitCode)" -Severity 3
@@ -100,42 +96,77 @@ switch ($Mode) {
 
     "Uninstall" {
         try {
+            # Copy files to staging folder
+            Copy-Item -Path "$PSScriptRoot\Files\*" -Destination $SetupFolder -Recurse -Force -ErrorAction Stop
+            Write-LogEntry -Value "Setup files have been copied to $Setupfolder." -Severity 1
+                      
             # Set the service to disabled
             $service = Get-Service -Name "FA_Scheduler" -ErrorAction SilentlyContinue
             if ($service) {
                 Write-LogEntry -Value "Disabling service FA_Scheduler" -Severity 1
-                Set-Service -Name "FA_Scheduler" -StartupType Disabled
+                Set-Service -Name "FA_Scheduler" -StartupType Disabled -ErrorAction SilentlyContinue
             }
 
             # Command to run a script block upon reboot
             $scriptBlock = {
 
-                # Run the FCRemove.exe app
-                $FCRemove = "C:\HUD\00_Staging\fcremove\fcremove_x64.exe"
+                # Define paths
+                $FCRemove = "C:\HUD\00_Staging\FortiClient\fcremove\fcremove_x64.exe"
+
+                # Run FCRemove.exe if it exists
                 if (Test-Path $FCRemove) {
-                    Write-Output "Running FCRemove.exe"
-                    Start-Process -FilePath $FCRemove -ArgumentList "-silent -noreboot" -Wait
+                    $process = Start-Process -FilePath $FCRemove -ArgumentList "-silent -noreboot" -Wait -PassThru
+
+                    if ($process.ExitCode -eq 0) {
+                        Write-Output -Value "FortiClient uninstallation completed successfully"
+                    } else {
+                        Write-Output -Value "FortiClient uninstallation failed with ExitCode: $($process.ExitCode)" -Severity 3
+                    }
                 }
 
+                # Remove the scheduled task after execution
+                $taskName = "Continue FortiClient Uninstall"
+                Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
+
+                # Remove setup files
+                Remove-Item -Path "C:\HUD\00_Staging\FortiClient" -Recurse -Force -ErrorAction SilentlyContinue
             }
 
-            # Convert script block to a Base64 encoded string to pass it to the scheduled task
-            $encodedCommand = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($scriptBlock.ToString()))
+            # Convert script block to a Base64 encoded string
+            $encodedCommand = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes(
+                [ScriptBlock]::Create($scriptBlock).ToString()
+            ))
 
-            # Creating the scheduled task
+            # Create a scheduled task to run the script block once upon reboot
+            $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 30)
             $action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "-ExecutionPolicy Bypass -EncodedCommand $encodedCommand"
             $trigger = New-ScheduledTaskTrigger -AtStartup
 
-            Register-ScheduledTask `
-                -Action $action `
-                -Trigger $trigger `
-                -TaskName "Continue FortiClient Uninstall" `
-                -Description "Completes the FCRemove.exe task to complete uninstall of FortiClient" `
-                -RunLevel Highest `
-                -User "System"
+            # Register the scheduled task
+            $task = Register-ScheduledTask `
+                                -Action $action `
+                                -Trigger $trigger `
+                                -Settings $settings `
+                                -TaskName "Continue FortiClient Uninstall" `
+                                -Description "Completes the FCRemove.exe task to complete uninstall of FortiClient" `
+                                -RunLevel Highest `
+                                -User "System" `
+                                -TaskPath "\HUD Digital"
+
+            if ($task.State -eq "ready"){
+                exit 0
+
+            } else {
+                exit 1
+            
+                } 
 
             # Restart the computer (uncomment in actual use)
-            Restart-Computer
+                #perform reboot
+                #Write-LogEntry -value $($task.exitcode) -Severity 1
+
+
+            #Restart-Computer -Confirm:$false
 
         } catch [System.Exception] {
             Write-LogEntry -Value "Error completing uninstall. Errormessage: $($_.Exception.Message)" -Severity 3
