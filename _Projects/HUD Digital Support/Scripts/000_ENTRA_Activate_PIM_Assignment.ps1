@@ -87,8 +87,28 @@ foreach ($value in $SelectedRoles) {
 	# Get role displayName and ID
 	$Role = Get-MgDirectoryRoleTemplate | Where-Object { $value -contains $_.DisplayName } | Select-Object DisplayName, Id
 
+	# Check for existing active assignments
+	$existingAssignments = Get-MgRoleManagementDirectoryRoleAssignmentSchedule -Filter "principalId eq '$currentuser' and roleDefinitionId eq '$($Role.id)'"
+    
+	if ($existingAssignments) {
+		Write-Host "Note: Found existing assignment for role '$value'" -ForegroundColor Yellow
+		$latestAssignment = $existingAssignments | Sort-Object -Property CreatedDateTime -Descending | Select-Object -First 1
+        
+		if ($latestAssignment.AssignmentType -eq 'Activated') {
+			$expirationTime = $latestAssignment.ScheduleInfo.Expiration.EndDateTime
+			Write-Host "Role '$value' is already active until $expirationTime" -ForegroundColor Cyan
+			$extendChoice = Read-Host "Would you like to extend this role assignment? (Yes/No)"
+			if ($extendChoice -eq 'Yes') {
+				# Continue with the activation process which will create a new assignment
+				Write-Host "Proceeding to extend role assignment..." -ForegroundColor Green
+			} else {
+				continue
+			}
+		}
+	}
+
 	# Policy Assignment to role
-	$PolicyAssignment = Get-MgPolicyRoleManagementPolicyAssignment -Filter "scopeId eq '/' and scopeType eq 'DirectoryRole' and roleDefinitionId eq '$($Role.Id)'" #-ExpandProperty "policy(`$expand=rules)"
+	$PolicyAssignment = Get-MgPolicyRoleManagementPolicyAssignment -Filter "scopeId eq '/' and scopeType eq 'DirectoryRole' and roleDefinitionId eq '$($Role.Id)'"
 
 	# Retrieve Rule (specific to Expiration_EndUser_Assignment but can be other rules if required)
 	$Rule = Get-MgPolicyRoleManagementPolicyRule -UnifiedRoleManagementPolicyId $PolicyAssignment.PolicyId | Where-Object { $_.id -eq 'Expiration_EndUser_Assignment' } | Select-Object Id -ExpandProperty AdditionalProperties
@@ -155,7 +175,7 @@ foreach ($value in $SelectedRoles) {
 	}
 	try {
 		# Activate the role
-		$Activation = New-MgRoleManagementDirectoryRoleAssignmentScheduleRequest -BodyParameter $params
+		$Activation = New-MgRoleManagementDirectoryRoleAssignmentScheduleRequest -BodyParameter $params -ErrorAction Stop
 
 		$Result = @()
 
@@ -169,9 +189,13 @@ foreach ($value in $SelectedRoles) {
 		}
 		$Result
 
-	} catch [System.Exception]{
-		Write-Output "Error activating $($value) role, Errormessage: $($_.Exception.Message)"
-		break
+	} catch {
+		if ($_.Exception.Message -like "*role assignment already exists*") {
+			Write-Host "Role '$value' is already assigned or activation is in progress." -ForegroundColor Yellow
+		} else {
+			Write-Host "Error activating $($value) role: $($_.Exception.Message)" -ForegroundColor Red
+		}
+		continue
 	}
 
 }
