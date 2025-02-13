@@ -18,9 +18,6 @@
 
 #Requires -Modules Microsoft.Graph.Identity.Governance
 
-$MaximumFunctionCount = 8192
-$MaximumVariableCount = 8192
-
 Clear-Host
 
 # Connect to Graph 
