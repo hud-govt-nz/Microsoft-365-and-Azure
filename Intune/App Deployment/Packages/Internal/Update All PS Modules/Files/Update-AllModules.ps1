@@ -1,13 +1,15 @@
+param (
+    [Parameter(Mandatory=$true)]
+    [ValidateSet('All', 'Selected')]
+    [string]$Mode = 'All',
+    [switch]$AllowPrerelease,
+    [string]$Name = '*',
+    [ValidateSet('AllUsers', 'CurrentUser')][string]$Scope = 'AllUsers',
+    [switch]$WhatIf
+)
+
 function Update-AllModules {
-    param (
-        [switch]$AllowPrerelease,
-        [string]$Name = '*',
-        [ValidateSet('AllUsers', 'CurrentUser')][string]$Scope = 'AllUsers',
-        [switch]$WhatIf
-    )
-    
-    # Test admin privileges without using -Requires RunAsAdministrator,
-    # which causes a nasty error message, if trying to load the function within a PS profile but without admin privileges
+    # Test admin privileges
     if ($Scope -eq 'AllUsers') {
         if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
             Write-Warning ("Function {0} needs admin privileges. Break now." -f $MyInvocation.MyCommand)
@@ -15,18 +17,44 @@ function Update-AllModules {
         }
     }
    
-    # Get all installed modules
-    Write-Host ("Retrieving all installed modules ...") -ForegroundColor Green
-    [array]$CurrentModules = Get-InstalledModule -Name $Name -ErrorAction SilentlyContinue | Select-Object Name, Version | Sort-Object Name
-   
-    if (-not $CurrentModules) {
+    # Get installed modules first
+    Write-Host ("Retrieving installed modules...") -ForegroundColor Green
+    $InstalledModules = Get-InstalledModule -Name $Name -ErrorAction SilentlyContinue | 
+        Select-Object Name, Version | 
+        Sort-Object Name
+
+    if (-not $InstalledModules) {
         Write-Host ("No modules found.") -ForegroundColor Gray
         return
-    } else {
-        $ModulesCount = $CurrentModules.Name.Count
-        $DigitsLength = $ModulesCount.ToString().Length
-        Write-Host ("{0} modules found." -f $ModulesCount) -ForegroundColor Gray
     }
+
+    # If Mode is Selected, show selection grid immediately
+    if ($Mode -eq 'Selected') {
+        $SelectedModules = $InstalledModules | Out-GridView -Title "Select modules to check for updates" -PassThru
+        if (-not $SelectedModules) {
+            Write-Host ("No modules selected for update.") -ForegroundColor Yellow
+            return
+        }
+        $InstalledModules = $SelectedModules
+    }
+
+    # Now check for updates only on selected/all modules
+    Write-Host ("Checking for available updates...") -ForegroundColor Green
+    $CurrentModules = $InstalledModules | ForEach-Object {
+        $Current = $_
+        Write-Host ("Checking {0}..." -f $Current.Name) -ForegroundColor Gray
+        $Latest = Find-Module -Name $Current.Name -ErrorAction SilentlyContinue
+        [PSCustomObject]@{
+            Name = $Current.Name
+            CurrentVersion = $Current.Version
+            LatestVersion = $Latest.Version
+            UpdateAvailable = ([version]$Latest.Version -gt [version]$Current.Version)
+        }
+    }
+    
+    $ModulesCount = $CurrentModules.Count
+    $DigitsLength = $ModulesCount.ToString().Length
+    Write-Host ("{0} modules will be processed for update." -f $ModulesCount) -ForegroundColor Gray
    
     # Show status of AllowPrerelease Switch
     ''
@@ -36,84 +64,38 @@ function Update-AllModules {
         Write-Host ("Updating installed modules to the latest Production version ...") -ForegroundColor Green
     }
    
-    # Retrieve current versions of modules (63 at a time because of PSGallery limit) if $InstalledModules is greater than 0
-    if ($CurrentModules.Count -eq 1) {
-        $onlineversions = $null
-        Write-Host ("Checking online versions for installed module {0}" -f $CurrentModules.name) -ForegroundColor Green
-        $currentversions = Find-Module -Name $CurrentModules.name
-        $onlineversions = $onlineversions + $currentversions
-    }
-   
-    if ($CurrentModules.Count -gt 1) {
-        $startnumber = 0
-        $endnumber = [math]::Min(62, $CurrentModules.Count - 1)
-        $onlineversions = $null
-        while ($CurrentModules.Count -gt $onlineversions.Count) {
-            Write-Host ("Checking online versions for installed modules [{0}..{1}/{2}]" -f $startnumber, $endnumber, $CurrentModules.Count) -ForegroundColor Green
-            $currentversions = Find-Module -Name $CurrentModules.name[$startnumber..$endnumber]
-            $startnumber = $startnumber + 63
-            $endnumber = [math]::Min($endnumber + 63, $CurrentModules.Count - 1)
-            $onlineversions = $onlineversions + $currentversions
-        }
-    }
-    
-    if (-not $CurrentModules) {
-        Write-Warning ("No modules were found to check for updates, please check your NameFilter. Exiting...")
-        return
-    }
-   
-    # Loop through the installed modules and update them if a newer version is available
+    # Update modules that need updating
     $i = 0
     foreach ($Module in $CurrentModules) {
         $i++
         $Counter = ("[{0,$DigitsLength}/{1,$DigitsLength}]" -f $i, $ModulesCount)
         $CounterLength = $Counter.Length
-        Write-Host ('{0} Checking for updated version of module {1} ...' -f $Counter, $Module.Name) -ForegroundColor Green
-        try {
-            $latest = $onlineversions | Where-Object name -eq $module.Name -ErrorAction Stop
-            if ([version]$Module.Version -lt [version]$latest.version) {
+
+        if ($Module.UpdateAvailable) {
+            Write-Host ('{0} Updating module {1} from version {2} to {3} ...' -f $Counter, $Module.Name, $Module.CurrentVersion, $Module.LatestVersion) -ForegroundColor Green
+            try {
                 Update-Module -Name $Module.Name -AllowPrerelease:$AllowPrerelease -AcceptLicense -Scope:$Scope -Force:$True -ErrorAction Stop -WhatIf:$WhatIf.IsPresent
-            }
-        } catch {
-            Write-Host ("{0,$CounterLength} Error updating module {1}!" -f ' ', $Module.Name) -ForegroundColor Red
-        }
-   
-        # Retrieve newest version number and remove old(er) version(s) if any
-        $AllVersions = Get-InstalledModule -Name $Module.Name -AllVersions | Sort-Object PublishedDate -Descending
-        $MostRecentVersion = $AllVersions[0].Version
-        if ($AllVersions.Count -gt 1 ) {
-            Foreach ($Version in $AllVersions) {
-                if ($Version.Version -ne $MostRecentVersion) {
-                    try {
-                        Write-Host ("{0,$CounterLength} Uninstalling previous version {1} of module {2} ..." -f ' ', $Version.Version, $Module.Name) -ForegroundColor Gray
-                        Uninstall-Module -Name $Module.Name -RequiredVersion $Version.Version -Force:$True -ErrorAction Stop -AllowPrerelease -WhatIf:$WhatIf.IsPresent
-                    } catch {
-                        Write-Warning ("{0,$CounterLength} Error uninstalling previous version {1} of module {2}!" -f ' ', $Version.Version, $Module.Name)
+                
+                # Remove old versions
+                $AllVersions = Get-InstalledModule -Name $Module.Name -AllVersions | Sort-Object PublishedDate -Descending
+                if ($AllVersions.Count -gt 1) {
+                    foreach ($Version in $AllVersions | Select-Object -Skip 1) {
+                        try {
+                            Write-Host ("{0,$CounterLength} Uninstalling previous version {1} of module {2} ..." -f ' ', $Version.Version, $Module.Name) -ForegroundColor Gray
+                            Uninstall-Module -Name $Module.Name -RequiredVersion $Version.Version -Force:$True -ErrorAction Stop -AllowPrerelease -WhatIf:$WhatIf.IsPresent
+                        } catch {
+                            Write-Warning ("{0,$CounterLength} Error uninstalling previous version {1} of module {2}!" -f ' ', $Version.Version, $Module.Name)
+                        }
                     }
                 }
+            } catch {
+                Write-Host ("{0,$CounterLength} Error updating module {1}!" -f ' ', $Module.Name) -ForegroundColor Red
             }
-        }
-    }
-   
-    # Get the new module versions for comparing them to previous one if updated
-    $NewModules = Get-InstalledModule -Name $Name | Select-Object Name, Version | Sort-Object Name
-    if ($NewModules) {
-        ''
-        Write-Host ("List of updated modules:") -ForegroundColor Green
-        $NoUpdatesFound = $true
-        foreach ($Module in $NewModules) {
-            $CurrentVersion = $CurrentModules | Where-Object Name -EQ $Module.Name
-            if ($CurrentVersion.Version -notlike $Module.Version) {
-                $NoUpdatesFound = $false
-                Write-Host ("- Updated module {0} from version {1} to {2}" -f $Module.Name, $CurrentVersion.Version, $Module.Version) -ForegroundColor Green
-            }
-        }
-   
-        if ($NoUpdatesFound) {
-            Write-Host ("No modules were updated.") -ForegroundColor Gray
+        } else {
+            Write-Host ('{0} Module {1} is already at latest version {2}' -f $Counter, $Module.Name, $Module.CurrentVersion) -ForegroundColor Gray
         }
     }
 }
-   
-# run function
-Update-AllModules -AllowPrerelease
+
+# Run the function
+Update-AllModules

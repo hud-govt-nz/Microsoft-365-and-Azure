@@ -1,23 +1,3 @@
-#______________________________________________________________________________________________________________________________________________________
-# Requires -Modules ExchangeOnlineManagement
-# Requires -Modules Microsoft.Graph.Authentication
-# Requires -Modules PNP.Powershell
-# Requires -Modules MicrosoftTeams
-#______________________________________________________________________________________________________________________________________________________
-
-# Function to connect to Security and Compliance PowerShell
-try{
-    Connect-IPPSSession `
-    -AppId $env:DigitalSupportAppID `
-    -Organization "mhud.onmicrosoft.com" `
-    -CertificateThumbprint "2A5AB205BA76E77499949DCC06919FA367A0CB58" `
-    -ShowBanner:$false
-    Clear-Host
-    Write-Host "`nConnected to Security and Compliance PowerShell." -ForegroundColor Green
-    } catch {
-        Write-Host "Error connecting to Security and Compliance PowerShell. Please check your credentials and network connection." -ForegroundColor Red
-}
-
 # Retention Policies 
 
 #Exchange Online
