@@ -13,3 +13,10 @@
         $Policy = New-RetentionCompliancePolicy -Name $PolicyName -Comment $Comment -SharePointLocation $SharePointLocation -Enabled:$false
         New-RetentionComplianceRule -Policy $Policy.guid -PublishComplianceTag $Tags 
     }
+
+
+
+    Get-retentioncompliancepolicy
+    
+
+    
