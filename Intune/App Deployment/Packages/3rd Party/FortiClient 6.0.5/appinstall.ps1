@@ -130,6 +130,11 @@ switch ($Mode) {
 
                 # Remove setup files
                 Remove-Item -Path "C:\HUD\00_Staging\FortiClient" -Recurse -Force -ErrorAction SilentlyContinue
+
+                # Remove all FortiClient shortcuts
+                $shortcutPath = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\FortiClient"
+                Remove-Item -Path $shortcutPath -Recurse -Force -ErrorAction SilentlyContinue
+
             }
 
             # Convert script block to a Base64 encoded string

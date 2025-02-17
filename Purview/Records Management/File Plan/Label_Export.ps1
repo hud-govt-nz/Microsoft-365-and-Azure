@@ -36,4 +36,4 @@ foreach ($tag in $complianceTags) {
 }
 
 # Export the processed data to a CSV file
-$processedData | Export-Csv -Path "<CSV File Path>" -NoTypeInformation
+$processedData | Export-Csv -Path "C:\HUD\06_Reporting\Record_Label_Export.CSV" -NoTypeInformation
