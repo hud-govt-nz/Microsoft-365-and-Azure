@@ -132,6 +132,31 @@ function FormatFileSize {
     Return $FileSize
 } 
 
+function Get-LibraryStatistics {
+    param($LibraryData)
+    
+    $Stats = [PSCustomObject]@{
+        TotalFiles = $LibraryData.Count
+        TotalSize = ($LibraryData | Measure-Object -Property Size -Sum).Sum
+        FilesWithRetentionLabel = ($LibraryData | Where-Object { $_.'Retention label' -ne 'No label' }).Count
+        FilesWithSensitivityLabel = ($LibraryData | Where-Object { $_.'Sensitivity label' -ne 'No label' }).Count
+        RetentionLabelDistribution = $LibraryData | Group-Object 'Retention label' | Select-Object Name, Count
+        SensitivityLabelDistribution = $LibraryData | Group-Object 'Sensitivity label' | Select-Object Name, Count
+    }
+    Return $Stats
+}
+
+function Write-BatchProgress {
+    param(
+        $CurrentItem,
+        $TotalItems,
+        $ItemName,
+        $Status
+    )
+    $PercentComplete = ($CurrentItem / $TotalItems) * 100
+    Write-Progress -Activity "Processing $TotalItems $ItemName" -Status $Status -PercentComplete $PercentComplete
+}
+
 # Disconnect from any previous Graph SDK session
 #Disconnect-MgGraph
 # Connect to the Microsoft Graph
@@ -203,44 +228,28 @@ If (!($Drives)) {
     Break
 }
 
-If ($Drives.Count -eq 1) { # Only one drive found - go ahead
-    $Drive = $Drives
-    $DriveName = $Drive.Name
-    Write-Host "Found drive to process:" $DriveName 
-} Elseif ($Drives.Count -gt 1) { # More than one drive found. Ask which to use
-    Clear-Host; Write-Host "More than one drive found in site. We need you to select a drive to report."; [int]$i=1
-    Write-Host " "
-    ForEach ($DriveOption in $Drives) {
-       Write-Host ("{0}: {1}" -f $i, $DriveOption.Name); $i++}
-       Write-Host ""
-    [Int]$Answer = Read-Host "Enter the number of the drive to use"
-    If (($Answer -gt 0) -and ($Answer -le $i)) {
-       [int]$Si = ($Answer-1)
-       $DriveName = $Drives[$Si].Name 
-       Write-Host "OK. Selected drive is" $Drives[$Si].Name 
-       $Drive = $Drives[$Si] 
-    }
-}
-
-If (!($Drive)) { 
-   Write-Host ("Can't find the {0} drive - script exiting" -f $Uri) ; break 
-}
+Write-Host "Found $($Drives.Count) document libraries to process..." -ForegroundColor Cyan
 
 [datetime]$StartProcessing = Get-Date
 $Global:TotalFolders = 1
 
 # Create output list and CSV file
 $Global:ReportData = [System.Collections.Generic.List[Object]]::new()
-$CSVOutputFile =  ((New-Object -ComObject Shell.Application).Namespace('shell:Downloads').Self.Path) + ("\Files {0}-{1} library.csv" -f $Site.displayName, $DriveName)
-# Get the items in the root, including child folders
-Write-Host "Fetching file information..."
-Get-DriveItems -Drive $Drive.Id -FolderId "root"
+$CSVOutputFile =  ((New-Object -ComObject Shell.Application).Namespace('shell:Downloads').Self.Path) + ("\Files {0}-AllLibraries.csv" -f $Site.displayName)
+
+# Process each drive (document library)
+ForEach ($Drive in $Drives) {
+    Write-Host "Processing library: $($Drive.Name)" -ForegroundColor Yellow
+    # Get the items in the root, including child folders
+    Get-DriveItems -Drive $Drive.Id -FolderId "root"
+}
+
 [datetime]$EndProcessing = Get-Date
 $ElapsedTime = ($EndProcessing - $StartProcessing)
 $FilesPerMinute = [math]::Round(($ReportData.Count / ($ElapsedTime.TotalSeconds / 60)), 2)
 Write-Host ""
-Write-Host ("Processed {0} files in {1} folders in {2}:{3} minutes ({4} files/minute)" -f `
-   $ReportData.Count, $TotalFolders, $ElapsedTime.Minutes, $ElapsedTime.Seconds, $FilesPerMinute)
+Write-Host ("Processed {0} files in {1} folders across {2} libraries in {3}:{4} minutes ({5} files/minute)" -f `
+   $ReportData.Count, $TotalFolders, $Drives.Count, $ElapsedTime.Minutes, $ElapsedTime.Seconds, $FilesPerMinute)
 
 Write-Host ""
 Write-Host "Retention Labels in Use"
@@ -268,7 +277,36 @@ If (Get-Module ImportExcel -ListAvailable) {
     $CSVOutputFile = ((New-Object -ComObject Shell.Application).Namespace('shell:Downloads').Self.Path) + "\SharePoint Files Report.CSV"
     $ReportData | Export-Csv -Path $CSVOutputFile -NoTypeInformation -Encoding Utf8
 }
- 
+
+# Generate per-library statistics
+Write-Host "`nGenerating detailed library statistics..." -ForegroundColor Cyan
+$LibraryStats = @{}
+ForEach ($Drive in $Drives) {
+    $LibraryData = $ReportData | Where-Object { $_.WebUrl -like "*/${Drive.Name}/*" }
+    $LibraryStats[$Drive.Name] = Get-LibraryStatistics -LibraryData $LibraryData
+}
+
+# Add library statistics to Excel report
+If ($ExcelGenerated) {
+    $StatsData = foreach ($lib in $LibraryStats.Keys) {
+        [PSCustomObject]@{
+            'Library Name' = $lib
+            'Total Files' = $LibraryStats[$lib].TotalFiles
+            'Total Size (GB)' = [math]::Round($LibraryStats[$lib].TotalSize / 1GB, 2)
+            'Files with Retention Labels' = $LibraryStats[$lib].FilesWithRetentionLabel
+            'Files with Sensitivity Labels' = $LibraryStats[$lib].FilesWithSensitivityLabel
+            'Retention Label %' = if ($LibraryStats[$lib].TotalFiles -gt 0) { 
+                [math]::Round(($LibraryStats[$lib].FilesWithRetentionLabel / $LibraryStats[$lib].TotalFiles) * 100, 1) 
+            } else { 0 }
+            'Sensitivity Label %' = if ($LibraryStats[$lib].TotalFiles -gt 0) { 
+                [math]::Round(($LibraryStats[$lib].FilesWithSensitivityLabel / $LibraryStats[$lib].TotalFiles) * 100, 1) 
+            } else { 0 }
+        }
+    }
+    
+    $StatsData | Export-Excel -Path $ExcelOutputFile -WorksheetName "Library Statistics" -AutoSize -TableName "LibraryStats"
+}
+
 If ($ExcelGenerated) {
     Write-Host ("An Excel report is available in {0}" -f $ExcelOutputFile)
 } Else {    
@@ -276,7 +314,7 @@ If ($ExcelGenerated) {
 }  
 
 # An example script used to illustrate a concept. More information about the topic can be found in the Office 365 for IT Pros eBook https://gum.co/O365IT/
-# and/or a relevant article on https://office365itpros.com or https://www.practical365.com. See our post about the Office 365 for IT Pros repository 
+# and/or a relevant article on https://www.practical365.com. See our post about the Office 365 for IT Pros repository 
 # https://office365itpros.com/office-365-github-repository/ for information about the scripts we write.
 
 # Do not use our scripts in production until you are satisfied that the code meets the needs of your organization. Never run any code downloaded from 
