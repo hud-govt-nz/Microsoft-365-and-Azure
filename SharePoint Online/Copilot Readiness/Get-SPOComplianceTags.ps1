@@ -49,8 +49,8 @@ try {
         
         $complianceTags | ForEach-Object {
             Write-Host "`nTag Details:" -ForegroundColor Cyan
-            Write-Host "  Name: $($_.Name)" -ForegroundColor White
-            Write-Host "  Display Name: $($_.DisplayName)" -ForegroundColor White
+            Write-Host "  Name: $($_.TagName)" -ForegroundColor White
+            Write-Host "  ID: $($_.TagID)" -ForegroundColor White
             if ($_.Description) {
                 Write-Host "  Description: $($_.Description)" -ForegroundColor White
             }
