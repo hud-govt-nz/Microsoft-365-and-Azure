@@ -14,13 +14,14 @@ $TenantURL = "https://$domain.sharepoint.com"
 $dateTime = (Get-Date).ToString("dd-MM-yyyy-hh-ss")
 $directoryPath = "C:\HUD\06_Reporting\SPO\Test\"
 $fileName = "labelsReport" + $dateTime
-$maxFileSize = 15MB # Target 15MB per file
-$sitesPerFile = 15 # Process 15 sites before checking file size
+$maxFileSize = 30MB # Target 30MB per file
+$sitesPerFile = 50 # Process 50 sites before creating new file
 $partNumber = 1
 $currentOutputFile = "$directoryPath\$fileName-part$partNumber.xlsx"
 $sitesProcessedInCurrentFile = 0
+$currentFileSites = @() # Array to store site data before writing to file
 
-Write-Host "Creating new file every 15 sites or when file reaches 15MB" -ForegroundColor Cyan
+Write-Host "Processing 50 sites per file, creating new file at 30MB" -ForegroundColor Cyan
 
 # Check if ImportExcel module is installed, if not install it
 if (-not (Get-Module -ListAvailable -Name ImportExcel)) {
@@ -79,7 +80,7 @@ function CheckFileSize {
     if (Test-Path $filePath) {
         $fileSize = (Get-Item $filePath).Length
         if ($fileSize -ge $maxFileSize) {
-            Write-Host "File size ($([math]::Round($fileSize / 1MB, 2))MB) exceeded 15MB limit. Creating new file." -ForegroundColor Yellow
+            Write-Host "File size ($([math]::Round($fileSize / 1MB, 2))MB) exceeded 30MB limit. Creating new file." -ForegroundColor Yellow
             return $true
         }
     }
@@ -89,6 +90,7 @@ function CheckFileSize {
 function ReportFileLabels($siteUrl) {
     Connect-PnPOnline -url $siteUrl -ClientId $env:DigitalSupportAppID -Tenant 'mhud.onmicrosoft.com' -Thumbprint $env:DigitalSupportCertificateThumbprint
     $siteconn = Get-PnPConnection
+    $siteItems = @() # Array to store items for this site
     try {
         $DocLibraries = Get-PnPList -Includes BaseType, Hidden, Title -Connection $siteconn | Where-Object {
             $_.BaseType -eq "DocumentLibrary" -and $_.Hidden -eq $False -and $_.Title -notin $ExcludedLibraries
@@ -96,92 +98,85 @@ function ReportFileLabels($siteUrl) {
 
         if (-not $DocLibraries -or $DocLibraries.Count -eq 0) {
             Write-Host "No eligible document libraries found in site: $siteUrl" -ForegroundColor Yellow
-            return
+            return @()
         }
 
         $totalLibraries = $DocLibraries.Count
         $currentLibrary = 0
         $totalItemsProcessed = 0
 
-        $DocLibraries | ForEach-Object {
+        foreach ($library in $DocLibraries) {
             $currentLibrary++
-            $libraryName = $_.Title
+            $libraryName = $library.Title
             Write-Progress -Id 2 -Activity "Processing Libraries" -Status "Library $libraryName ($currentLibrary of $totalLibraries)" -PercentComplete (($currentLibrary / $totalLibraries) * 100)
             Write-Host "Processing Document Library:" $libraryName "($currentLibrary of $totalLibraries)" -ForegroundColor Yellow
             
-            $library = $_
             $items = Get-PnPListItem -List $library.Title -Fields "ID","_ComplianceTag","_DisplayName","FileLeafRef","FileRef","FileDirRef","Last_x0020_Modified","Created_x0020_Date","_UIVersionString","SMTotalFileStreamSize" -PageSize 1000 -Connection $siteconn
 
-            if (-not $items -or $items.Count -eq 0) {
-                Write-Host "No items found in library: $libraryName" -ForegroundColor Yellow
-                return
-            }
+            if ($items -and $items.Count -gt 0) {
+                $itemCount = $items.Count
+                $currentItem = 0
 
-            $itemCount = $items.Count
-            $currentItem = 0
-
-            $items | ForEach-Object {
-                $currentItem++
-                $totalItemsProcessed++
-                
-                # Skip folder items and temporary files
-                $fileName = $_.FieldValues["FileLeafRef"]
-                $isExcludedFile = $false
-                if ($fileName) {
-                    $isExcludedFile = $ExcludedFilePatterns | Where-Object { $fileName -match $_ }
-                }
-
-                if ($_.FileSystemObjectType -ne "Folder" -and -not $isExcludedFile) {
-                    Write-Progress -Id 3 -Activity "Processing Items in $libraryName" -Status "Item $currentItem of $itemCount" -PercentComplete (($currentItem / $itemCount) * 100)
+                foreach ($_ in $items) {
+                    $currentItem++
+                    $totalItemsProcessed++
                     
-                    # Convert size from bytes to KB
-                    $sizeInKB = if ($_.FieldValues["SMTotalFileStreamSize"]) {
-                        [math]::Round($_.FieldValues["SMTotalFileStreamSize"] / 1KB, 2)
-                    } else {
-                        0
+                    $fileName = $_.FieldValues["FileLeafRef"]
+                    $isExcludedFile = $false
+                    if ($fileName) {
+                        $isExcludedFile = $ExcludedFilePatterns | Where-Object { $fileName -match $_ }
                     }
 
-                    $item = [PSCustomObject]@{
-                        SiteUrl           = $siteUrl
-                        FolderPath       = $_.FieldValues["FileDirRef"]
-                        ItemID           = $_.FieldValues["ID"]
-                        FileName         = $fileName
-                        RetentionLabel    = $_.FieldValues["_ComplianceTag"]
-                        SensitivityLabel  = $_.FieldValues["_DisplayName"]
-                        Created          = $_.FieldValues["Created_x0020_Date"]
-                        LastModified      = $_.FieldValues["Last_x0020_Modified"]
-                        Version          = $_.FieldValues["_UIVersionString"]
-                        SizeKB           = $sizeInKB
-                        ServerRelativePath = $_.FieldValues["FileRef"]
-                    }
-                    
-                    # Create directory if it doesn't exist
-                    if (-not (Test-Path $directoryPath)) {
-                        New-Item -ItemType Directory -Path $directoryPath -Force | Out-Null
-                    }
+                    if ($_.FileSystemObjectType -ne "Folder" -and -not $isExcludedFile) {
+                        Write-Progress -Id 3 -Activity "Processing Items in $libraryName" -Status "Item $currentItem of $itemCount" -PercentComplete (($currentItem / $itemCount) * 100)
+                        
+                        $sizeInKB = if ($_.FieldValues["SMTotalFileStreamSize"]) {
+                            [math]::Round($_.FieldValues["SMTotalFileStreamSize"] / 1KB, 2)
+                        } else {
+                            0
+                        }
 
-                    # Export the item, either creating a new file or appending
-                    if (-not (Test-Path $currentOutputFile)) {
-                        $item | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -AutoSize -AutoFilter
-                    } else {
-                        $item | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -Append
-                    }
-
-                    # Check file size after append
-                    if (CheckFileSize -filePath $currentOutputFile) {
-                        $partNumber++
-                        $currentOutputFile = "$directoryPath\$fileName-part$partNumber.xlsx"
+                        $item = [PSCustomObject]@{
+                            SiteUrl            = $siteUrl
+                            FolderPath        = $_.FieldValues["FileDirRef"]
+                            ItemID            = $_.FieldValues["ID"]
+                            FileName          = $fileName
+                            RetentionLabel    = $_.FieldValues["_ComplianceTag"]
+                            SensitivityLabel  = $_.FieldValues["_DisplayName"]
+                            Created           = $_.FieldValues["Created_x0020_Date"]
+                            LastModified      = $_.FieldValues["Last_x0020_Modified"]
+                            Version           = $_.FieldValues["_UIVersionString"]
+                            SizeKB            = $sizeInKB
+                            ServerRelativePath = $_.FieldValues["FileRef"]
+                        }
+                        
+                        $siteItems += $item
                     }
                 }
             }
-            Write-Progress -Id 3 -Activity "Processing Items" -Completed
-            Write-Host "Processed $totalItemsProcessed total items so far" -ForegroundColor Cyan
         }
         Write-Progress -Id 2 -Activity "Processing Libraries" -Completed
+        Write-Host "Processed $totalItemsProcessed total items" -ForegroundColor Cyan
+        return $siteItems
     } catch {
-        Write-Host "An exception was thrown: $($_.Exception.Message)" -ForegroundColor Red
-        Write-Host "Error occurred at line: $($_.InvocationInfo.ScriptLineNumber)" -ForegroundColor Red
-        Write-Host "Stack trace: $($_.ScriptStackTrace)" -ForegroundColor Red
+        Write-Host "An error occurred: $($_.Exception.Message)" -ForegroundColor Red
+        return @()
+    }
+}
+
+function ExportToExcel($items) {
+    # Create directory if it doesn't exist
+    if (-not (Test-Path $directoryPath)) {
+        New-Item -ItemType Directory -Path $directoryPath -Force | Out-Null
+    }
+
+    $items | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -AutoSize -AutoFilter
+
+    # Check if file size exceeds limit
+    if ((Get-Item $currentOutputFile).Length -ge $maxFileSize) {
+        Write-Host "File size exceeded 30MB limit. Creating new file for next batch." -ForegroundColor Yellow
+        $script:partNumber++
+        $script:currentOutputFile = "$directoryPath\$fileName-part$partNumber.xlsx"
     }
 }
 
@@ -189,16 +184,25 @@ $allSites | foreach-object {
     $currentSite++
     Write-Progress -Id 1 -Activity "Processing Sites" -Status "Site $currentSite of $totalSites" -PercentComplete (($currentSite / $totalSites) * 100)
     Write-Host "`nProcessing Site ($currentSite of $totalSites):" $_.Url -ForegroundColor Magenta
-    ReportFileLabels -siteUrl $_.Url
+    
+    # Collect items from this site
+    $siteData = ReportFileLabels -siteUrl $_.Url
+    $currentFileSites += $siteData
     
     $sitesProcessedInCurrentFile++
     if ($sitesProcessedInCurrentFile -ge $sitesPerFile) {
-        Write-Host "Processed $sitesPerFile sites. Creating new file." -ForegroundColor Yellow
-        $partNumber++
-        $currentOutputFile = "$directoryPath\$fileName-part$partNumber.xlsx"
+        Write-Host "Processed $sitesPerFile sites. Writing to file." -ForegroundColor Yellow
+        ExportToExcel -items $currentFileSites
+        $currentFileSites = @() # Clear the array for next batch
         $sitesProcessedInCurrentFile = 0
     }
 }
-Write-Progress -Id 1 -Activity "Processing Sites" -Completed
 
+# Export any remaining sites in the last batch
+if ($currentFileSites.Count -gt 0) {
+    Write-Host "Writing final batch to file." -ForegroundColor Yellow
+    ExportToExcel -items $currentFileSites
+}
+
+Write-Progress -Id 1 -Activity "Processing Sites" -Completed
 Write-Host "`nReport generation completed!" -ForegroundColor Green
