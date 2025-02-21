@@ -14,16 +14,13 @@ $TenantURL = "https://$domain.sharepoint.com"
 $dateTime = (Get-Date).ToString("dd-MM-yyyy-hh-ss")
 $directoryPath = "C:\HUD\06_Reporting\SPO\Test\"
 $fileName = "labelsReport" + $dateTime
-$approximateRowSize = 15 # Adjusted down to 15 bytes per row to account for Excel compression
+$maxFileSize = 15MB # Target 15MB per file
+$sitesPerFile = 15 # Process 15 sites before checking file size
 $partNumber = 1
-$targetFileSize = 15MB # Target 30MB per file
-$maxRowsPerFile = [math]::Floor($targetFileSize / $approximateRowSize) # Calculate max rows per file based on 30MB target
-$currentFileRows = 0
 $currentOutputFile = "$directoryPath\$fileName-part$partNumber.xlsx"
-$batchSize = 10000
-$currentBatch = [System.Collections.ArrayList]@()
+$sitesProcessedInCurrentFile = 0
 
-Write-Host "Targeting approximately $([math]::Round($targetFileSize / 1MB, 0))MB per file ($maxRowsPerFile rows per file)" -ForegroundColor Cyan
+Write-Host "Creating new file every 15 sites or when file reaches 15MB" -ForegroundColor Cyan
 
 # Check if ImportExcel module is installed, if not install it
 if (-not (Get-Module -ListAvailable -Name ImportExcel)) {
@@ -74,6 +71,20 @@ $ExcludedFilePatterns = @(
     '.part$',    # Partial downloads
     '.crdownload$' # Chrome download temporaries
 )
+
+function CheckFileSize {
+    param (
+        [string]$filePath
+    )
+    if (Test-Path $filePath) {
+        $fileSize = (Get-Item $filePath).Length
+        if ($fileSize -ge $maxFileSize) {
+            Write-Host "File size ($([math]::Round($fileSize / 1MB, 2))MB) exceeded 15MB limit. Creating new file." -ForegroundColor Yellow
+            return $true
+        }
+    }
+    return $false
+}
 
 function ReportFileLabels($siteUrl) {
     Connect-PnPOnline -url $siteUrl -ClientId $env:DigitalSupportAppID -Tenant 'mhud.onmicrosoft.com' -Thumbprint $env:DigitalSupportCertificateThumbprint
@@ -149,43 +160,20 @@ function ReportFileLabels($siteUrl) {
                         New-Item -ItemType Directory -Path $directoryPath -Force | Out-Null
                     }
 
-                    # Add item to current batch
-                    [void]$currentBatch.Add($item)
-                    $currentFileRows++
+                    # Export the item, either creating a new file or appending
+                    if (-not (Test-Path $currentOutputFile)) {
+                        $item | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -AutoSize -AutoFilter
+                    } else {
+                        $item | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -Append
+                    }
 
-                    # If we've reached our batch size or max rows per file, export the batch
-                    if ($currentBatch.Count -ge $batchSize -or $currentFileRows -ge $maxRowsPerFile) {
-                        if ($currentFileRows -eq $batchSize) {
-                            $currentBatch | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -AutoSize -AutoFilter
-                        } else {
-                            $currentBatch | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -Append
-                        }
-
-                        Write-Host "Exported batch of $($currentBatch.Count) rows" -ForegroundColor Cyan
-                        $currentBatch.Clear()
-
-                        # If we've reached max rows per file, start a new file
-                        if ($currentFileRows -ge $maxRowsPerFile) {
-                            Write-Host "Created part $partNumber at $currentOutputFile ($currentFileRows rows)" -ForegroundColor Green
-                            $partNumber++
-                            $currentFileRows = 0
-                            $currentOutputFile = "$directoryPath\$fileName-part$partNumber.xlsx"
-                        }
+                    # Check file size after append
+                    if (CheckFileSize -filePath $currentOutputFile) {
+                        $partNumber++
+                        $currentOutputFile = "$directoryPath\$fileName-part$partNumber.xlsx"
                     }
                 }
             }
-            
-            # Export any remaining items in the batch
-            if ($currentBatch.Count -gt 0) {
-                if ($currentFileRows -eq $currentBatch.Count) {
-                    $currentBatch | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -AutoSize -AutoFilter
-                } else {
-                    $currentBatch | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -Append
-                }
-                Write-Host "Exported final batch of $($currentBatch.Count) rows" -ForegroundColor Cyan
-                $currentBatch.Clear()
-            }
-
             Write-Progress -Id 3 -Activity "Processing Items" -Completed
             Write-Host "Processed $totalItemsProcessed total items so far" -ForegroundColor Cyan
         }
@@ -202,6 +190,14 @@ $allSites | foreach-object {
     Write-Progress -Id 1 -Activity "Processing Sites" -Status "Site $currentSite of $totalSites" -PercentComplete (($currentSite / $totalSites) * 100)
     Write-Host "`nProcessing Site ($currentSite of $totalSites):" $_.Url -ForegroundColor Magenta
     ReportFileLabels -siteUrl $_.Url
+    
+    $sitesProcessedInCurrentFile++
+    if ($sitesProcessedInCurrentFile -ge $sitesPerFile) {
+        Write-Host "Processed $sitesPerFile sites. Creating new file." -ForegroundColor Yellow
+        $partNumber++
+        $currentOutputFile = "$directoryPath\$fileName-part$partNumber.xlsx"
+        $sitesProcessedInCurrentFile = 0
+    }
 }
 Write-Progress -Id 1 -Activity "Processing Sites" -Completed
 
