@@ -17,7 +17,7 @@ $fileName = "labelsReport" + $dateTime
 $maxFileSize = 30MB # Target 30MB per file
 $sitesPerFile = 50 # Process 50 sites before creating new file
 $partNumber = 1
-$currentOutputFile = "$directoryPath\$fileName-part$partNumber.xlsx"
+$currentOutputFile = "$directoryPath\$fileName-part$partNumber.csv"
 $sitesProcessedInCurrentFile = 0
 $currentFileSites = @() # Array to store site data before writing to file
 
@@ -170,13 +170,13 @@ function ExportToExcel($items) {
         New-Item -ItemType Directory -Path $directoryPath -Force | Out-Null
     }
 
-    $items | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -AutoSize -AutoFilter
+    $items | Export-Csv -Path $currentOutputFile -NoTypeInformation
 
     # Check if file size exceeds limit
     if ((Get-Item $currentOutputFile).Length -ge $maxFileSize) {
         Write-Host "File size exceeded 30MB limit. Creating new file for next batch." -ForegroundColor Yellow
         $script:partNumber++
-        $script:currentOutputFile = "$directoryPath\$fileName-part$partNumber.xlsx"
+        $script:currentOutputFile = "$directoryPath\$fileName-part$partNumber.csv"
     }
 }
 
