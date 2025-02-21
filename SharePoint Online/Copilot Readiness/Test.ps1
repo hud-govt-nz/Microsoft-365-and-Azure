@@ -20,6 +20,8 @@ $targetFileSize = 30MB # Target 30MB per file
 $maxRowsPerFile = [math]::Floor($targetFileSize / $approximateRowSize) # Calculate max rows per file based on 30MB target
 $currentFileRows = 0
 $currentOutputFile = "$directoryPath\$fileName-part$partNumber.xlsx"
+$batchSize = 10000
+$currentBatch = [System.Collections.ArrayList]@()
 
 Write-Host "Targeting approximately $([math]::Round($targetFileSize / 1MB, 0))MB per file ($maxRowsPerFile rows per file)" -ForegroundColor Cyan
 
@@ -147,23 +149,43 @@ function ReportFileLabels($siteUrl) {
                         New-Item -ItemType Directory -Path $directoryPath -Force | Out-Null
                     }
 
-                    # Export the item, either creating a new file or appending
-                    if ($currentFileRows -eq 0) {
-                        $item | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -AutoSize -AutoFilter
-                    } else {
-                        $item | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -Append
-                    }
+                    # Add item to current batch
+                    [void]$currentBatch.Add($item)
                     $currentFileRows++
 
-                    # If we've reached our target number of rows, prepare for next file
-                    if ($currentFileRows -ge $maxRowsPerFile) {
-                        Write-Host "Created part $partNumber at $currentOutputFile ($currentFileRows rows)" -ForegroundColor Green
-                        $partNumber++
-                        $currentFileRows = 0
-                        $currentOutputFile = "$directoryPath\$fileName-part$partNumber.xlsx"
+                    # If we've reached our batch size or max rows per file, export the batch
+                    if ($currentBatch.Count -ge $batchSize -or $currentFileRows -ge $maxRowsPerFile) {
+                        if ($currentFileRows -eq $batchSize) {
+                            $currentBatch | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -AutoSize -AutoFilter
+                        } else {
+                            $currentBatch | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -Append
+                        }
+
+                        Write-Host "Exported batch of $($currentBatch.Count) rows" -ForegroundColor Cyan
+                        $currentBatch.Clear()
+
+                        # If we've reached max rows per file, start a new file
+                        if ($currentFileRows -ge $maxRowsPerFile) {
+                            Write-Host "Created part $partNumber at $currentOutputFile ($currentFileRows rows)" -ForegroundColor Green
+                            $partNumber++
+                            $currentFileRows = 0
+                            $currentOutputFile = "$directoryPath\$fileName-part$partNumber.xlsx"
+                        }
                     }
                 }
             }
+            
+            # Export any remaining items in the batch
+            if ($currentBatch.Count -gt 0) {
+                if ($currentFileRows -eq $currentBatch.Count) {
+                    $currentBatch | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -AutoSize -AutoFilter
+                } else {
+                    $currentBatch | Export-Excel -Path $currentOutputFile -WorksheetName "Labels Report" -Append
+                }
+                Write-Host "Exported final batch of $($currentBatch.Count) rows" -ForegroundColor Cyan
+                $currentBatch.Clear()
+            }
+
             Write-Progress -Id 3 -Activity "Processing Items" -Completed
             Write-Host "Processed $totalItemsProcessed total items so far" -ForegroundColor Cyan
         }
