@@ -40,73 +40,57 @@ function Get-DriveItems {
     # Process the files
     ForEach ($File in $Files) {  
         If ($SensitivityLabelsAvailable -eq $true) {
-            $SensitivityLabelName = $null; $SensitivityLabelInfo = $Null
+            $SensitivityLabelName = "No label"
             # Only check for sensitivity labels if they are available
-            $FileType = $File.Name.Split(".")[1]
+            $FileType = $File.Name.Split(".")[-1]
             If ($FileType -in $ValidFileTypes) { 
                 $Uri = ("https://graph.microsoft.com/beta/sites/{0}/drive/items/{1}/extractSensitivityLabels" -f $Site.Id, $File.id)
                 Try {
                     [array]$SensitivityLabelInfo = Invoke-MgGraphRequest -Uri $Uri -Method POST 
                     If ($SensitivityLabelInfo.labels.sensitivityLabelId) { 
                         [array]$LabelName = $SensitivityLabelsHash[$SensitivityLabelInfo.labels.sensitivityLabelId]
+                        If ($LabelName) {
+                            $SensitivityLabelName = $LabelName[0].Trim()
+                        }
                     }
                 } Catch {
                     Write-Host ("Error reading sensitivity label data from file {0}" -f $File.Name) 
-                    [array]$LabelName = "Error"
+                    $SensitivityLabelName = "Error"
                 }
             }       
         }  
+
         # Get retention label information
+        $ComplianceTag = "No label"
         If ($RetentionLabelsAvailable -eq $true) {
             Try {
-                $RetentionLabelName = $null; $RetentionLabelInfo = $null
                 $Uri = ("https://graph.microsoft.com/v1.0/drives/{0}/items/{1}/retentionLabel" -f $Drive, $File.Id)
                 [array]$RetentionLabelInfo = Invoke-MgGraphRequest -Uri $Uri -Method Get
-                $RetentionLabelName = $RetentionLabelInfo.name
+                If ($RetentionLabelInfo.name) {
+                    $ComplianceTag = $RetentionLabelInfo.name.Trim()
+                }
             } Catch {
                 Write-Host ("Error reading retention label data from file {0}" -f $File.Name) 
             }
         }
-        If ($File.LastModifiedDateTime) {
-            $LastModifiedDateTime = Get-Date $File.LastModifiedDateTime -format 'dd-MMM-yyyy HH:mm'
-        } Else {
-            $LastModifiedDateTime = $null
-        }
-        If ($File.CreatedDateTime) {
-            $FileCreatedDateTime = Get-Date $File.CreatedDateTime -format 'dd-MMM-yyyy HH:mm'
-        }
-        If ([string]::IsNullOrEmpty($LabelName)) {
-            $SensitivityLabelName = "No label"
-        } Else {
-            [string]$SensitivityLabelName = $LabelName[0].Trim()
-        }
-        If ([string]::IsNullOrEmpty($RetentionLabelName)) {
-            $RetentionLabelName = "No label"
-        } Else {
-            [string]$RetentionLabelName = $RetentionLabelName.Trim()
-        }
     
         $ReportLine = [PSCustomObject]@{
-            FileName                = $File.Name
-            Folder                  = $File.parentreference.name
-            Size                    = (FormatFileSize $File.Size)
-            Created                 = $FileCreatedDateTime
-            Author                  = $File.CreatedBy.User.DisplayName
-            LastModified            = $LastModifiedDateTime
-            'Last modified by'      = $File.LastModifiedBy.User.DisplayName
-            'Sensitivity label'     = $SensitivityLabelName
-            'Retention label'       = $RetentionLabelName
-            WebURL                  = $File.WebUrl
+            Library             = $Drive.Name
+            FileName           = $File.Name
+            ID                 = $File.Id
+            SensitivityLabel   = $SensitivityLabelName
+            ComplianceTag      = $ComplianceTag
         }
         $ReportData.Add($ReportLine)
     }
 
     # Process the folders
     ForEach ($Folder in $Folders) {
-        Write-Host ("Processing folder {0} ({1} files/size {2})" -f $Folder.Name, $Folder.folder.childcount, (FormatFileSize $Folder.Size))
+        Write-Host ("Processing folder {0}" -f $Folder.Name)
         Get-DriveItems -Drive $Drive -FolderId $Folder.Id
     }
 }
+
 function FormatFileSize {
     # Format File Size nicely
     param (
@@ -235,83 +219,23 @@ $Global:TotalFolders = 1
 
 # Create output list and CSV file
 $Global:ReportData = [System.Collections.Generic.List[Object]]::new()
-$CSVOutputFile =  ((New-Object -ComObject Shell.Application).Namespace('shell:Downloads').Self.Path) + ("\Files {0}-AllLibraries.csv" -f $Site.displayName)
+$CSVOutputFile = ((New-Object -ComObject Shell.Application).Namespace('shell:Downloads').Self.Path) + ("\SPO_Items_{0}.csv" -f $Site.displayName)
 
 # Process each drive (document library)
 ForEach ($Drive in $Drives) {
     Write-Host "Processing library: $($Drive.Name)" -ForegroundColor Yellow
-    # Get the items in the root, including child folders
     Get-DriveItems -Drive $Drive.Id -FolderId "root"
 }
 
 [datetime]$EndProcessing = Get-Date
 $ElapsedTime = ($EndProcessing - $StartProcessing)
-$FilesPerMinute = [math]::Round(($ReportData.Count / ($ElapsedTime.TotalSeconds / 60)), 2)
 Write-Host ""
-Write-Host ("Processed {0} files in {1} folders across {2} libraries in {3}:{4} minutes ({5} files/minute)" -f `
-   $ReportData.Count, $TotalFolders, $Drives.Count, $ElapsedTime.Minutes, $ElapsedTime.Seconds, $FilesPerMinute)
+Write-Host ("Processed {0} files in {1} folders across {2} libraries in {3}:{4} minutes" -f `
+   $ReportData.Count, $TotalFolders, $Drives.Count, $ElapsedTime.Minutes, $ElapsedTime.Seconds)
 
-Write-Host ""
-Write-Host "Retention Labels in Use"
-$ReportData | Group-Object 'Retention label' -NoElement | Sort-Object Count -Descending | Format-Table Name, Count
-Write-Host ""
-Write-Host "Sensitivity Labels in Use"
-$ReportData | Group-Object 'Sensitivity label' -NoElement | Sort-Object Count -Descending | Format-Table Name, Count
-
-$ReportData | Out-GridView -Title ("Files in {0} document library for the {1} site" -f $DriveName, $SiteName)
+# Export the data
 $ReportData | Export-Csv -Path $CSVOutputFile -NoTypeInformation -Encoding UTF8
 Write-Host ("Report data saved to {0}" -f $CSVOutputFile)
-
-Write-Host ""
-Write-Host "Generating report..."
-If (Get-Module ImportExcel -ListAvailable) {
-    $ExcelGenerated = $True
-    Import-Module ImportExcel -ErrorAction SilentlyContinue
-    $ExcelOutputFile = ((New-Object -ComObject Shell.Application).Namespace('shell:Downloads').Self.Path) + "\SharePoint Files Report.xlsx"
-    If (Test-Path $ExcelOutputFile) {
-        Remove-Item $ExcelOutputFile -ErrorAction SilentlyContinue
-    }
-    $ReportData | Export-Excel -Path $ExcelOutputFile -WorksheetName "SharePoint Files Report" -Title ("SharePoint Files Report") -TitleBold -TableName "SPOFiles" 
-   
-} Else {
-    $CSVOutputFile = ((New-Object -ComObject Shell.Application).Namespace('shell:Downloads').Self.Path) + "\SharePoint Files Report.CSV"
-    $ReportData | Export-Csv -Path $CSVOutputFile -NoTypeInformation -Encoding Utf8
-}
-
-# Generate per-library statistics
-Write-Host "`nGenerating detailed library statistics..." -ForegroundColor Cyan
-$LibraryStats = @{}
-ForEach ($Drive in $Drives) {
-    $LibraryData = $ReportData | Where-Object { $_.WebUrl -like "*/${Drive.Name}/*" }
-    $LibraryStats[$Drive.Name] = Get-LibraryStatistics -LibraryData $LibraryData
-}
-
-# Add library statistics to Excel report
-If ($ExcelGenerated) {
-    $StatsData = foreach ($lib in $LibraryStats.Keys) {
-        [PSCustomObject]@{
-            'Library Name' = $lib
-            'Total Files' = $LibraryStats[$lib].TotalFiles
-            'Total Size (GB)' = [math]::Round($LibraryStats[$lib].TotalSize / 1GB, 2)
-            'Files with Retention Labels' = $LibraryStats[$lib].FilesWithRetentionLabel
-            'Files with Sensitivity Labels' = $LibraryStats[$lib].FilesWithSensitivityLabel
-            'Retention Label %' = if ($LibraryStats[$lib].TotalFiles -gt 0) { 
-                [math]::Round(($LibraryStats[$lib].FilesWithRetentionLabel / $LibraryStats[$lib].TotalFiles) * 100, 1) 
-            } else { 0 }
-            'Sensitivity Label %' = if ($LibraryStats[$lib].TotalFiles -gt 0) { 
-                [math]::Round(($LibraryStats[$lib].FilesWithSensitivityLabel / $LibraryStats[$lib].TotalFiles) * 100, 1) 
-            } else { 0 }
-        }
-    }
-    
-    $StatsData | Export-Excel -Path $ExcelOutputFile -WorksheetName "Library Statistics" -AutoSize -TableName "LibraryStats"
-}
-
-If ($ExcelGenerated) {
-    Write-Host ("An Excel report is available in {0}" -f $ExcelOutputFile)
-} Else {    
-    Write-Host ("A CSV report is available in {0}" -f $CSVOutputFile)
-}  
 
 # An example script used to illustrate a concept. More information about the topic can be found in the Office 365 for IT Pros eBook https://gum.co/O365IT/
 # and/or a relevant article on https://www.practical365.com. See our post about the Office 365 for IT Pros repository 

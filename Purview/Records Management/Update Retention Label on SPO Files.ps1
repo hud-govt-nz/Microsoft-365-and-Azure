@@ -4,19 +4,18 @@
 #Requires -Modules Microsoft.Graph.Files
 
 # Update-RetentionLabelsOnSPOFiles.PS1
-# A script to update the retention label on files in a SharePoint document library that uses cmdlets from
-# the Microsoft Graph SDK. For iterating thru the files and folders in the library and reporting, this script was modeled after 
-# https://github.com/12Knocksinna/Office365itpros/blob/master/Report-SPOFilesDocumentLibrary.PS1
-# V1.0 14-Jan-2025
+# A script to update retention labels on files in all SharePoint document libraries based on a CSV mapping file
+# The CSV should have two columns: "ExistingLabel" and "NewLabel"
+# V2.1 14-Jan-2025
 
-# Run the script with the site url to process, the library display name, the old retention label and the new retention label.
-# .\Update-RetentionLabelsOnSPOFiles.PS1 -SiteUrl "https://<domain>.sharepoint.com/sites/YourSiteName" -DocumentLibraryName "Documents" -OldRetentionLabelName "Budget" -NewRetentionLabelName "Financial Report"
+# Run the script with the site url and CSV file path
+# .\Update-RetentionLabelsOnSPOFiles.PS1 -SiteUrl "https://<domain>.sharepoint.com/sites/YourSiteName" -CsvPath "C:\Path\To\LabelMappings.csv"
 
 param (
+    [Parameter(Mandatory=$true)]
     [string]$siteURL,
-    [string]$documentLibraryName,
-    [string]$oldRetentionLabelName,
-    [string]$newRetentionLabelName
+    [Parameter(Mandatory=$true)]
+    [string]$csvPath
 )
 
 function FormatFileSize {
@@ -63,7 +62,9 @@ function Get-DriveItems {
         [Parameter()]
         $Drive,
         [Parameter()]
-        $FolderId
+        $FolderId,
+        [Parameter()]
+        $LabelMappings
     )
     # Get data for a folder and its children
     [array]$Data = Get-MgDriveItemChild -DriveId $Drive -DriveItemId $FolderId -All
@@ -76,58 +77,68 @@ function Get-DriveItems {
     # Process the files
     ForEach ($File in $Files) {  
         # Get retention label information from file
-            Try {
-                $RetentionLabelName = $null; $RetentionLabelInfo = $null
-                $RetentionlabelInfo = Get-MgDriveItemRetentionLabel -DriveId $Drive -DriveItemId $File.id
-                $RetentionLabelName = $RetentionLabelInfo.Name
+        Try {
+            $RetentionLabelName = $null; $RetentionLabelInfo = $null
+            $RetentionlabelInfo = Get-MgDriveItemRetentionLabel -DriveId $Drive -DriveItemId $File.id
+            $RetentionLabelName = $RetentionLabelInfo.Name
 
-                if ($null -ne $RetentionLabelName -and $RetentionLabelName -eq $oldRetentionLabelName) {
-                    if ($global:IsRecordLabel -and $RetentionLabelInfo.RetentionSettings.IsRecordLocked -ne $true ) {
-                        Lock-Record -Drive $Drive -DriveItemId $File.Id
-                        $lockedByScript = $true
-                    } else {
-                        $lockedByScript = $false
-                    }
-                    if ($newRetentionLabelName -eq "CLEAR") {
-                        Remove-MgDriveItemRetentionLabel -DriveId $Drive -DriveItemId $File.Id
-                    } else {
-                        $UpdatedLabel = Update-MgDriveItemRetentionLabel -DriveId $Drive -DriveItemId $File.Id -BodyParameter @{name = $newRetentionLabelName}
-                    }  
-
-                    If ($File.LastModifiedDateTime) {
-                        $LastModifiedDateTime = Get-Date $File.LastModifiedDateTime -format 'dd-MMM-yyyy HH:mm'
-                    } Else {
-                        $LastModifiedDateTime = $null
-                    }
-                    If ($File.CreatedDateTime) {
-                        $FileCreatedDateTime = Get-Date $File.CreatedDateTime -format 'dd-MMM-yyyy HH:mm'
-                    }
+            # Check if current label exists in our mapping
+            $labelMapping = $LabelMappings | Where-Object { $_.ExistingLabel -eq $RetentionLabelName }
             
-                    $ReportLine = [PSCustomObject]@{
-                        FileName                = $File.Name
-                        Folder                  = $File.parentreference.name
-                        Size                    = (FormatFileSize $File.Size)
-                        Created                 = $FileCreatedDateTime
-                        Author                  = $File.CreatedBy.User.DisplayName
-                        LastModified            = $LastModifiedDateTime
-                        'Last modified by'      = $File.LastModifiedBy.User.DisplayName
-                        'Old Retention label'   = $RetentionLabelName
-                        'New Retention label'   = if ($newRetentionLabelName -eq "CLEAR") {""} else {$UpdatedLabel.Name}
-                        'Label applied on'      = get-date $UpdatedLabel.labelAppliedDateTime -format 'dd-MMM-yyyy'
-                        'Locked by script'      = if ($lockedByScript) {"Yes"} else {"N/A"}
-                        WebURL                  = $File.WebUrl
-                    }
-                    $ReportData.Add($ReportLine)                            
+            if ($null -ne $RetentionLabelName -and $null -ne $labelMapping) {
+                $newRetentionLabelName = $labelMapping.NewLabel
+                
+                # Check if this is a record label
+                $RetentionLabel = $RetentionLabels | Where-Object { $_.DisplayName -eq $RetentionLabelName }
+                $isRecordLabel = if ($RetentionLabel.BehaviorDuringRetentionPeriod -eq "retainAsRecord") {$true} else {$false}
+
+                if ($isRecordLabel -and $RetentionLabelInfo.RetentionSettings.IsRecordLocked -ne $true ) {
+                    Lock-Record -Drive $Drive -DriveItemId $File.Id
+                    $lockedByScript = $true
+                } else {
+                    $lockedByScript = $false
                 }
-            } Catch {
-                Write-Host ("Error reading retention label data from file {0}" -f $File.Name) 
+
+                if ($newRetentionLabelName -eq "CLEAR") {
+                    Remove-MgDriveItemRetentionLabel -DriveId $Drive -DriveItemId $File.Id
+                } else {
+                    $UpdatedLabel = Update-MgDriveItemRetentionLabel -DriveId $Drive -DriveItemId $File.Id -BodyParameter @{name = $newRetentionLabelName}
+                }  
+
+                If ($File.LastModifiedDateTime) {
+                    $LastModifiedDateTime = Get-Date $File.LastModifiedDateTime -format 'dd-MMM-yyyy HH:mm'
+                } Else {
+                    $LastModifiedDateTime = $null
+                }
+                If ($File.CreatedDateTime) {
+                    $FileCreatedDateTime = Get-Date $File.CreatedDateTime -format 'dd-MMM-yyyy HH:mm'
+                }
+        
+                $ReportLine = [PSCustomObject]@{
+                    FileName                = $File.Name
+                    Folder                  = $File.parentreference.name
+                    Size                    = (FormatFileSize $File.Size)
+                    Created                 = $FileCreatedDateTime
+                    Author                  = $File.CreatedBy.User.DisplayName
+                    LastModified            = $LastModifiedDateTime
+                    'Last modified by'      = $File.LastModifiedBy.User.DisplayName
+                    'Old Retention label'   = $RetentionLabelName
+                    'New Retention label'   = if ($newRetentionLabelName -eq "CLEAR") {""} else {$UpdatedLabel.Name}
+                    'Label applied on'      = get-date $UpdatedLabel.labelAppliedDateTime -format 'dd-MMM-yyyy'
+                    'Locked by script'      = if ($lockedByScript) {"Yes"} else {"N/A"}
+                    WebURL                  = $File.WebUrl
+                }
+                $ReportData.Add($ReportLine)                            
             }
+        } Catch {
+            Write-Host ("Error processing file {0}: {1}" -f $File.Name, $_.Exception.Message) 
+        }
     }
 
     # Process the folders
     ForEach ($Folder in $Folders) {
         Write-Host ("Processing folder {0} ({1} files/size {2})" -f $Folder.Name, $Folder.folder.childcount, (FormatFileSize $Folder.Size))
-        Get-DriveItems -Drive $Drive -FolderId $Folder.Id
+        Get-DriveItems -Drive $Drive -FolderId $Folder.Id -LabelMappings $LabelMappings
     }
 }
 
@@ -155,43 +166,60 @@ if ($null -eq $site) {
     Write-Host "Found site to process:" $SiteName 
 }
 
-# Get the document library (drive) information
-$drive = Get-MgSiteDrive -SiteId $siteId | Where-Object { $_.name -eq $documentLibraryName }
-if ($null -eq $drive) {
+# Get all document libraries (drives) in the site
+$drives = Get-MgSiteDrive -SiteId $siteId
+if ($null -eq $drives) {
     Write-Output "Error: Unable to retrieve drive information."
     return
 } else {
-    $DriveName = $drive.Name
-    Write-Host "Found drive to process:" $DriveName 
+    Write-Host "Found" $drives.Count "drives to process"
 }
+
+# Validate and import CSV
+if (-not (Test-Path $csvPath)) {
+    Write-Error "CSV file not found at path: $csvPath"
+    return
+}
+
+$labelMappings = Import-Csv $csvPath
+if (-not ($labelMappings | Get-Member -Name "ExistingLabel") -or -not ($labelMappings | Get-Member -Name "NewLabel")) {
+    Write-Error "CSV must contain 'ExistingLabel' and 'NewLabel' columns"
+    return
+}
+
+Write-Host "Loaded $(($labelMappings | Measure-Object).Count) label mappings from CSV"
 
 # Retrieve retention label from Purview to know if the old label is a record label (retainAsRecord property)
 $RetentionLabels = Get-MgSecurityLabelRetentionLabel
-$RetentionLabel = $RetentionLabels | Where-Object { $_.DisplayName -eq $oldRetentionLabelName }
-$Global:IsRecordLabel = if ($RetentionLabel.BehaviorDuringRetentionPeriod -eq "retainAsRecord") {$true} else {$false}
 
 [datetime]$StartProcessing = Get-Date
 $Global:TotalFolders = 1
 
 # Create output list and CSV file
 $Global:ReportData = [System.Collections.Generic.List[Object]]::new()
-$CSVOutputFile =  ((New-Object -ComObject Shell.Application).Namespace('shell:Downloads').Self.Path) + ("\Files {0}-{1} library.csv" -f $Site.displayName, $DriveName)
+$CSVOutputFile =  ((New-Object -ComObject Shell.Application).Namespace('shell:Downloads').Self.Path) + ("\Files {0}-AllLibraries.csv" -f $Site.displayName)
 
-# Get the items in the root, including child folders
-Write-Host "Fetching file information..."
-Get-DriveItems -Drive $Drive.Id -FolderId "root"
+# Process each drive in the site
+foreach ($drive in $drives) {
+    $DriveName = $drive.Name
+    Write-Host "`nProcessing drive:" $DriveName
+    Write-Host "Fetching file information..."
+    
+    # Get the items in the root, including child folders
+    Get-DriveItems -Drive $Drive.Id -FolderId "root" -LabelMappings $labelMappings
+}
 
 [datetime]$EndProcessing = Get-Date
 $ElapsedTime = ($EndProcessing - $StartProcessing)
 $FilesPerMinute = [math]::Round(($ReportData.Count / ($ElapsedTime.TotalSeconds / 60)), 2)
 Write-Host ""
-Write-Host ("Processed {0} files in {1} folders in {2}:{3} minutes ({4} files/minute)" -f `
-   $ReportData.Count, $TotalFolders, $ElapsedTime.Minutes, $ElapsedTime.Seconds, $FilesPerMinute)
+Write-Host ("Processed {0} files in {1} folders across {2} libraries in {3}:{4} minutes ({5} files/minute)" -f `
+   $ReportData.Count, $TotalFolders, $drives.Count, $ElapsedTime.Minutes, $ElapsedTime.Seconds, $FilesPerMinute)
 
 Write-Host ""
 Write-Host "Retention Labels updated"
 $ReportData | Group-Object 'Old Retention label' -NoElement | Sort-Object Count -Descending | Format-Table Name, Count
-$ReportData | Out-GridView -Title ("Updated retention labels on files in {0} document library for the {1} site" -f $DriveName, $SiteName)
+$ReportData | Out-GridView -Title ("Updated retention labels on files in all document libraries for the {0} site" -f $SiteName)
 $ReportData | Export-Csv -Path $CSVOutputFile -NoTypeInformation -Encoding UTF8
 Write-Host ("Report data saved to {0}" -f $CSVOutputFile)
 
