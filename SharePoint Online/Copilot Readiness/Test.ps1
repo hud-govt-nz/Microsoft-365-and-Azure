@@ -20,8 +20,7 @@ $currentLabeledPart = 1
 $currentUnlabeledPart = 1
 $labeledRowCount = 0
 $unlabeledRowCount = 0
-$sitesBatchSize = 300  # Process 300 sites before writing to CSV
-$currentFileSites = @() # Array to store site batch data
+$sitesBatchSize = 2  # Process sites in batches
 $currentSite = 0
 
 Write-Host "Starting SharePoint site scan..." -ForegroundColor Cyan
@@ -52,7 +51,12 @@ if ($SelectSites) {
 $totalSites = $allSites.Count
 $currentSite = 0
 
-Write-Host "Found $totalSites sites to process" -ForegroundColor Cyan
+# Add job handling variables
+$scanJob = $null
+$processingBatch = 1
+$totalBatches = [math]::Ceiling($totalSites / $sitesBatchSize)
+
+Write-Host "Found $totalSites sites to process ($totalBatches batches)" -ForegroundColor Cyan
 
 # Exclude certain libraries
 $ExcludedLibraries = @(
@@ -106,117 +110,81 @@ function ReportFileLabels($siteUrl) {
         $env:PNPPOWERSHELL_UPDATECHECK = "Off"
         Connect-PnPOnline -url $siteUrl -ClientId $env:DigitalSupportAppID -Tenant 'mhud.onmicrosoft.com' -Thumbprint $env:DigitalSupportCertificateThumbprint -ErrorAction Stop
         $siteconn = Get-PnPConnection
-        $siteItems = @()
         $totalSiteDocuments = 0
         
-        try {
-            $DocLibraries = Get-PnPList -Includes BaseType, Hidden, Title -Connection $siteconn | Where-Object {
-                $_.BaseType -eq "DocumentLibrary" -and $_.Hidden -eq $False -and $_.Title -notin $ExcludedLibraries
-            }
+        $DocLibraries = Get-PnPList -Includes BaseType, Hidden, Title -Connection $siteconn | Where-Object {
+            $_.BaseType -eq "DocumentLibrary" -and $_.Hidden -eq $False -and $_.Title -notin $ExcludedLibraries
+        }
 
-            if (-not $DocLibraries -or $DocLibraries.Count -eq 0) {
-                Write-Host "No eligible document libraries found in site: $siteUrl" -ForegroundColor Yellow
-                Write-Log "No eligible document libraries found in site: $siteUrl" "WARNING"
-                return @()
-            }
+        if (-not $DocLibraries) {
+            Write-Log "No eligible document libraries found in site: $siteUrl" "WARNING"
+            return
+        }
 
-            Write-Log "Found $($DocLibraries.Count) eligible document libraries in site: $siteUrl"
-            $totalLibraries = $DocLibraries.Count
-            $currentLibrary = 0
+        foreach ($library in $DocLibraries) {
+            $libraryName = $library.Title
+            $libraryDocCount = 0
+            
+            if ([string]::IsNullOrEmpty($libraryName)) { continue }
 
-            foreach ($library in $DocLibraries) {
-                $currentLibrary++
-                $libraryName = $library.Title
-                $libraryDocCount = 0
-                Write-Progress -Id 2 -Activity "Processing Libraries" -Status "Library $libraryName ($currentLibrary of $totalLibraries)" -PercentComplete (($currentLibrary / $totalLibraries) * 100)
-                Write-Host "  Processing library: $libraryName" -ForegroundColor White
-                Write-Log "Processing library: $libraryName"
+            try {
+                $items = Get-PnPListItem -List $libraryName -Fields "ID","_ComplianceTag","_DisplayName","FileLeafRef","FileRef","FileDirRef","Last_x0020_Modified","Created_x0020_Date","_UIVersionString","SMTotalFileStreamSize" -PageSize 1000 -Connection $siteconn
                 
-                try {
-                    # Add extra error checking for null library
-                    if ($null -eq $library -or [string]::IsNullOrEmpty($library.Title)) {
-                        Write-Host "  Skipping null or invalid library in site $siteUrl" -ForegroundColor Yellow
-                        Write-Log "Skipping null or invalid library in site $siteUrl" "WARNING"
-                        continue
+                foreach ($item in $items) {
+                    if ($item.FileSystemObjectType -eq "Folder") { continue }
+                    
+                    $fileName = $item.FieldValues["FileLeafRef"]
+                    if (-not $fileName -or ($ExcludedFilePatterns | Where-Object { $fileName -match $_ })) { continue }
+                    
+                    $libraryDocCount++
+                    $docItem = [PSCustomObject]@{
+                        SiteUrl = $siteUrl
+                        FolderPath = $item.FieldValues["FileDirRef"]
+                        ItemID = $item.FieldValues["ID"]
+                        FileName = $fileName
+                        RetentionLabel = $item.FieldValues["_ComplianceTag"]
+                        SensitivityLabel = $item.FieldValues["_DisplayName"]
+                        Created = $item.FieldValues["Created_x0020_Date"]
+                        LastModified = $item.FieldValues["Last_x0020_Modified"]
+                        Version = $item.FieldValues["_UIVersionString"]
+                        SizeKB = if ($item.FieldValues["SMTotalFileStreamSize"]) { [math]::Round($item.FieldValues["SMTotalFileStreamSize"] / 1KB, 2) } else { 0 }
+                        ServerRelativePath = $item.FieldValues["FileRef"]
                     }
-
-                    $items = Get-PnPListItem -List $library.Title -Fields "ID","_ComplianceTag","_DisplayName","FileLeafRef","FileRef","FileDirRef","Last_x0020_Modified","Created_x0020_Date","_UIVersionString","SMTotalFileStreamSize" -PageSize 1000 -Connection $siteconn -ErrorAction Stop
-
-                    if ($items -and $items.Count -gt 0) {
-                        $itemCount = $items.Count
-                        $currentItem = 0
-
-                        foreach ($_ in $items) {
-                            $currentItem++
-                            
-                            $fileName = $_.FieldValues["FileLeafRef"]
-                            $isExcludedFile = $false
-                            if ($fileName) {
-                                $isExcludedFile = $ExcludedFilePatterns | Where-Object { $fileName -match $_ }
-                            }
-
-                            if ($_.FileSystemObjectType -ne "Folder" -and -not $isExcludedFile) {
-                                Write-Progress -Id 3 -Activity "Processing Items in $libraryName" -Status "Item $currentItem of $itemCount" -PercentComplete (($currentItem / $itemCount) * 100)
-                                $libraryDocCount++
-                                
-                                $sizeInKB = if ($_.FieldValues["SMTotalFileStreamSize"]) {
-                                    [math]::Round($_.FieldValues["SMTotalFileStreamSize"] / 1KB, 2)
-                                } else {
-                                    0
-                                }
-
-                                $item = [PSCustomObject]@{
-                                    SiteUrl            = $siteUrl
-                                    FolderPath        = $_.FieldValues["FileDirRef"]
-                                    ItemID            = $_.FieldValues["ID"]
-                                    FileName          = $fileName
-                                    RetentionLabel    = $_.FieldValues["_ComplianceTag"]
-                                    SensitivityLabel  = $_.FieldValues["_DisplayName"]
-                                    Created           = $_.FieldValues["Created_x0020_Date"]
-                                    LastModified      = $_.FieldValues["Last_x0020_Modified"]
-                                    Version           = $_.FieldValues["_UIVersionString"]
-                                    SizeKB            = $sizeInKB
-                                    ServerRelativePath = $_.FieldValues["FileRef"]
-                                }
-                                
-                                $siteItems += $item
-                            }
-                        }
-                    }
-                    Write-Host "    Processed $libraryDocCount documents in $libraryName" -ForegroundColor Green
-                    Write-Log "Library '$libraryName': Processed $libraryDocCount documents"
-                    $totalSiteDocuments += $libraryDocCount
+                    
+                    # Stream the item directly to CSV
+                    ExportToCSV -items @($docItem)
                 }
-                catch {
-                    Write-Host "Error processing library $libraryName in site $siteUrl : $($_.Exception.Message)" -ForegroundColor Red
-                    Write-Log "Error processing library $libraryName in site $siteUrl : $($_.Exception.Message)" "ERROR"
-                    # Continue with next library
-                    continue
-                }
+                
+                Write-Log "Library '$libraryName': Processed $libraryDocCount documents"
+                $totalSiteDocuments += $libraryDocCount
             }
-            Write-Progress -Id 2 -Activity "Processing Libraries" -Completed
-            Write-Host "Completed site: $siteUrl - Total documents: $totalSiteDocuments" -ForegroundColor Cyan
-            Write-Log "Site completed: $siteUrl - Total documents: $totalSiteDocuments"
-            return $siteItems
+            catch {
+                Write-Host "Error processing library $libraryName in site $siteUrl : $($_.Exception.Message)" -ForegroundColor Red
+                Write-Log "Error processing library $libraryName in site $siteUrl : $($_.Exception.Message)" "ERROR"
+                continue
+            }
         }
-        catch {
-            Write-Host "Error accessing libraries in site $siteUrl : $($_.Exception.Message)" -ForegroundColor Red
-            Write-Log "Error accessing libraries in site $siteUrl : $($_.Exception.Message)" "ERROR"
-            return @()
-        }
+        
+        Write-Log "Site completed: $siteUrl - Total documents: $totalSiteDocuments"
     }
     catch {
         Write-Host "Error connecting to site $siteUrl : $($_.Exception.Message)" -ForegroundColor Red
         Write-Log "Error connecting to site $siteUrl : $($_.Exception.Message)" "ERROR"
-        return @()
     }
 }
 
 function GetOutputFilePath([string]$type, [int]$part) {
-    return "$directoryPath\${fileName}_${type}_pt$part.csv"
+    $filePath = "$directoryPath\${fileName}_${type}_pt$part.csv"
+    return $filePath
 }
 
-function ExportToCSV($items, [bool]$append = $false) {
+function ShouldCreateNewFile($filePath) {
+    if (-not (Test-Path $filePath)) { return $false }
+    $file = Get-Item $filePath
+    return $file.Length -gt 100MB
+}
+
+function ExportToCSV($items) {
     # Create directory if it doesn't exist
     if (-not (Test-Path $directoryPath)) {
         New-Item -ItemType Directory -Path $directoryPath -Force | Out-Null
@@ -230,69 +198,59 @@ function ExportToCSV($items, [bool]$append = $false) {
     if ($labeledItems) {
         $labeledOutputFile = GetOutputFilePath "labeled" $currentLabeledPart
         
-        if ($append -and (Test-Path $labeledOutputFile)) {
-            $existingRows = (Import-Csv $labeledOutputFile | Measure-Object).Count
-            $labeledRowCount = $existingRows
-        }
-        
         foreach ($item in $labeledItems) {
-            if ($labeledRowCount -ge $rowLimit) {
+            if (ShouldCreateNewFile $labeledOutputFile) {
                 $currentLabeledPart++
-                $labeledRowCount = 0
                 $labeledOutputFile = GetOutputFilePath "labeled" $currentLabeledPart
                 $item | Export-Csv -Path $labeledOutputFile -NoTypeInformation
             } else {
-                $item | Export-Csv -Path $labeledOutputFile -NoTypeInformation -Append:($labeledRowCount -gt 0)
+                $item | Export-Csv -Path $labeledOutputFile -NoTypeInformation -Append
             }
-            $labeledRowCount++
         }
-        Write-Log "Processed labeled items to part $currentLabeledPart (Row count: $labeledRowCount)"
     }
 
     # Handle unlabeled items
     if ($unlabeledItems) {
         $unlabeledOutputFile = GetOutputFilePath "unlabeled" $currentUnlabeledPart
         
-        if ($append -and (Test-Path $unlabeledOutputFile)) {
-            $existingRows = (Import-Csv $unlabeledOutputFile | Measure-Object).Count
-            $unlabeledRowCount = $existingRows
-        }
-        
         foreach ($item in $unlabeledItems) {
-            if ($unlabeledRowCount -ge $rowLimit) {
+            if (ShouldCreateNewFile $unlabeledOutputFile) {
                 $currentUnlabeledPart++
-                $unlabeledRowCount = 0
                 $unlabeledOutputFile = GetOutputFilePath "unlabeled" $currentUnlabeledPart
                 $item | Export-Csv -Path $unlabeledOutputFile -NoTypeInformation
             } else {
-                $item | Export-Csv -Path $unlabeledOutputFile -NoTypeInformation -Append:($unlabeledRowCount -gt 0)
+                $item | Export-Csv -Path $unlabeledOutputFile -NoTypeInformation -Append
             }
-            $unlabeledRowCount++
         }
-        Write-Log "Processed unlabeled items to part $currentUnlabeledPart (Row count: $unlabeledRowCount)"
     }
 }
 
-$allSites | foreach-object {   
+# Process sites in parallel
+$currentSite = 0
+$totalSites = $allSites.Count
+$maxParallelJobs = 3
+$runningJobs = @{}
+
+Write-Host "Found $($allSites.Count) sites to process" -ForegroundColor Cyan
+Write-Log "Starting processing of $($allSites.Count) sites" -Level "INFO"
+
+foreach ($site in $allSites) {
     $currentSite++
     Write-Progress -Id 1 -Activity "Processing Sites" -Status "Site $currentSite of $totalSites" -PercentComplete (($currentSite / $totalSites) * 100)
     
-    # Collect items from this site
-    $siteData = ReportFileLabels -siteUrl $_.Url
-    $currentFileSites += $siteData
-
-    # Export to CSV after every 100 sites or on the last site
-    if ($currentSite % $sitesBatchSize -eq 0 -or $currentSite -eq $totalSites) {
-        Write-Host "`nExporting batch $([math]::Ceiling($currentSite / $sitesBatchSize)) of $([math]::Ceiling($totalSites / $sitesBatchSize))" -ForegroundColor Yellow
-        Write-Log "Exporting batch (Sites $($currentSite - $currentFileSites.Count + 1) to $currentSite)" -Level "INFO"
-        
-        # Determine if we should append or create new file
-        $shouldAppend = $currentSite -gt $sitesBatchSize
-        ExportToCSV -items $currentFileSites -append $shouldAppend
-        
-        # Clear the current batch after export
-        $currentFileSites = @()
+    while ($runningJobs.Count -ge $maxParallelJobs) {
+        $completedJobs = $runningJobs.Keys | Where-Object { $runningJobs[$_].State -eq 'Completed' }
+        foreach ($jobId in $completedJobs) {
+            $job = $runningJobs[$jobId]
+            Remove-Job -Job $job
+            $runningJobs.Remove($jobId)
+        }
+        if ($runningJobs.Count -ge $maxParallelJobs) {
+            Start-Sleep -Seconds 2
+        }
     }
+    
+    ReportFileLabels -siteUrl $site.Url
 }
 
 Write-Progress -Id 1 -Activity "Processing Sites" -Completed
