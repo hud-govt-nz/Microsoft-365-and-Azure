@@ -1,266 +1,281 @@
-#=============================================================================
-# Script Name: SPO_Labels_Report.ps1
-# Created: 10.02.2025
-# Author: Ashley Forde
-# 
-# Description:
-#   This script generates a comprehensive report of SharePoint Online files that have
-#   retention or sensitivity labels applied. It provides flexible scanning options
-#   including filtering by specific compliance tags and selecting target sites.
-#
-# Features:
-#   - Filter by specific compliance tag(s) or scan all tagged files
-#   - Interactive site selection via GUI
-#   - Real-time XLSX export for immediate results
-#   - Progress tracking for long operations
-#   - Detailed file information including library and folder paths
-#
-# Parameters:
-#   -ComplianceTagScope : String
-#       Optional. Specify "all" to scan all tagged files, or provide a comma-separated
-#       list of specific tag names to filter by. Default: "all"
-#   
-#   -SelectSites : Switch
-#       Optional. When enabled, shows a GUI dialog to select specific sites to scan.
-#       Default: False (scans all sites)
-#
-# Example Usage:
-#   # Scan all sites for any tagged files
-#   .\SPO_Labels_Report.ps1
-#
-#   # Scan selected sites for specific compliance tags
-#   .\SPO_Labels_Report.ps1 -ComplianceTagScope "Confidential,Internal" -SelectSites
-#=============================================================================
-
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory = $false)]
-    [ValidateNotNullOrEmpty()]
-    [string[]]$ComplianceTagScope = @("all"),
+    [Parameter(Mandatory=$false,
+    HelpMessage="Domain name for SharePoint tenant (e.g., 'mhud' for mhud.sharepoint.com)")]
+    [string]$domain = "mhud",
     
-    [Parameter(Mandatory = $false)]
-    [switch]$SelectSites = $false
+    [Parameter(Mandatory=$false,
+    HelpMessage="Show site selection grid to choose specific sites")]
+    [switch]$SelectSites
 )
 
-# Clear screen for better visibility
-Clear-Host
+function GetOutputFilePath([string]$type, [int]$part) {
+    return "$directoryPath\${fileName}_${type}_pt$part.csv"
+}
 
-# Initialize basic configuration
-Write-Host "Initializing script configuration..." -ForegroundColor Cyan
-$domain = "mhud"
+function Write-Log {
+    param(
+        [string]$Message,
+        [string]$Level = "INFO",
+        [switch]$Console
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logMessage = "$timestamp [$Level] $Message"
+    
+    # Always write to log file
+    Add-Content -Path $logFile -Value $logMessage
+    
+    # Only write to console if Console switch is used
+    if ($Console) {
+        Write-Host $Message -ForegroundColor $(
+            switch ($Level) {
+                "INFO" { "White" }
+                "WARNING" { "Yellow" }
+                "ERROR" { "Red" }
+                "SUCCESS" { "Green" }
+                "PROGRESS" { "Cyan" }
+                default { "White" }
+            }
+        )
+    }
+}
+
+function ReportFileLabels($siteUrl) {
+    Write-Log "Starting scan of site: $siteUrl"
+    Write-Host "Processing site: $siteUrl" -ForegroundColor Cyan
+    
+    try {
+        $env:PNPPOWERSHELL_UPDATECHECK = "Off"
+        Connect-PnPOnline -url $siteUrl -ClientId $env:DigitalSupportAppID -Tenant 'mhud.onmicrosoft.com' -Thumbprint $env:DigitalSupportCertificateThumbprint -ErrorAction Stop
+        $siteconn = Get-PnPConnection
+        $siteItems = @()
+        $totalSiteDocuments = 0
+        
+        try {
+            $DocLibraries = Get-PnPList -Includes BaseType, Hidden, Title -Connection $siteconn | Where-Object {
+                $_.BaseType -eq "DocumentLibrary" -and $_.Hidden -eq $False -and $_.Title -notin $ExcludedLibraries
+            }
+
+            if (-not $DocLibraries -or $DocLibraries.Count -eq 0) {
+                Write-Host "No eligible document libraries found in site: $siteUrl" -ForegroundColor Yellow
+                Write-Log "No eligible document libraries found in site: $siteUrl" "WARNING"
+                return @()
+            }
+
+            Write-Log "Found $($DocLibraries.Count) eligible document libraries in site: $siteUrl"
+            $totalLibraries = $DocLibraries.Count
+            $currentLibrary = 0
+
+            foreach ($library in $DocLibraries) {
+                $currentLibrary++
+                $libraryName = $library.Title
+                $libraryDocCount = 0
+                Write-Progress -Id 2 -Activity "Processing Libraries" -Status "Library $libraryName ($currentLibrary of $totalLibraries)" -PercentComplete (($currentLibrary / $totalLibraries) * 100)
+                Write-Host "  Processing library: $libraryName" -ForegroundColor White
+                Write-Log "Processing library: $libraryName"
+                
+                try {
+                    # Add extra error checking for null library
+                    if ($null -eq $library -or [string]::IsNullOrEmpty($library.Title)) {
+                        Write-Host "  Skipping null or invalid library in site $siteUrl" -ForegroundColor Yellow
+                        Write-Log "Skipping null or invalid library in site $siteUrl" "WARNING"
+                        continue
+                    }
+
+                    $items = Get-PnPListItem -List $library.Title -Fields "ID","_ComplianceTag","_DisplayName","FileLeafRef","FileRef","FileDirRef","Last_x0020_Modified","Created_x0020_Date","_UIVersionString","SMTotalFileStreamSize" -PageSize 1000 -Connection $siteconn -ErrorAction Stop
+
+                    if ($items -and $items.Count -gt 0) {
+                        $itemCount = $items.Count
+                        $currentItem = 0
+
+                        foreach ($_ in $items) {
+                            $currentItem++
+                            
+                            $fileName = $_.FieldValues["FileLeafRef"]
+                            $isExcludedFile = $false
+                            if ($fileName) {
+                                $isExcludedFile = $ExcludedFilePatterns | Where-Object { $fileName -match $_ }
+                            }
+
+                            if ($_.FileSystemObjectType -ne "Folder" -and -not $isExcludedFile) {
+                                Write-Progress -Id 3 -Activity "Processing Items in $libraryName" -Status "Item $currentItem of $itemCount" -PercentComplete (($currentItem / $itemCount) * 100)
+                                $libraryDocCount++
+                                
+                                $sizeInKB = if ($_.FieldValues["SMTotalFileStreamSize"]) {
+                                    [math]::Round($_.FieldValues["SMTotalFileStreamSize"] / 1KB, 2)
+                                } else {
+                                    0
+                                }
+
+                                $item = [PSCustomObject]@{
+                                    SiteUrl            = $siteUrl
+                                    FolderPath        = $_.FieldValues["FileDirRef"]
+                                    ItemID            = $_.FieldValues["ID"]
+                                    FileName          = $fileName
+                                    RetentionLabel    = $_.FieldValues["_ComplianceTag"]
+                                    SensitivityLabel  = $_.FieldValues["_DisplayName"]
+                                    Created           = $_.FieldValues["Created_x0020_Date"]
+                                    LastModified      = $_.FieldValues["Last_x0020_Modified"]
+                                    Version           = $_.FieldValues["_UIVersionString"]
+                                    SizeKB            = $sizeInKB
+                                    ServerRelativePath = $_.FieldValues["FileRef"]
+                                }
+                                
+                                $siteItems += $item
+                            }
+                        }
+                    }
+                    Write-Host "    Processed $libraryDocCount documents in $libraryName" -ForegroundColor Green
+                    Write-Log "Library '$libraryName': Processed $libraryDocCount documents"
+                    $totalSiteDocuments += $libraryDocCount
+                }
+                catch {
+                    Write-Host "Error processing library $libraryName in site $siteUrl : $($_.Exception.Message)" -ForegroundColor Red
+                    Write-Log "Error processing library $libraryName in site $siteUrl : $($_.Exception.Message)" "ERROR"
+                    # Continue with next library
+                    continue
+                }
+            }
+            Write-Progress -Id 2 -Activity "Processing Libraries" -Completed
+            Write-Host "Completed site: $siteUrl - Total documents: $totalSiteDocuments" -ForegroundColor Cyan
+            Write-Log "Site completed: $siteUrl - Total documents: $totalSiteDocuments"
+            return $siteItems
+        }
+        catch {
+            Write-Host "Error accessing libraries in site $siteUrl : $($_.Exception.Message)" -ForegroundColor Red
+            Write-Log "Error accessing libraries in site $siteUrl : $($_.Exception.Message)" "ERROR"
+            return @()
+        }
+    }
+    catch {
+        Write-Host "Error connecting to site $siteUrl : $($_.Exception.Message)" -ForegroundColor Red
+        Write-Log "Error connecting to site $siteUrl : $($_.Exception.Message)" "ERROR"
+        return @()
+    }
+}
+
+function ExportToCSV($items, [bool]$append = $false) {
+    # Create directory if it doesn't exist
+    if (-not (Test-Path $directoryPath)) {
+        New-Item -ItemType Directory -Path $directoryPath -Force | Out-Null
+    }
+
+    # Split items into labeled and unlabeled
+    $labeledItems = $items | Where-Object { -not [string]::IsNullOrEmpty($_.RetentionLabel) }
+    $unlabeledItems = $items | Where-Object { [string]::IsNullOrEmpty($_.RetentionLabel) }
+
+    # Handle labeled items with CSV splitting logic
+    foreach ($item in $labeledItems) {
+         if ($labeledRowCount -ge $rowLimit) {
+             $currentLabeledPart++
+             $labeledRowCount = 0
+             $labeledOutputFile = GetOutputFilePath "labeled" $currentLabeledPart
+         }
+         if (-not (Test-Path $labeledOutputFile)) {
+             $item | Export-Csv -Path $labeledOutputFile -NoTypeInformation
+         } else {
+             $item | Export-Csv -Path $labeledOutputFile -NoTypeInformation -Append
+         }
+         $labeledRowCount++
+    }
+    Write-Log "Exported labeled items"
+
+    # Handle unlabeled items with CSV splitting logic
+    foreach ($item in $unlabeledItems) {
+         if ($unlabeledRowCount -ge $rowLimit) {
+             $currentUnlabeledPart++
+             $unlabeledRowCount = 0
+             $unlabeledOutputFile = GetOutputFilePath "unlabeled" $currentUnlabeledPart
+         }
+         if (-not (Test-Path $unlabeledOutputFile)) {
+             $item | Export-Csv -Path $unlabeledOutputFile -NoTypeInformation
+         } else {
+             $item | Export-Csv -Path $unlabeledOutputFile -NoTypeInformation -Append
+         }
+         $unlabeledRowCount++
+    }
+    Write-Log "Exported unlabeled items"
+}
+
+# Script Variables
 $adminSiteURL = "https://$domain-Admin.SharePoint.com"
 $TenantURL = "https://$domain.sharepoint.com"
 $dateTime = (Get-Date).ToString("dd-MM-yyyy-hh-ss")
-$directoryPath = "C:\HUD\06_Reporting\SPO"
+$directoryPath = "C:\HUD\06_Reporting\SPO\Test\"
 $fileName = "labelsReport" + $dateTime
-$outputPath = "$directoryPath\Reports" + "\" + $fileName + ".xlsx"
-$transcriptPath = "$directoryPath\Logs" + "\" + $fileName + "_transcript.txt"
+$logFile = "$directoryPath\scan_log_$dateTime.log"
+$rowLimit = 900000 # Row limit per file part
+$currentLabeledPart = 1
+$currentUnlabeledPart = 1
+$labeledRowCount = 0
+$unlabeledRowCount = 0
+$currentSite = 0
 
-# Import the ImportExcel module
-Import-Module ImportExcel
-
-# Function to ensure output directories exist
-function Initialize-OutputDirectories {
-    param (
-        [string]$ReportPath,
-        [string]$LogPath
-    )
-    
-    try {
-        $ReportDir = Split-Path $ReportPath -Parent
-        $LogDir = Split-Path $LogPath -Parent
-        
-        if (-not (Test-Path $ReportDir)) { New-Item -ItemType Directory -Path $ReportDir -Force | Out-Null }
-        if (-not (Test-Path $LogDir)) { New-Item -ItemType Directory -Path $LogDir -Force | Out-Null }
-    }
-    catch {
-        Write-Error "Failed to create output directories: $_"
-        throw
-    }
-}
-
-# Function to test file size and create a new file if the current file exceeds 10MB
-function Test-FileSize {
-    param (
-        [string]$FilePath,
-        [string]$BaseFileName,
-        [string]$DirectoryPath,
-        [int]$MaxFileSizeMB = 10
-    )
-    
-    $fileInfo = Get-Item $FilePath -ErrorAction SilentlyContinue
-    if ($fileInfo -and $fileInfo.Length -gt ($MaxFileSizeMB * 1MB)) {
-        $dateTime = (Get-Date).ToString("dd-MM-yyyy-hh-ss")
-        $newFileName = "$BaseFileName-$dateTime.xlsx"
-        $newFilePath = Join-Path $DirectoryPath "Reports\$newFileName"
-        return $newFilePath
-    }
-    return $FilePath
-}
-
-# Start transcript logging
-Start-Transcript -Path $transcriptPath
-Write-Host "Script started at: $(Get-Date)" -ForegroundColor Green
-Write-Host "Transcript being saved to: $transcriptPath" -ForegroundColor Green
-
-# Process compliance tag parameter
-Write-Host "Setting up compliance tag filtering..." -ForegroundColor Cyan
-$ComplianceTags = @()
-if ($ComplianceTagScope.Count -eq 1 -and $ComplianceTagScope[0] -eq "all") {
-    Write-Host "Scanning for all compliance tags" -ForegroundColor Yellow
-} else {
-    $ComplianceTags = $ComplianceTagScope
-    Write-Host "Filtering for specific tags:" -ForegroundColor Yellow
-    $ComplianceTags | ForEach-Object { Write-Host "  - $_" -ForegroundColor Yellow }
-}
-
-# Disable PnP PowerShell update check
-$env:PNPPOWERSHELL_UPDATECHECK = "Off"
-# Connect to SharePoint Online Admin center
-Write-Host "Connecting to SharePoint Online Admin Center..." -ForegroundColor Cyan
-Connect-PnPOnline -Url $adminSiteURL -ClientId $env:DigitalSupportAppID -Tenant 'mhud.onmicrosoft.com' -Thumbprint $env:DigitalSupportCertificateThumbprint
-$adminConnection = Get-PnPConnection
-
-# Define libraries to exclude from scanning
+# Exclude certain libraries
 $ExcludedLibraries = @(
     "Form Templates", "Preservation Hold Library", "Site Assets", "Site Pages", "Images", "Pages", "Settings", "Videos",
     "Site Collection Documents", "Site Collection Images", "Style Library", "AppPages", "Apps for SharePoint", "Apps for Office"
 )
 
-#Function to convert bytes to GB
-function Convert-ToGB {
-    param([double]$bytes)
-    return [math]::Round(($bytes / 1GB), 2)
-}
-   
-# Main function to report on labeled files within a site
-function ReportFileLabels($siteUrl) {
-    # Disable PnP PowerShell update check
-    $env:PNPPOWERSHELL_UPDATECHECK = "Off"
-    # Connect to the specific site
-    Write-Host "  Connecting to site: $siteUrl" -ForegroundColor Gray
-    Connect-PnPOnline -url $siteUrl -ClientId $env:DigitalSupportAppID -Tenant 'mhud.onmicrosoft.com' -Thumbprint $env:DigitalSupportCertificateThumbprint
-    $siteconn = Get-PnPConnection
-    
-    try {
-        # Get all document libraries, excluding system libraries
-        Write-Host "  Retrieving document libraries..." -ForegroundColor Gray
-        $DocLibraries = Get-PnPList -Includes BaseType, Hidden, Title -Connection $siteconn | Where-Object {
-            $_.BaseType -eq "DocumentLibrary" -and $_.Hidden -eq $False -and $_.Title -notin $ExcludedLibraries
-        }
+# Add exclusion patterns for temporary files
+$ExcludedFilePatterns = @(
+    '~$',        # Temporary Office files
+    '.tmp$',     # Temporary files
+    '.TMP$',
+    '.lck$',     # Lock files
+    '.lock$',
+    '.part$',    # Partial downloads
+    '.crdownload$' # Chrome download temporaries
+)
 
-        # Process each library
-        foreach ($library in $DocLibraries) {
-            Write-Host "    Scanning library: $($library.Title)" -ForegroundColor Yellow
-            
-            # Retrieve all items with additional fields needed for the report
-            Get-PnPListItem -List $library.Title -Fields "ID","GUID","ParentUniqueId","_UIVersionString","_ComplianceTag","_DisplayName","FileDirRef","FileLeafRef","FileRef","Author","Editor","Created","Last_x0020_Modified","File_x0020_Size" -PageSize 1000 -Connection $siteconn | ForEach-Object {
-                # Filter items based on label presence and compliance tag scope
-                if (($_.FieldValues["_DisplayName"] -or $_.FieldValues["_ComplianceTag"]) -and
-                    ($ComplianceTags.Count -eq 0 -or $_.FieldValues["_ComplianceTag"] -in $ComplianceTags)) {
+# Initialize CSV output files at the very beginning
+$labeledOutputFile = GetOutputFilePath "labeled" 1
+$unlabeledOutputFile = GetOutputFilePath "unlabeled" 1
+if (Test-Path $labeledOutputFile) { Remove-Item $labeledOutputFile -Force }
+if (Test-Path $unlabeledOutputFile) { Remove-Item $unlabeledOutputFile -Force }
 
-                    # Get file size values (assuming File_x0020_Size holds file size in bytes)
-                    $FileSizeBytes = $_.FieldValues["File_x0020_Size"]
-                    # Use the same value for TotalSizeBytes or adjust as needed
-                    $TotalSizeBytes = $FileSizeBytes
-                    
-                    # Create item object with relevant information
-                    $item = [PSCustomObject]@{
-                        SiteUrl             = $siteUrl
-                        Library             = $library.Title
-                        FolderPath          = $_.FieldValues["FileDirRef"]
-                        Title               = $_.FieldValues["FileLeafRef"]
-                        ID                  = $_.Id
-                        ServerRelativePath  = $_.FieldValues["FileRef"]
-                        RetentionLabel      = $_.FieldValues["_ComplianceTag"]
-                        SensitivityLabel    = $_.FieldValues["_DisplayName"]
-                        Created             = $_["Created"]
-                        CreatedBy           = $_["Author"].LookupValue
-                        LastModified        = $_["Last_x0020_Modified"]
-                        ModifiedBy         = $_["Editor"].LookupValue
-                        FileSizeGB          = Convert-ToGB $FileSizeBytes
-                        TotalFileSizeGB     = Convert-ToGB $TotalSizeBytes
-                        Version             = $_.FieldValues["_UIVersionString"]
-                        UniqueId            = $_.FieldValues["GUID"]
-                        ParentFolderUniqueId= $_.FieldValues["ParentUniqueId"]
+Write-Host "Starting SharePoint site scan..." -ForegroundColor Cyan
 
-                    }
+# Initialize PnP connection
+$env:PNPPOWERSHELL_UPDATECHECK = "Off"
+Connect-PnPOnline -Url $adminSiteURL -ClientId $env:DigitalSupportAppID -Tenant 'mhud.onmicrosoft.com' -Thumbprint $env:DigitalSupportCertificateThumbprint
+$adminConnection = Get-PnPConnection
 
-                    # Test file size and create a new file if needed
-                    $outputPath = Test-FileSize -FilePath $outputPath -BaseFileName $fileName -DirectoryPath $directoryPath
+# Get total number of sites first for progress tracking
+$allSites = Get-PnPTenantSite -Filter "Url -like '$TenantURL'" -Connection $adminConnection | Where-Object { $_.Template -ne 'RedirectSite#0' }
 
-                    # Export item to XLSX in real-time
-                    $ExcelParams = @{
-                        Path = $outputPath
-                        WorksheetName = "LabeledFiles"
-                        AutoSize = $true
-                        AutoFilter = $true
-                        FreezeTopRow = $true
-                        BoldTopRow = $true
-                    }
-
-                    if (Test-Path -Path $outputPath) {
-                        $ExcelParams.Add("Append", $true)
-                    }
-
-                    $item | Export-Excel @ExcelParams
-                }
-            }
-        }
-    } catch {
-        Write-Output "  Error processing site: $($_.Exception.Message)" -ForegroundColor Red
+# If SelectSites is specified, show site selection grid
+if ($SelectSites) {
+    Write-Host "Opening site selection grid..." -ForegroundColor Cyan
+    $selectedSites = $allSites | Select-Object Url, Title, Template, LastContentModifiedDate | 
+        Sort-Object LastContentModifiedDate -Descending |
+        Out-GridView -Title "Select Sites to Process (Multiple selection allowed)" -OutputMode Multiple
+    if ($selectedSites) {
+        $allSites = $allSites | Where-Object { $_.Url -in $selectedSites.Url }
+        Write-Host "Selected $($selectedSites.Count) sites to process" -ForegroundColor Green
+    } else {
+        Write-Host "No sites were selected. Exiting..." -ForegroundColor Yellow
+        return
     }
 }
 
-# Ensure output directories exist
-Initialize-OutputDirectories -ReportPath $outputPath -LogPath $transcriptPath
+$totalSites = $allSites.Count
+$currentSite = 0
 
-# Retrieve all SharePoint sites
-Write-Host "Retrieving SharePoint sites..." -ForegroundColor Cyan
-$allSites = Get-PnPTenantSite -Filter "Url -like '$TenantURL'" -Connection $adminConnection |
-    Where-Object { $_.Template -ne 'RedirectSite#0' }
+Write-Host "Found $totalSites sites to process" -ForegroundColor Cyan
 
-if ($allSites.Count -eq 0) {
-    Write-Output "No sites found in the tenant" -ForegroundColor Yellow
-    exit
-}
-
-# Handle site selection based on parameter
-Write-Host "Processing site selection..." -ForegroundColor Cyan
-$sites = if ($SelectSites) {
-    Write-Host "Opening site selection dialog..." -ForegroundColor Yellow
-    $selectedSites = $allSites | Select-Object Title, Url | Out-GridView -Title "Select SharePoint Sites to Process" -OutputMode Multiple
-    $allSites | Where-Object { $_.Url -in $selectedSites.Url }
-} else {
-    Write-Host "Processing all available sites..." -ForegroundColor Yellow
-    $allSites
-}
-
-if ($sites.Count -eq 0) {
-    Write-Output "No sites selected for processing" -ForegroundColor Yellow
-    exit
-}
-
-# Process selected sites with progress tracking
-Write-Host "`nStarting site processing..." -ForegroundColor Green
-$total = $sites.Count
-$count = 0
-
-foreach ($site in $sites) {
-    $count++
-    Write-Progress -Activity "Processing Sites" `
-                   -Status "Processing site: $($site.Url) ($count of $total)" `
-                   -PercentComplete (($count / $total) * 100)
-    Write-Host "Processing Site ($count of $total):" $site.Url -ForegroundColor Magenta
+$allSites | foreach-object {   
+    $currentSite++
+    Write-Progress -Id 1 -Activity "Processing Sites" -Status "Site $currentSite of $totalSites" -PercentComplete (($currentSite / $totalSites) * 100)
     
-    ReportFileLabels -siteUrl $site.Url
+    # Collect items from this site
+    $siteData = ReportFileLabels -siteUrl $_.Url
+    $currentFileSites += $siteData
+
+    # Immediately export each scanned site by appending to the CSV files as needed
+    ExportToCSV -items $siteData -append $true
 }
 
-# Display completion summary
-Write-Host "`nReport generation complete!" -ForegroundColor Green
-Write-Host "Report location: $outputPath" -ForegroundColor Green
-Write-Host "Transcript location: $transcriptPath" -ForegroundColor Green
-Write-Host "Total sites processed: $count" -ForegroundColor Green
-
-# Stop transcript logging
-Stop-Transcript
+Write-Progress -Id 1 -Activity "Processing Sites" -Completed
+Write-Host "`nReport generation completed!" -ForegroundColor Green
+Write-Log "Report generation completed!" -Level "SUCCESS"

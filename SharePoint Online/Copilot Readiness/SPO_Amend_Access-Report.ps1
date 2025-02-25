@@ -1,21 +1,3 @@
-<#
-.SYNOPSIS
-This script performs a specific task or set of tasks.
-
-.DESCRIPTION
-This PowerShell script is designed to automate a particular process or set of processes. It includes various functions and commands to achieve the desired outcome efficiently. The script is intended to be used by system administrators or users with appropriate permissions.
-
-.PARAMETER <ParameterName>
-Description of the parameter and its purpose.
-
-.EXAMPLE
-An example of how to run the script with appropriate parameters.
-
-.NOTES
-Additional information about the script, such as author, version, and date.
-
-#>
-
 Clear-Host
 
 # Variables
