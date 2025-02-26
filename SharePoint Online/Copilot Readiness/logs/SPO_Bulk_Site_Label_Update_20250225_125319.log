@@ -1,0 +1,134 @@
+**********************
+PowerShell transcript start
+Start time: 20250225125319
+Username: AD\Ashley.Forde
+RunAs User: AD\Ashley.Forde
+Configuration Name: 
+Machine: MHUD-9713672074 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Program Files\PowerShell\7\pwsh.dll
+Process ID: 15388
+PSVersion: 7.5.0
+PSEdition: Core
+GitCommitId: 7.5.0
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is C:\HUD\Git_Repositories\Microsoft-365-and-Azure\SharePoint Online\Copilot Readiness\logs\SPO_Bulk_Site_Label_Update_20250225_125319.log
+Successfully imported CSV with 10 items to process across 2 sites
+
+Sites to be processed:
+- https://mhud.sharepoint.com/sites/dms-oce (5 items)
+- https://mhud.sharepoint.com/sites/strategyinsights (5 items)
+
+=== Processing Site: https://mhud.sharepoint.com/sites/dms-oce ===
+Items to process: 5
+Connecting to site...
+Connected successfully to https://mhud.sharepoint.com/sites/dms-oce
+
+Processing file: Hot topics.docx
+List: planning/Meetings and stakeholder engagement/Housing CEs/2023 meetings - Housing CEs/20230720 Housing CEs, ItemID: 1806
+Current Label: DA-1.4.1 External Advisory Groups engagement
+New Label: _DA697 - 1.4.1 - External Advisory Groups Engagement
+
+Id    Title                                              GUID
+--    -----                                              ----
+1806  Templates                                          50dae6ed-26c6-4b1d-be88-015ed24f7f44
+✓ Successfully updated retention label
+
+Processing file: Work programme for Housing CEs.pptx
+List: planning/Meetings and stakeholder engagement/Housing CEs/2023 meetings - Housing CEs/20230720 Housing CEs, ItemID: 1807
+Current Label: DA-1.4.1 External Advisory Groups engagement
+New Label: _DA697 - 1.4.1 - External Advisory Groups Engagement
+1807  PowerPoint Presentation                            06306185-fec4-4781-9d30-1dc9b217c94f
+✓ Successfully updated retention label
+
+Processing file: Housing Market Update June 2023.pdf
+List: planning/Meetings and stakeholder engagement/Housing CEs/2023 meetings - Housing CEs/20230720 Housing CEs, ItemID: 1808
+Current Label: DA-1.4.1 External Advisory Groups engagement
+New Label: _DA697 - 1.4.1 - External Advisory Groups Engagement
+1808                                                     6f1fa85b-c91f-42ea-b0ca-8928f6e66dec
+✓ Successfully updated retention label
+
+Processing file: 20230720 Chief Executives Housing meeting Agenda.docx
+List: planning/Meetings and stakeholder engagement/Housing CEs/2023 meetings - Housing CEs/20230720 Housing CEs, ItemID: 1809
+Current Label: DA-1.4.1 External Advisory Groups engagement
+New Label: _DA697 - 1.4.1 - External Advisory Groups Engagement
+1809  Templates                                          b94ca2d2-dc49-42a9-842f-673149a56017
+✓ Successfully updated retention label
+
+Processing file: Housing CEs backpocket info.pptx
+List: planning/Meetings and stakeholder engagement/Housing CEs/2023 meetings - Housing CEs/20230720 Housing CEs, ItemID: 1818
+Current Label: DA-1.4.1 External Advisory Groups engagement
+New Label: _DA697 - 1.4.1 - External Advisory Groups Engagement
+1818  Creating systemic change                           8d879fc9-23f1-490c-9a0f-80ae2f25f7c9
+✓ Successfully updated retention label
+
+=== Updating Library Retention Labels ===
+Updating library 'planning/Meetings and stakeholder engagement/Housing CEs/2023 meetings - Housing CEs/20230720 Housing CEs' with retention label '_DA697 - 1.4.1 - External Advisory Groups Engagement'...
+✓ Successfully updated library retention label
+
+=== Processing Site: https://mhud.sharepoint.com/sites/strategyinsights ===
+Items to process: 5
+Connecting to site...
+Connected successfully to https://mhud.sharepoint.com/sites/strategyinsights
+
+Processing file: 9) KO Dec21 Report Back Financials (Shared with HUD 20211124) - for Budget 2022.xlsx
+List: budgets/Budget 2022/Initiative Templates (Pre submission - Nov 2021), ItemID: 1480
+Current Label: DA-1.4.2 External budgets
+New Label: _DA697 - 1.4.2 - External Budgets
+1480                                                     32b332d1-123e-418b-a120-7047d372a555
+✓ Successfully updated retention label
+
+Processing file: AMI2122080620_Appendix A_A3 of Proposed Budget Bids.pptx
+List: budgets/Budget 2022/Scoping Documents - August - September 2021, ItemID: 1399
+Current Label: DA-1.4.2 External budgets
+New Label: _DA697 - 1.4.2 - External Budgets
+1399  Templates                                          040ba366-611b-4f44-be04-e7f1e3f1f754
+✓ Successfully updated retention label
+
+Processing file: AMI2122080620_Budget 2022 Update - Vote Housing and Urban Development.docx
+List: budgets/Budget 2022/Scoping Documents - August - September 2021, ItemID: 1397
+Current Label: DA-1.4.2 External budgets
+New Label: _DA697 - 1.4.2 - External Budgets
+1397  Templates                                          45d1b4d7-7f41-4684-a814-3526d2fcbecb
+✓ Successfully updated retention label
+
+Processing file: BRF2122081084 Appendix B_Vote Housing Budget 22 A3_1.09.21.pptx
+List: budgets/Budget 2022/Scoping Documents - August - September 2021, ItemID: 1393
+Current Label: DA-1.4.2 External budgets
+New Label: _DA697 - 1.4.2 - External Budgets
+1393  Templates                                          12139d97-2ec5-4095-8f0d-efc6f3ce0d0f
+✓ Successfully updated retention label
+
+Processing file: BRF2122081084 Budget 22 Draft Letter of Intentions - Vote Housing and Urban Development.docx
+List: budgets/Budget 2022/Scoping Documents - August - September 2021, ItemID: 1395
+Current Label: DA-1.4.2 External budgets
+New Label: _DA697 - 1.4.2 - External Budgets
+1395  Templates                                          0f9f9654-5526-4807-afc1-b54e081dcaef
+✓ Successfully updated retention label
+
+=== Updating Library Retention Labels ===
+Updating library 'budgets/Budget 2022/Scoping Documents - August - September 2021' with retention label '_DA697 - 1.4.2 - External Budgets'...
+✓ Successfully updated library retention label
+Updating library 'budgets/Budget 2022/Initiative Templates (Pre submission - Nov 2021)' with retention label '_DA697 - 1.4.2 - External Budgets'...
+✓ Successfully updated library retention label
+
+=== Summary ===
+Total items processed: 10
+Successful updates: 10
+Failed updates: 0
+Skipped items (HUD Record): 0
+
+Library Updates:
+Successful library updates: 3
+Failed library updates: 0
+
+Log file saved to: C:\HUD\Git_Repositories\Microsoft-365-and-Azure\SharePoint Online\Copilot Readiness\logs\SPO_Bulk_Site_Label_Update_20250225_125319.log
+**********************
+PowerShell transcript end
+End time: 20250225125359
+**********************

@@ -1,5 +1,5 @@
 # Start transcription
-$logDirectory = Join-Path $PSScriptRoot "logs"
+$logDirectory = "C:\HUD\06_Reporting\SPO\Logs"
 if (-not (Test-Path $logDirectory)) {
     New-Item -ItemType Directory -Path $logDirectory | Out-Null
 }
