@@ -1,0 +1,616 @@
+**********************
+PowerShell transcript start
+Start time: 20250226150532
+Username: W11-MDT\MDTAdmin
+RunAs User: W11-MDT\MDTAdmin
+Configuration Name: 
+Machine: W11-MDT (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Program Files\PowerShell\7\pwsh.dll
+Process ID: 3676
+PSVersion: 7.5.0
+PSEdition: Core
+GitCommitId: 7.5.0
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is C:\Users\MDTAdmin\Documents\Code Repo\Microsoft-365-and-Azure\SharePoint Online\Copilot Readiness\logs\SPO_Bulk_Site_Label_Update_20250226_150532.log
+Successfully imported CSV with 74 items to process across 4 sites
+
+Sites to be processed:
+- https://mhud.sharepoint.com/sites/dms-oce (5 items)
+- https://mhud.sharepoint.com/sites/hs2022713135129 (1 items)
+- https://mhud.sharepoint.com/sites/insights (15 items)
+- https://mhud.sharepoint.com/sites/pol2022523162148 (53 items)
+
+=== Processing Site: https://mhud.sharepoint.com/sites/dms-oce ===
+Items to process: 5
+Connecting to site...
+Connected successfully to https://mhud.sharepoint.com/sites/dms-oce
+
+Processing file: Housing building consent target 2 pager.msg
+List: planning/Ad hoc issues and advice/MInisterial priorities - deliverables - etc/Priorities and Targets Jan-Feb 2024/Targets/Consents, ItemID: 2085
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+
+Id    Title                                              GUID
+--    -----                                              ----
+2085                                                     0fce05b6-0686-46dc-943c-e2105a7c9b36
+✓ Successfully updated retention label
+
+Processing file: Housing Target 5.2.24.docx
+List: planning/Ad hoc issues and advice/MInisterial priorities - deliverables - etc/Priorities and Targets Jan-Feb 2024/Targets/Consents, ItemID: 2086
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+2086                                                     d34007b5-2b6e-4969-8276-87cb2c93feba
+✓ Successfully updated retention label
+
+Processing file: Targets DPMC request above recover capacity target 20240216.xlsx
+List: planning/Ad hoc issues and advice/MInisterial priorities - deliverables - etc/Priorities and Targets Jan-Feb 2024/Targets/Consents, ItemID: 2090
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+2090                                                     802e07a8-3f42-439e-ae3e-6c2129dee586
+✓ Successfully updated retention label
+
+Processing file: Copy of Targets DPMC request above recover capacity target 20240214.xlsx
+List: planning/Ad hoc issues and advice/MInisterial priorities - deliverables - etc/Priorities and Targets Jan-Feb 2024/Targets/Consents, ItemID: 2091
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+2091                                                     92084ddb-ff6d-46d4-9f00-32bfb420580e
+✓ Successfully updated retention label
+
+Processing file: Fwd 20240208 Target Validation for Housing - consents - DPMC v1.msg
+List: planning/Ad hoc issues and advice/MInisterial priorities - deliverables - etc/Priorities and Targets Jan-Feb 2024/Targets/Consents, ItemID: 2096
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+2096                                                     e9dcacd6-2e5c-474d-a0d0-a89f40cb4b9a
+✓ Successfully updated retention label
+
+=== Updating Library Retention Labels ===
+Updating library 'planning/Ad hoc issues and advice/MInisterial priorities - deliverables - etc/Priorities and Targets Jan-Feb 2024/Targets/Consents' with retention label '_DA697 - 1.3.4 - Data Analysis Working Records'...
+✓ Successfully updated library retention label
+
+=== Processing Site: https://mhud.sharepoint.com/sites/hs2022713135129 ===
+Items to process: 1
+Connecting to site...
+Connected successfully to https://mhud.sharepoint.com/sites/hs2022713135129
+
+Processing file: FINAL Twenty20 Tokoroa proforma V1.xlsx
+List: workstream/2000391_TOKOROA and TAUPO, ItemID: 77
+Current Label: DA697-1.3.5 Data analysis reports-finals excluding publications
+New Label: _DA697 - 1.3.5 - Data Analysis Reports
+77                                                       d7c57d21-4294-4eb6-9ae5-7804f3b25d94
+✓ Successfully updated retention label
+
+=== Updating Library Retention Labels ===
+Updating library 'workstream/2000391_TOKOROA and TAUPO' with retention label '_DA697 - 1.3.5 - Data Analysis Reports'...
+✓ Successfully updated library retention label
+
+=== Processing Site: https://mhud.sharepoint.com/sites/insights ===
+Items to process: 15
+Connecting to site...
+Connected successfully to https://mhud.sharepoint.com/sites/insights
+
+Processing file: F&F Total Investment (real) by TA (1) (2).xlsx
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107538
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    c7c5cecf-ffea-468c-a1da-58691e6578ed
+✓ Successfully updated retention label
+
+Processing file: F&F Total Investment (real) by TA (1).xlsx
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107526
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    6a38bf19-dd53-46d6-b9fc-e62abc05c437
+✓ Successfully updated retention label
+
+Processing file: Funding and Finance Investment - All Programs Total Heatmap Max-Min.png
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107540
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    70c6c3e5-3cab-487c-8857-f8fc217edc7f
+✓ Successfully updated retention label
+
+Processing file: Funding and Finance Investment - Land For Housing and Build-Ready Development Heatmap.png
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107532
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    8b357a9f-b64c-459c-bfdf-9350d78d9b1b
+✓ Successfully updated retention label
+
+Processing file: Funding and Finance Investment - Land For Housing and Build-Ready Development Spend Heatmap Max-Min.png
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107534
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    90f0c721-ae8b-4023-91f0-18fc81bb08c7
+✓ Successfully updated retention label
+
+Processing file: Funding and Finance Investment - PH (IRRS) and TH delivered by CHPs Heatmap Max-Min.png
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107536
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    43a29c2e-d047-4fe8-b055-73c35bbf10c7
+✓ Successfully updated retention label
+
+Processing file: Funding and Finance Investment - PH (IRRS) and TH delivered by CHPs Heatmap.png
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107533
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    67fab839-d514-4778-9000-a3f5db334f21
+✓ Successfully updated retention label
+
+Processing file: Funding and Finance Investment - WKWO and PHO Total Heatmap Max-Min.png
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107535
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    9f51edd4-1b8f-4fd8-a140-daf312a59bac
+✓ Successfully updated retention label
+
+Processing file: Funding and Finance Investment - WKWO and PHO Total Heatmap.png
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107531
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    562cd056-1b51-4a1c-9180-8368587dfd37
+✓ Successfully updated retention label
+
+Processing file: NZ 2013 TA Heat Map Template - 10Unit All Spend Investment by TA.xlsm
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107539
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    bbe4f9c1-4024-404e-9522-bbcb648f94da
+✓ Successfully updated retention label
+
+Processing file: NZ 2013 TA Heat Map Template - 10Unit L4H BuRe Investment.xlsm
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107527
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    596f5f6d-9ecd-4d67-a70f-71b6cd201794
+✓ Successfully updated retention label
+
+Processing file: NZ 2013 TA Heat Map Template - 10Unit TH CHP Investment.xlsm
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107528
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    75ff507b-7845-4469-910e-1e8aed7d4990
+✓ Successfully updated retention label
+
+Processing file: NZ 2013 TA Heat Map Template - 10Unit WKWO PHO Investment alt col.xlsm
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107529
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    e50db679-5206-49b2-a007-6b6468134211
+✓ Successfully updated retention label
+
+Processing file: RE Heatmap of NZ showing investment through HUD funds and Programmes.msg
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107530
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    5242dcdb-2c97-4e56-b340-0b6b35e53fa0
+✓ Successfully updated retention label
+
+Processing file: RE_ Heatmap of NZ showing investment through HUD funds and Programmes.msg
+List: code/Sandpit/Simon M/Heatmap/Funding and Investment, ItemID: 107537
+Current Label: DA-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+1075…                                                    4a4f7d4b-e8a3-4167-866e-a81d65f87137
+✓ Successfully updated retention label
+
+=== Updating Library Retention Labels ===
+Updating library 'code/Sandpit/Simon M/Heatmap/Funding and Investment' with retention label '_DA697 - 1.3.4 - Data Analysis Working Records'...
+✓ Successfully updated library retention label
+
+=== Processing Site: https://mhud.sharepoint.com/sites/pol2022523162148 ===
+Items to process: 53
+Connecting to site...
+Connected successfully to https://mhud.sharepoint.com/sites/pol2022523162148
+
+Processing file: 20231110 Corrections data on supported housing.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Ara Poutama Aotearoa - Department of Corrections, ItemID: 54
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+54                                                       a0c979ca-5088-4291-a5e5-a2677418b281
+✓ Successfully updated retention label
+
+Processing file: 20231114 Corrections Data.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Ara Poutama Aotearoa - Department of Corrections, ItemID: 55
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+55                                                       631754e1-1fa8-41a9-b928-e7467f55a4c4
+✓ Successfully updated retention label
+
+Processing file: 20231115 Corrections Data - Follow up questions and answers.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Ara Poutama Aotearoa - Department of Corrections, ItemID: 56
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+56                                                       fc9480aa-3173-42ea-b635-2d0ee8ae7ab5
+✓ Successfully updated retention label
+
+Processing file: Ara Poutama Supported Housing Data.docx
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Ara Poutama Aotearoa - Department of Corrections, ItemID: 133
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+133                                                      90bcd82c-dd63-4fc3-8c6c-935f414ad387
+✓ Successfully updated retention label
+
+Processing file: Corrections - Reintegration_and_housing_booklet [IN-CONFIDENCE].pdf
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Ara Poutama Aotearoa - Department of Corrections, ItemID: 26
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+26                                                       3648e83b-f7f6-43a4-bea4-5807b131c799
+✓ Successfully updated retention label
+
+Processing file: 20231106 - Health - MHA data relevant to supported housing.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Health (Manatū Hauora and Te Whatu Ora), ItemID: 51
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+51                                                       2bf1b7cc-7bd8-48e3-8f03-346e68bac5d2
+✓ Successfully updated retention label
+
+Processing file: 20231106 - MHA data relevant to supported housing.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Health (Manatū Hauora and Te Whatu Ora), ItemID: 65
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+65                                                       bd477bcc-6fbc-45b4-8dfe-7126474b21f9
+✓ Successfully updated retention label
+
+Processing file: 20240220 - Health - Mental Health Pilots Data - follow-ups.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Health (Manatū Hauora and Te Whatu Ora), ItemID: 71
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+71                                                       685a9806-582d-4ef7-94b6-9fcd1419f543
+✓ Successfully updated retention label
+
+Processing file: 20230626 KO (Download to view attachments) - Some Supported Housing and CGH documentation [IN-CONFIDENCE].msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 27
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+27                                                       2a2cdb0a-7449-45bd-b925-be1a6ba1e2f6
+✓ Successfully updated retention label
+
+Processing file: 20230725 KO Supported Housing Journey Mapping (Download to view attachments).msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 28
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+28                                                       de3b72ed-d1de-4f87-ae4b-ae3f7f051143
+✓ Successfully updated retention label
+
+Processing file: 20230726 KO Eligibility and Prioritisation (Download to view attachment).msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 29
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+29                                                       11294073-7018-4fa2-a909-82a694e57f25
+✓ Successfully updated retention label
+
+Processing file: 20230829 KO CGH Deep Dive - Issues.pptx
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 30
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+30    Using this template                                ea7e6f29-6e69-4804-9fb1-7a676734c2d0
+✓ Successfully updated retention label
+
+Processing file: 20230908 KO - IRD Binding Ruling.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 34
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+34                                                       f28cdb4a-1bf5-4fa9-8b7f-49c734314d32
+✓ Successfully updated retention label
+
+Processing file: 20230909 KO - TH & CGH Binding Ruling - GST Treatment of Payments_15.03.21.pdf
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 33
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+33                                                       8ab9dc0e-5816-4b1c-8365-9d56d9517945
+✓ Successfully updated retention label
+
+Processing file: 20231019 KO MoU, Schedule, Homes Programme Agreements with Oranga Tamariki and Corrections.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 47
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+47                                                       34639faf-1772-4b2c-acfe-6d62a890b0e2
+✓ Successfully updated retention label
+
+Processing file: 20231026 KO - CGH data and next steps.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/CGH Data, ItemID: 49
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+49                                                       4c4d5fb3-d773-4942-b36f-ec7f14414236
+✓ Successfully updated retention label
+
+Processing file: 20231101 - KO CGH Data .msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/CGH Data, ItemID: 59
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+59                                                       0a5cb52a-d8b2-47c1-8dae-3dc627fb139b
+✓ Successfully updated retention label
+
+Processing file: 20231109 - KO CGH Data.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/CGH Data, ItemID: 60
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+60                                                       d93c5324-0342-49be-b997-ce74b03fb849
+✓ Successfully updated retention label
+
+Processing file: 20231121 - KO CGH Data Follow up questions.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/CGH Data, ItemID: 61
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+61                                                       66d7acb5-d001-4f2b-aa29-a3efcac86b2d
+✓ Successfully updated retention label
+
+Processing file: 20231206 KO CGH data - chat and next steps.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/CGH Data, ItemID: 64
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+64                                                       2c67782f-a79e-4856-b9c3-983d0d662025
+✓ Successfully updated retention label
+
+Processing file: 20231207 KO CGH Data Follow Up.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/CGH Data, ItemID: 63
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+63                                                       c5bec618-79d4-451e-9b59-16e5b4b2895f
+✓ Successfully updated retention label
+
+Processing file: 20240529 KO - Initial CGH April Data.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/CGH Data, ItemID: 73
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+73                                                       5287ea64-b6fb-4a8d-a74d-fc87e2741949
+✓ Successfully updated retention label
+
+Processing file: 20240618 KO - Updated CGH April Data.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/CGH Data, ItemID: 74
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+74                                                       d7edc6e0-5e05-4290-9a65-ad35802fe8f8
+✓ Successfully updated retention label
+
+Processing file: 20240625 KO CGH Data April V3 Updated Financial Data for FY24.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/CGH Data, ItemID: 82
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+82                                                       ebe75ca6-a09b-4fde-8b2a-d3e00e7a172d
+✓ Successfully updated retention label
+
+Processing file: 20240626 Kāinga Ora CGH Data Feedback FY24 Overview.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/CGH Data, ItemID: 83
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+83                                                       bbe70fb8-af14-4edf-b2de-cae3c4679234
+✓ Successfully updated retention label
+
+Processing file: 20240703 - KO - HUD2024-004837 Feedback on CGH Financial Data.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/CGH Data, ItemID: 85
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+85                                                       74a68b03-0512-47aa-b35d-224a347498cd
+✓ Successfully updated retention label
+
+Processing file: Kāinga Ora - CGH funding case study v2.pptx
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 115
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+115   PowerPoint Presentation                            53b07dbc-9a63-46ac-a25a-6b9311bb7c9f
+✓ Successfully updated retention label
+
+Processing file: Kāinga Ora - CGH overall issues.pptx
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 114
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+114   Using this template                                9cb527db-5191-4769-887a-75a41ec7d8bb
+✓ Successfully updated retention label
+
+Processing file: Kāinga Ora - Current State funding models.pptx
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 116
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+116   Current State: Supported Housing and Funders       d3d9a4f7-0398-4558-b159-e6cebed3b5c3
+✓ Successfully updated retention label
+
+Processing file: Kāinga Ora - Melrose atamai article.docx
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 117
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+117                                                      ab9a1c44-de5c-4216-9dd3-d71990693ccd
+✓ Successfully updated retention label
+
+Processing file: Kāinga Ora - Operational Policy for CGH Eligibility and Prioritisation (CC-POL-102).pdf
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 118
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+118                                                      e25ffd2a-5be7-4d32-91bb-dc4a5e7b062d
+✓ Successfully updated retention label
+
+Processing file: 19 December 2013 - Community Group Housing Programme History and Issues - Adhoc13179-19122013.pdf
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/Kāinga Ora - previous briefings on CGH, ItemID: 123
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+123                                                      858398e0-e07d-4013-af97-265aa02e75f4
+✓ Successfully updated retention label
+
+Processing file: 19 June 2015 - Information on Community Group Housing - Adhoc15054-19062015.pdf
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/Kāinga Ora - previous briefings on CGH, ItemID: 121
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+121                                                      df890115-2e4b-4c4d-a3f9-fae17233428c
+✓ Successfully updated retention label
+
+Processing file: 27 October 2004 BN0465 Rent Relief outcomes Nov04.doc
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/Kāinga Ora - previous briefings on CGH, ItemID: 124
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+124   BN/04/65                                           915d2d8c-daa0-4c80-8057-db85c7317554
+✓ Successfully updated retention label
+
+Processing file: 31 October 2011 - Budget 2012 Community Group Housing.doc
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/Kāinga Ora - previous briefings on CGH, ItemID: 126
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+126   [regional office address]                          961479a0-f82c-4189-aa6b-866c39523355
+✓ Successfully updated retention label
+
+Processing file: 6 June 2006 - BN 06-44 Rent Support Scheme.doc
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/Kāinga Ora - previous briefings on CGH, ItemID: 125
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+125                                                      23d99e5f-1962-4514-80ba-87d2e5154fd6
+✓ Successfully updated retention label
+
+Processing file: Kāinga Ora - SHSPIWP 240323 Why CGH focus.pptx
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 113
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+113   Using this template                                a093f6c0-0242-4a7c-9acc-17549cef05d5
+✓ Successfully updated retention label
+
+Processing file: Kāinga Ora - Supported Housing Strategic Plan Final - 28 June 2022.pdf
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 112
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+112                                                      4a44afac-d3d8-408d-94d0-d8f36e54c387
+✓ Successfully updated retention label
+
+Processing file: Kāinga Ora TI - Care Continuum [IN-CONFIDENCE] [NOT FOR FURTHER DISTRIBUTION].pdf
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 25
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+25                                                       904d47e0-753c-4cb1-a794-297de63cf364
+✓ Successfully updated retention label
+
+Processing file: 2023-06-19 MOU Kainga Ora and Oranga Tamariki Final signed (A10850081).pdf
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/Relationship Agreements with Oranga Tamariki and Ara Poutama Aotearoa Department of Corrections, ItemID: 131
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+131                                                      18c105e6-7f4e-469c-8684-2411acf39bb9
+✓ Successfully updated retention label
+
+Processing file: Community Group Housing Lease - OT template [FINAL] (A10850111).pdf
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/Relationship Agreements with Oranga Tamariki and Ara Poutama Aotearoa Department of Corrections, ItemID: 129
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+129                                                      26fe58d3-7055-486b-b9c9-058f3a1379d3
+✓ Successfully updated retention label
+
+Processing file: Relationship Agreement Department of Corrections - HNZ 20180523.pdf
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/Relationship Agreements with Oranga Tamariki and Ara Poutama Aotearoa Department of Corrections, ItemID: 128
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+128                                                      21e4e28e-6fc4-414f-90ac-ae05a9256a4c
+✓ Successfully updated retention label
+
+Processing file: Signed Schedule 1 final (A10850091).pdf
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/Relationship Agreements with Oranga Tamariki and Ara Poutama Aotearoa Department of Corrections, ItemID: 130
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+130                                                      506c4f55-5ec2-4f5c-bef8-9dac076ebe0a
+✓ Successfully updated retention label
+
+Processing file: SH CGH Provider service journey.docx
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora, ItemID: 132
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+132                                                      f4e459b3-77e0-49c4-bc8f-7413330e8e5a
+✓ Successfully updated retention label
+
+Processing file: 20230928 MSD Supported Housing Data.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/MSD, ItemID: 38
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+38                                                       15c1ea64-0995-4f79-9cee-b36d16a72045
+✓ Successfully updated retention label
+
+Processing file: 20230922 Oranga Tamariki Supported Housing Data.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Oranga Tamariki, ItemID: 37
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+37                                                       4658f545-84f9-42a4-88b4-f03d43480c42
+✓ Successfully updated retention label
+
+Processing file: 20231020 OT - Supported Accommodation Review and Malatest Evaluation Report.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Oranga Tamariki, ItemID: 48
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+48                                                       b6bffed8-80cc-43ad-98eb-293093635422
+✓ Successfully updated retention label
+
+Processing file: 20231102 OT - Supported Housing placement and finance data.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Oranga Tamariki, ItemID: 57
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+57                                                       c6e00131-7b8e-46d8-91a6-12d9781a6029
+✓ Successfully updated retention label
+
+Processing file: 20231113 OT - Supported Housing placement and finance data.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Oranga Tamariki, ItemID: 58
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+58                                                       f57464c4-3c23-4a10-ad0e-9cd47073b50d
+✓ Successfully updated retention label
+
+Processing file: Malatest International Evaluation of Supported Accommodation - June 2023.pdf
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Oranga Tamariki, ItemID: 135
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+135                                                      bd94030e-7f6b-4fe4-844b-0baaddf418e2
+✓ Successfully updated retention label
+
+Processing file: Oranga Tamariki Supported Accommodation Review - Final.pdf
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Oranga Tamariki, ItemID: 134
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+134                                                      c4a9bbdb-550a-48b2-a339-56201b33a4ac
+✓ Successfully updated retention label
+
+Processing file: 20231207 Whaikaha Disability data.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Whaikaha, ItemID: 62
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+62                                                       8deb0822-05aa-4592-b704-0b0d909fcd4b
+✓ Successfully updated retention label
+
+Processing file: 20240626 - Whaikaha Forensics Business Case Information.msg
+List: extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Whaikaha, ItemID: 84
+Current Label: DA697-1.3.4 Data analysis working records
+New Label: _DA697 - 1.3.4 - Data Analysis Working Records
+84                                                       7a91f1d6-c83a-41e4-91c2-36c16420ba34
+✓ Successfully updated retention label
+
+=== Updating Library Retention Labels ===
+Updating library 'extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/Relationship Agreements with Oranga Tamariki and Ara Poutama Aotearoa Department of Corrections' with retention label '_DA697 - 1.3.4 - Data Analysis Working Records'...
+✓ Successfully updated library retention label
+Updating library 'extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/Kāinga Ora - previous briefings on CGH' with retention label '_DA697 - 1.3.4 - Data Analysis Working Records'...
+✓ Successfully updated library retention label
+Updating library 'extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Ara Poutama Aotearoa - Department of Corrections' with retention label '_DA697 - 1.3.4 - Data Analysis Working Records'...
+✓ Successfully updated library retention label
+Updating library 'extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/MSD' with retention label '_DA697 - 1.3.4 - Data Analysis Working Records'...
+✓ Successfully updated library retention label
+Updating library 'extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Health (Manatū Hauora and Te Whatu Ora)' with retention label '_DA697 - 1.3.4 - Data Analysis Working Records'...
+✓ Successfully updated library retention label
+Updating library 'extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Whaikaha' with retention label '_DA697 - 1.3.4 - Data Analysis Working Records'...
+✓ Successfully updated library retention label
+Updating library 'extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Oranga Tamariki' with retention label '_DA697 - 1.3.4 - Data Analysis Working Records'...
+✓ Successfully updated library retention label
+Updating library 'extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora/CGH Data' with retention label '_DA697 - 1.3.4 - Data Analysis Working Records'...
+✓ Successfully updated library retention label
+Updating library 'extcoll/May 2023 and newer/EXT - GOV - Agency Resources (Note - Download emails to view attachments)/Kāinga Ora' with retention label '_DA697 - 1.3.4 - Data Analysis Working Records'...
+✓ Successfully updated library retention label
+
+=== Summary ===
+Total items processed: 74
+Successful updates: 74
+Failed updates: 0
+Skipped items (HUD Record): 0
+
+Library Updates:
+Successful library updates: 12
+Failed library updates: 0
+
+Log file saved to: C:\Users\MDTAdmin\Documents\Code Repo\Microsoft-365-and-Azure\SharePoint Online\Copilot Readiness\logs\SPO_Bulk_Site_Label_Update_20250226_150532.log
+**********************
+PowerShell transcript end
+End time: 20250226150804
+**********************
