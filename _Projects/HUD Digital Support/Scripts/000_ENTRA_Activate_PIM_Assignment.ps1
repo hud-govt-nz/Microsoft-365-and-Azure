@@ -95,12 +95,10 @@ foreach ($value in $SelectedRoles) {
 			$expirationTime = $latestAssignment.ScheduleInfo.Expiration.EndDateTime
 			Write-Host "Role '$value' is already active until $expirationTime" -ForegroundColor Cyan
 			$extendChoice = Read-Host "Would you like to extend this role assignment? (Yes/No)"
-			if ($extendChoice -eq 'Yes') {
-				# Continue with the activation process which will create a new assignment
-				Write-Host "Proceeding to extend role assignment..." -ForegroundColor Green
-			} else {
+			if ($extendChoice -ne 'Yes') {
 				continue
 			}
+			Write-Host "Proceeding to extend role assignment..." -ForegroundColor Green
 		}
 	}
 
