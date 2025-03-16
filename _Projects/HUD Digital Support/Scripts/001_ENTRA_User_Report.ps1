@@ -1,3 +1,34 @@
+<#
+.SYNOPSIS
+    Exports detailed user information from Microsoft Entra ID (Azure AD) to Excel.
+
+.DESCRIPTION
+    This script connects to Microsoft Graph API and retrieves comprehensive user information 
+    from Entra ID, including user details, organizational structure, contact information,
+    and account status. The data is exported to an Excel file with formatted columns.
+
+.NOTES
+    Version:        1.0
+    Author:         Digital Support Team
+    Creation Date:  2024
+    
+.REQUIREMENTS
+    - Microsoft.Graph.Authentication module
+    - ImportExcel module
+    - Environment variables:
+        * DigitalSupportAppID
+        * DigitalSupportTenantID
+        * DigitalSupportCertificateThumbprint
+
+.OUTPUTS
+    Excel file containing user information with the following details:
+    - Identity information
+    - Organizational structure
+    - Contact and location details
+    - Account status and properties
+    - License information
+#>
+
 Clear-Host
 Write-Host '## EntraID User Account Export ##' -ForegroundColor Yellow
 
@@ -13,7 +44,7 @@ try {
         -NoWelcome
     Write-Host "Connected" -ForegroundColor Green
 
-    $CollectToken = Invoke-MgGraphRequest -Uri "https://graph.microsoft.com/v1.0/users" -ContentType "txt" -OutputType HttpResponseMessage
+    $CollectToken = Invoke-MgGraphRequest -Uri "https://graph.microsoft.com/v1.0/users?$select"accountenabled" -ContentType "txt" -OutputType HttpResponseMessage
     $Token        = $CollectToken.RequestMessage.Headers.Authorization.Parameter
 
     } catch {
