@@ -70,7 +70,7 @@ $validationFolderVar = $folderPaths.ValidationFolder
 $Date = Get-Date -Format "MM-dd-yyyy"
 $AppName = "HUD - Office 365 Document Templates"
 $AppValidationFile = "$validationFolderVar\$AppName.txt"
-$AppVersion = "3.1"
+$AppVersion = "3.2"
 $LogFileName = "$($AppName)_${Mode}_$Date.log"
 
 # Begin Setup
