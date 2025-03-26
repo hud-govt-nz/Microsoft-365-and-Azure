@@ -3,17 +3,17 @@
     Activate PIM roles via Graph PowerShell.
 
 .DESCRIPTION
-    Script can be used to activate PIM eligable assignments using native Graph Powershell cmdlets.  
+    Script can be used to activate PIM eligible assignments using native Graph PowerShell cmdlets.
+    The script dynamically retrieves and displays only the roles that the current user is eligible for.
 
 .EXAMPLE 
-    powershell.exe -executionpolicy bypass -file .\Enable_PIM_Assignment.ps1
-    powershell.exe -executionpolicy bypass -file .\Enable_PIM_Assignment.ps1
+    powershell.exe -executionpolicy bypass -file .\Activate-PIM-Assignment.ps1
 
 .NOTES
     - AUTHOR : Ashley Forde
-    - Version: 2.0
-    - Date   : 12 Oct 2023
-    - Notes  : 
+    - Version: 3.0
+    - Date   : 27 Mar 2025
+    - Notes  : Updated to dynamically show only eligible roles for the current user instead of using a static list
 #>
 
 #Requires -Modules Microsoft.Graph.Identity.Governance
@@ -27,42 +27,30 @@ Connect-MgGraph -NoWelcome
 $context     = Get-MgContext
 $currentUser = (Get-MgUser -UserId $context.Account).id
 
-# Select which role group you wish to activate
-#Clear-Host
+# Display header
 Write-Host '## Elevate PIM roles ##' -ForegroundColor Yellow
 
-$ToActivate = @(
-	'Application Administrator',
-	'Attack Payload Author',
-	'Attack Simulation Administrator',
-	'Authentication Administrator',
-	'Authentication Policy Administrator',
-	'Azure Information Protection Administrator',
-	'Cloud App Security Administrator',
-	'Cloud Device Administrator',
-	'Compliance Administrator',
-	'Compliance Data Administrator',
-	'Conditional Access Administrator',
-	'Exchange Administrator',
-	'Exchange Recipient Administrator',
-	'Global Administrator',
-	'Guest Inviter',
-	'Helpdesk Administrator',
-	'Intune Administrator',
-	'License Administrator',
-	'Office Apps Administrator',
-	'Privileged Authentication Administrator',
-	'Privileged Role Administrator',
-	'Security Administrator',
-	'Security Operator',
-	'Security Reader',
-	'Sharepoint Administrator',
-	'Teams Administrator',
-	'Teams Communications Administrator',
-	'User Administrator'
-)
+# Get all roles that the current user is eligible for
+Write-Host "Retrieving your eligible roles..." -ForegroundColor Cyan
+$myRoles = Get-MgRoleManagementDirectoryRoleEligibilitySchedule -ExpandProperty RoleDefinition -All -Filter "principalId eq '$currentuser'"
 
+if (-not $myRoles) {
+    Write-Host "You don't have any eligible roles to activate." -ForegroundColor Red
+    exit
+}
+
+# Extract role display names from the eligible roles
+$ToActivate = $myRoles | ForEach-Object { $_.RoleDefinition.DisplayName } | Sort-Object
+
+Write-Host "Found $($ToActivate.Count) eligible role(s) for your account." -ForegroundColor Green
+
+# Let user select from their eligible roles
 $SelectedRoles = $ToActivate | Out-GridView -Title "Select Role(s) to Activate" -PassThru
+
+if (-not $SelectedRoles) {
+    Write-Host "No roles selected. Exiting..." -ForegroundColor Yellow
+    exit
+}
 
 # Write the selected roles to the host as a comma-separated list
 Write-Host "Selected Roles:" -ForegroundColor Green
@@ -79,10 +67,10 @@ if ([string]::IsNullOrWhiteSpace($UserChoice)) {
 	$UserChoice = 'No'
 }
 
-#$Value = "User Administrator"
+# Process each selected role
 foreach ($value in $SelectedRoles) {
-	# Get role displayName and ID
-	$Role = Get-MgDirectoryRoleTemplate | Where-Object { $value -contains $_.DisplayName } | Select-Object DisplayName, Id
+	# Get role displayName and ID from the already retrieved eligible roles
+	$Role = $myRoles | Where-Object { $_.RoleDefinition.DisplayName -eq $value } | Select-Object -ExpandProperty RoleDefinition | Select-Object DisplayName, Id
 
 	# Check for existing active assignments
 	$existingAssignments = Get-MgRoleManagementDirectoryRoleAssignmentSchedule -Filter "principalId eq '$currentuser' and roleDefinitionId eq '$($Role.id)'"
@@ -143,11 +131,8 @@ foreach ($value in $SelectedRoles) {
 	# Format date/time for result array.
 	$FormattedFutureDate = $FutureDate.ToString("dd-MMM-yy hh:mm tt")
 
-	# Get all available roles
-	$myRoles = Get-MgRoleManagementDirectoryRoleEligibilitySchedule -ExpandProperty RoleDefinition -All -Filter "principalId eq '$currentuser'"
-
-	# Get SharePoint admin role info
-	$myRole = $myroles | Where-Object { $_.RoleDefinitionid -eq "$($Role.id)" }
+	# Get the specific role details from the list of eligible roles we already retrieved
+	$myRole = $myRoles | Where-Object { $_.RoleDefinitionId -eq "$($Role.id)" }
 
 	# Setup parameters for activation
 	$params = @{
@@ -192,5 +177,4 @@ foreach ($value in $SelectedRoles) {
 		}
 		continue
 	}
-
 }
