@@ -44,12 +44,11 @@ try {
         -NoWelcome
     Write-Host "Connected" -ForegroundColor Green
 
-    $CollectToken = Invoke-MgGraphRequest -Uri "https://graph.microsoft.com/v1.0/users?$select"accountenabled" -ContentType "txt" -OutputType HttpResponseMessage
-    $Token        = $CollectToken.RequestMessage.Headers.Authorization.Parameter
-
-    } catch {
-        Write-Host "Error connecting to Microsoft Graph. Please check your credentials and network connection." -ForegroundColor Red
-        exit 1
+    $CollectToken = Invoke-MgGraphRequest -Uri "https://graph.microsoft.com/v1.0/users?$select=accountenabled" -ContentType "txt" -OutputType HttpResponseMessage
+    $Token = $CollectToken.RequestMessage.Headers.Authorization.Parameter
+} catch {
+    Write-Host "Error connecting to Microsoft Graph. Please check your credentials and network connection." -ForegroundColor Red
+    exit 1
 }
 
 # Selected Values
@@ -149,21 +148,21 @@ do {
             'mobile'                      = $user.mobilePhone
 
             # Account
-            'created_date_time'                      = $NZSTcreatedDateTime
-            'last_successful_sign_in_date_time_nzt' = $NZSTsuccessfulSignIn
-            'days_since_last_sign_in'               = $TimeSpan
-            'usage_location'                         = $user.usageLocation
-            'password_policies'                      = $user.passwordPolicies
-            'start_date'                             = $user.extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserStartDate
-            'leave_date'                             = $user.extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserLeaveDateTime
-            'e5_license'                             = if ($user.assignedLicenses.skuid -eq "06ebc4ee-1bb5-47dd-8120-11324bc54e06") { $true } else { $false }
-            'no_licenses'                            = if ($user.assignedLicenses.count -eq 0) { $true } else { $false }
+            'created_date_time'           = $NZSTcreatedDateTime
+            'last_successful_sign_in'     = $NZSTsuccessfulSignIn
+            'days_since_last_sign_in'     = $TimeSpan
+            'usage_location'              = $user.usageLocation
+            'password_policies'           = $user.passwordPolicies
+            'start_date'                  = $user.extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserStartDate
+            'leave_date'                  = $user.extension_56a473fa1d5b476484f306f7b06ee688_ObjectUserLeaveDateTime
+            'e5_license'                  = if ($user.assignedLicenses.skuid -eq "06ebc4ee-1bb5-47dd-8120-11324bc54e06") { $true } else { $false }
+            'no_licenses'                 = if ($user.assignedLicenses.count -eq 0) { $true } else { $false }
                         
             # Other
             'security_identifier'         = $user.SecurityIdentifier
             'room_mailbox'                = $User.extension_56a473fa1d5b476484f306f7b06ee688_RoomMailbox
             'shared_mailbox'              = $User.extension_56a473fa1d5b476484f306f7b06ee688_SharedMailbox
-            'Service_Account'             = $User.extension_56a473fa1d5b476484f306f7b06ee688_ServiceAccount
+            'service_account'             = $User.extension_56a473fa1d5b476484f306f7b06ee688_ServiceAccount
         }
     }
 } while ($uri)
@@ -216,17 +215,16 @@ if ($SaveFileResult -eq [System.Windows.Forms.DialogResult]::OK) {
     }
 
     # Autosize columns if needed
-    foreach ($column in $worksheet.Dimension.Start.Column.$worksheet.Dimension.End.Column) {
+    for ($column = $worksheet.Dimension.Start.Column; $column -le $worksheet.Dimension.End.Column; $column++) {
         $worksheet.Column($column).AutoFit()
-        }
+    }
     
     # Save and close the Excel package
     $excelPackage.Save()
     Close-ExcelPackage $excelPackage -Show
 
     Write-Host "The report $FileName has been saved in $($SelectedFilePath)" -ForegroundColor Green
-
 } else {
-Write-Host "Save cancelled" -ForegroundColor Yellow
+    Write-Host "Save cancelled" -ForegroundColor Yellow
 }
 Disconnect-MgGraph | Out-Null
