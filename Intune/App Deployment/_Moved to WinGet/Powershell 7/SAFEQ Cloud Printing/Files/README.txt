@@ -1,1 +1,0 @@
-https://cdn.everyoneprint.com/safeq-cloud-client-3.41.0-release-setup.exe

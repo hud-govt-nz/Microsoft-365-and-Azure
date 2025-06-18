@@ -1,1 +1,0 @@
-Download URL: https://www.git-scm.com/downloads
